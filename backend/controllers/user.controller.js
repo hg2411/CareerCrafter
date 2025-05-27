@@ -1,4 +1,4 @@
-import User from "../models/user.model.js"; 
+import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -74,23 +74,24 @@ export const updateProfile = async (req, res) => {
     try {
         const { fullname,email,phoneNumber,bio,skills } = req.body;
         const file=req.file;
-        if(!fullname || !email || !phoneNumber || !bio || !skills) {
-            return res.status(400).json({ message: "Something is missing", success: false });
-        };
-
         // coludinary resume wali file ka setup iddar hogha 
-        const skillsArray = skills.split(",");
+         let skillsArray;
+        if(skills){
+            skillsArray = skills.split(",");
+        }
         const userId= req.id; // mildware autentication se aayegha baad m baatyegha 
         let user=await User.findById(userId);
         if(!user) {
             return res.status(404).json({ message: "User not found", success: false });
         }
-        //updating the data
-        user.fullname = fullname;
-        user.email = email; 
-        user.phoneNumber = phoneNumber;
-        user.profile.bio = bio;
-        user.profile.skills = skillsArray;
+       
+        // updating data
+        if(fullname) user.fullname = fullname
+        if(email) user.email = email
+        if(phoneNumber)  user.phoneNumber = phoneNumber
+        if(bio) user.profile.bio = bio
+        if(skills) user.profile.skills = skillsArray
+
 //resume  will comes here  later ....
         await user.save();
          user={
