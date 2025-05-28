@@ -9,14 +9,14 @@ export const register = async (req, res) => {
         return res
         .status(400)
         .json({ message: "Something is missing", success: false });
-    }
+    };
     const user = await User.findOne({ email });
     if (user) {
         return res.status(400).json({
         message: "User already exists with this email",
-        sucess: false,
+        success: false,
     });
-    }
+    };
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.create({
         fullname,
@@ -42,7 +42,7 @@ export const login = async (req, res) => {
         return res
         .status(400)
         .json({ message: "Something is missing", success: false });
-    }
+    };
     let user = await User.findOne({ email });
     if (!user) {
         return res
