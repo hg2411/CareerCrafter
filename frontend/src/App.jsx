@@ -1,12 +1,13 @@
-import React from "react";
-import { Button } from "./components/ui/button";
-import Navbar from "./components/shared/Navbar";
 
 
-export default function App() {
+function App() {
+  
+
   return (
-    // <div className="p-10">
-    // </div>
-    <Navbar/>
-  );
+    <>
+      <h1 className="text-blue-600">hello world! thanks sir</h1>
+    </>
+  )
 }
+
+export default App
