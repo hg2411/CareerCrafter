@@ -47,8 +47,8 @@ const Navbar = () => {
             <PopoverTrigger asChild>
               <Avatar className="cursor-pointer">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
+                  src="/Passport Size Photo.jpg"
+                  alt="profile"
                 />
               </Avatar>
             </PopoverTrigger>
@@ -56,12 +56,12 @@ const Navbar = () => {
               <div className="flex gap-4 items-center">
                 <Avatar className="cursor-pointer">
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
+                    src="/Passport Size Photo.jpg"
+                    alt="profile"
                   />
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-gray-800">Mern Stack</h4>
+                  <h4 className="font-semibold text-gray-800">Himani Goyal</h4>
                   <p className="text-sm text-gray-500">
                     This is the job portal
                   </p>
