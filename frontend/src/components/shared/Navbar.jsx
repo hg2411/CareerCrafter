@@ -3,6 +3,7 @@ import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const user = false;
@@ -30,17 +31,18 @@ const Navbar = () => {
         {/* Auth Section */}
         {!user ? (
           <div className="flex items-center gap-3">
-            <Button
+            <Link to="/login"> <Button
               variant="outline"
               className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-5 py-2 text-sm transition-all"
             >
               Login
-            </Button>
-            <Button
+            </Button></Link>
+            <Link to="/signup"> <Button
               className="rounded-full px-5 py-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white text-sm transition-all"
             >
               Sign Up
-            </Button>
+            </Button> </Link>
+                     
           </div>
         ) : (
           <Popover>
