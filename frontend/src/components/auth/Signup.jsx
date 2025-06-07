@@ -1,18 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../shared/Navbar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Ensure CSS is imported
+
+import { USER_API_END_POINT } from "@/utils/constant";
 
 const Signup = () => {
+  const [input, setInput] = useState({
+    fullname: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    role: "",
+    file: null,
+  });
+
+  const navigate = useNavigate();
+
+  const changeEventHandler = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
+
+  const changeFileHandler = (e) => {
+    setInput({ ...input, file: e.target.files?.[0] });
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("fullname", input.fullname);
+    formData.append("email", input.email);
+    formData.append("phoneNumber", input.phoneNumber);
+    formData.append("password", input.password);
+    formData.append("role", input.role);
+    if (input.file) formData.append("file", input.file);
+
+    try {
+      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      toast.error("Signup failed. Please try again.");
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <form
-          action=""
+          onSubmit={submitHandler}
           className="w-full max-w-md bg-white border border-gray-300 shadow-md rounded-lg p-6 my-10"
         >
           <h1 className="font-bold text-2xl mb-6 text-center">Sign Up</h1>
@@ -21,6 +73,9 @@ const Signup = () => {
             <Label>Full Name</Label>
             <Input
               type="text"
+              value={input.fullname}
+              name="fullname"
+              onChange={changeEventHandler}
               placeholder="NAME"
               className="mt-1 shadow-sm rounded-md"
             />
@@ -30,6 +85,9 @@ const Signup = () => {
             <Label>Email</Label>
             <Input
               type="email"
+              value={input.email}
+              name="email"
+              onChange={changeEventHandler}
               placeholder="abc123@gmail.com"
               className="mt-1 shadow-sm rounded-md"
             />
@@ -39,6 +97,9 @@ const Signup = () => {
             <Label>Phone Number</Label>
             <Input
               type="text"
+              value={input.phoneNumber}
+              name="phoneNumber"
+              onChange={changeEventHandler}
               placeholder="XXX-XXX-XXXX"
               className="mt-1 shadow-sm rounded-md"
             />
@@ -48,6 +109,9 @@ const Signup = () => {
             <Label>Password</Label>
             <Input
               type="password"
+              value={input.password}
+              name="password"
+              onChange={changeEventHandler}
               placeholder="********"
               className="mt-1 shadow-sm rounded-md"
             />
@@ -60,6 +124,8 @@ const Signup = () => {
                   type="radio"
                   name="role"
                   value="student"
+                  checked={input.role === "student"}
+                  onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
                 <Label className="cursor-pointer">Student</Label>
@@ -69,16 +135,20 @@ const Signup = () => {
                   type="radio"
                   name="role"
                   value="recruiter"
+                  checked={input.role === "recruiter"}
+                  onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
                 <Label className="cursor-pointer">Recruiter</Label>
               </div>
             </div>
+
             <div className="flex items-center gap-2">
               <Label>Profile</Label>
               <Input
                 accept="image/*"
                 type="file"
+                onChange={changeFileHandler}
                 className="cursor-pointer file:mr-2 file:py-1 file:px-2 file:border-0 file:rounded file:bg-gray-100 file:text-sm"
               />
             </div>
@@ -90,9 +160,10 @@ const Signup = () => {
           >
             Signup
           </Button>
-          <span className="text-sm">
+
+          <span className="text-sm block text-center mt-4">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600">
+            <Link to="/login" className="text-blue-600 font-medium">
               Login
             </Link>
           </span>
