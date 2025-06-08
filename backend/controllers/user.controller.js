@@ -1,8 +1,12 @@
+
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
+    console.log("BODY:", req.body);
+  console.log("FILE:", req.file);
+
     try {
     const { fullname, email, phoneNumber, password, role } = req.body;
     if (!fullname || !email || !phoneNumber || !password || !role) {

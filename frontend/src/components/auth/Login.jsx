@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+// Import your constant here (adjust path if needed)
+import { USER_API_END_POINT } from "../../utils/constant";
+
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -22,18 +25,22 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_USER_API_END_POINT}/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // to handle cookies/sessions
-          body: JSON.stringify(input),
-        }
-      );
+      // Use the imported USER_API_END_POINT instead of env variable
+      const res = await fetch(`${USER_API_END_POINT}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // to handle cookies/sessions
+        body: JSON.stringify(input),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP error! status: ${res.status}, message: ${text}`);
+      }
 
       const data = await res.json();
 
@@ -45,7 +52,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("error.response.data.message");
+      toast.error(error.message || "Something went wrong during login");
     }
   };
 
