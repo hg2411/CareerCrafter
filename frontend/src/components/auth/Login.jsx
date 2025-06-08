@@ -1,10 +1,16 @@
 import Navbar from "../shared/Navbar";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../redux/authSlice";
+
+import { USER_API_END_POINT } from "../../utils/constant";
+import { useSelector } from "react-redux";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -12,8 +18,9 @@ const Login = () => {
     password: "",
     role: "",
   });
-
+  const { loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -21,18 +28,23 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_USER_API_END_POINT}/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // to handle cookies/sessions
-          body: JSON.stringify(input),
-        }
-      );
+      dispatch(setLoading(true));
+      // Use the imported USER_API_END_POINT instead of env variable
+      const res = await fetch(`${USER_API_END_POINT}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // to handle cookies/sessions
+        body: JSON.stringify(input),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP error! status: ${res.status}, message: ${text}`);
+      }
 
       const data = await res.json();
 
@@ -44,7 +56,9 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("error.response.data.message");
+      toast.error(error.message || "Something went wrong during login");
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -108,15 +122,21 @@ const Login = () => {
               </div>
             </div>
           </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-gray-900 text-white hover:bg-gray-800 focus:ring-4 focus:ring-blue-700 font-medium py-2 rounded"
-          >
-            Login
-          </Button>
+          {loading ? (
+            <Button className="w-full  my -4">
+              <Loader2 className="mr-2  h-4 w-4  animate-spin" />
+              Please Wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full bg-gray-900 text-white hover:bg-gray-800 focus:ring-4 focus:ring-blue-700 font-medium py-2 rounded"
+            >
+              Login
+            </Button>
+          )}
           <span className="text-sm block text-center mt-4">
-            Don&apos;t have an account?{" "}
+            Don't have an account?{" "}
             <Link to="/signup" className="text-blue-600 font-medium">
               Sign Up
             </Link>
