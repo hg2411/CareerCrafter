@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
+import { useDispatch, useSelector } from "react-redux";
 
 import { USER_API_END_POINT } from "@/utils/constant";
 
@@ -19,7 +20,8 @@ const Signup = () => {
     role: "",
     file: null,
   });
-
+  const {loading} = useSelector((state) => state.auth);
+  const dispatch= useDispatch();
   const navigate = useNavigate();
 
   const changeEventHandler = (e) => {
@@ -42,6 +44,7 @@ const Signup = () => {
     if (input.file) formData.append("file", input.file);
 
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(
         `${USER_API_END_POINT.replace(/\/$/, "")}/register`,
         formData,
@@ -60,6 +63,8 @@ const Signup = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Signup failed");
+    }finally{
+      dispatch(setLoading(false));
     }
   };
   return (
@@ -156,13 +161,19 @@ const Signup = () => {
               />
             </div>
           </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-gray-900 text-white hover:bg-gray-800 focus:ring-4 focus:ring-blue-700 font-medium py-2 rounded"
-          >
-            Signup
-          </Button>
+ {loading ? (
+            <Button className="w-full  my -4">
+              <Loader2 className="mr-2  h-4 w-4  animate-spin" />
+              Please Wait
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full bg-gray-900 text-white hover:bg-gray-800 focus:ring-4 focus:ring-blue-700 font-medium py-2 rounded"
+            >
+              Sign Up
+            </Button>
+          )}
 
           <span className="text-sm block text-center mt-4">
             Already have an account?{" "}
