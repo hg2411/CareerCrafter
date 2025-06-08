@@ -1,16 +1,14 @@
-import Navbar from "../shared/Navbar";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../redux/authSlice";
-
-import { USER_API_END_POINT } from "../../utils/constant";
-import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
+import Navbar from "../shared/Navbar";
+import { USER_API_END_POINT } from "../../utils/constant";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -18,6 +16,7 @@ const Login = () => {
     password: "",
     role: "",
   });
+
   const { loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,13 +30,11 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
-      // Use the imported USER_API_END_POINT instead of env variable
+
       const res = await fetch(`${USER_API_END_POINT}/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // to handle cookies/sessions
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(input),
       });
 
@@ -65,40 +62,42 @@ const Login = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
         <form
           onSubmit={submitHandler}
-          className="w-full max-w-md bg-white border border-gray-300 shadow-md rounded-lg p-6 my-10"
+          className="w-full max-w-md bg-white border border-gray-200 shadow-lg rounded-2xl p-8 mt-10"
         >
-          <h1 className="font-bold text-2xl mb-6 text-center">Login</h1>
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            Welcome Back 👋
+          </h1>
 
-          <div className="mb-4">
-            <Label>Email</Label>
+          <div className="mb-5">
+            <Label className="text-gray-700 font-medium">Email</Label>
             <Input
               type="email"
               value={input.email}
               name="email"
               onChange={changeEventHandler}
               placeholder="abc123@gmail.com"
-              className="mt-1 shadow-sm rounded-md"
+              className="mt-2 shadow-sm rounded-md"
             />
           </div>
 
-          <div className="mb-4">
-            <Label>Password</Label>
+          <div className="mb-5">
+            <Label className="text-gray-700 font-medium">Password</Label>
             <Input
               type="password"
               value={input.password}
               name="password"
               onChange={changeEventHandler}
               placeholder="********"
-              className="mt-1 shadow-sm rounded-md"
+              className="mt-2 shadow-sm rounded-md"
             />
           </div>
 
-          <div className="flex items-center justify-between mb-6 gap-6">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 text-gray-600 text-sm">
                 <Input
                   type="radio"
                   name="role"
@@ -107,9 +106,9 @@ const Login = () => {
                   onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
-                <Label className="cursor-pointer">Student</Label>
-              </div>
-              <div className="flex items-center gap-2">
+                Student
+              </label>
+              <label className="flex items-center gap-2 text-gray-600 text-sm">
                 <Input
                   type="radio"
                   name="role"
@@ -118,29 +117,31 @@ const Login = () => {
                   onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
-                <Label className="cursor-pointer">Recruiter</Label>
-              </div>
+                Recruiter
+              </label>
             </div>
           </div>
+
           {loading ? (
-            <Button className="w-full  my -4">
-              <Loader2 className="mr-2  h-4 w-4  animate-spin" />
+            <Button className="w-full bg-[#6A38C2] text-white">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please Wait
             </Button>
           ) : (
             <Button
               type="submit"
-              className="w-full bg-gray-900 text-white hover:bg-gray-800 focus:ring-4 focus:ring-blue-700 font-medium py-2 rounded"
+              className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-all"
             >
               Login
             </Button>
           )}
-          <span className="text-sm block text-center mt-4">
+
+          <p className="text-center text-sm mt-5 text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 font-medium">
+            <Link to="/signup" className="text-[#6A38C2] font-medium">
               Sign Up
             </Link>
-          </span>
+          </p>
         </form>
       </div>
     </div>
