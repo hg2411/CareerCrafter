@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Ensure CSS is imported
+import "react-toastify/dist/ReactToastify.css"; 
 
 import { USER_API_END_POINT } from "@/utils/constant";
 
