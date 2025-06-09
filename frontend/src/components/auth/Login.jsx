@@ -28,6 +28,14 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    const { email, password, role } = input;
+
+    // 🔴 Form validation
+    if (!email || !password || !role) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
 
