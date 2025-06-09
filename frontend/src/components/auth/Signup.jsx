@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from '@/redux/authSlice'
-import { Loader2 } from 'lucide-react'
+import { setLoading } from "@/redux/authSlice";
+import { Loader2 } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/constant";
 
 const Signup = () => {
@@ -21,8 +21,9 @@ const Signup = () => {
     role: "",
     file: null,
   });
-  const {loading} = useSelector((state) => state.auth);
-  const dispatch= useDispatch();
+
+  const { loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const changeEventHandler = (e) => {
@@ -36,13 +37,21 @@ const Signup = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    // ✅ Validation added here
+    const { fullname, email, phoneNumber, password, role, file } = input;
+
+    if (!fullname || !email || !phoneNumber || !password || !role || !file) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("fullname", input.fullname);
-    formData.append("email", input.email);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("password", input.password);
-    formData.append("role", input.role);
-    if (input.file) formData.append("file", input.file);
+    formData.append("fullname", fullname);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("password", password);
+    formData.append("role", role);
+    formData.append("file", file);
 
     try {
       dispatch(setLoading(true));
@@ -64,10 +73,11 @@ const Signup = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Signup failed");
-    }finally{
+    } finally {
       dispatch(setLoading(false));
     }
   };
+
   return (
     <div>
       <Navbar />
@@ -162,9 +172,10 @@ const Signup = () => {
               />
             </div>
           </div>
- {loading ? (
-            <Button className="w-full  my -4">
-              <Loader2 className="mr-2  h-4 w-4  animate-spin" />
+
+          {loading ? (
+            <Button className="w-full my-4" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please Wait
             </Button>
           ) : (

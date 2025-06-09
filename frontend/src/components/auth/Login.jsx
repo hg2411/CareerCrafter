@@ -1,15 +1,13 @@
 import Navbar from "../shared/Navbar";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../redux/authSlice";
-
 import { USER_API_END_POINT } from "../../utils/constant";
-import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 
 const Login = () => {
@@ -18,9 +16,11 @@ const Login = () => {
     password: "",
     role: "",
   });
+
   const { loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
     setInput({
@@ -32,9 +32,17 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    const { email, password, role } = input;
+
+    // ✅ Validation added here:
+    if (!email || !password || !role) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
-      // Use the imported USER_API_END_POINT instead of env variable
+
       const res = await fetch(`${USER_API_END_POINT}/login`, {
         method: "POST",
         headers: {
@@ -125,9 +133,11 @@ const Login = () => {
               </div>
             </div>
           </div>
+
           {loading ? (
-            <Button className="w-full  my -4">
-              <Loader2 className="mr-2  h-4 w-4  animate-spin" />
+            // ✅ Button shows loader if loading
+            <Button className="w-full my-4" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please Wait
             </Button>
           ) : (
@@ -138,6 +148,7 @@ const Login = () => {
               Login
             </Button>
           )}
+
           <span className="text-sm block text-center mt-4">
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-600 font-medium">
