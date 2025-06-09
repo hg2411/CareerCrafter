@@ -21,9 +21,12 @@ const Login = () => {
   const { loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const changeEventHandler = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setInput({
+      ...input,
+      [name]: name === "role" ? value.toLowerCase() : value,
+    });
   };
 
   const submitHandler = async (e) => {
