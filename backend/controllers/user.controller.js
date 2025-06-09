@@ -59,12 +59,13 @@ export const login = async (req, res) => {
         .status(400)
         .json({ message: "Incorrect email or Password", success: false });
     }
-   if (role.toLowerCase() !== user.role.toLowerCase()) {
-  return res.status(400).json({
-    message: "Account does not exist with the selected role",
-    success: false,
-  });
-}
+    // check if role is correct or not
+    if (role != user.role) {
+        return res.status(400).json({
+        message: "Account does not exist with the selected role",
+        success: false,
+        });
+    }
     const tokenData = {
         userId: user._id,
     };

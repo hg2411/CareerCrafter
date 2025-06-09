@@ -1,16 +1,12 @@
-// App.jsx
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Home from "./components/Home.jsx";
 import Login from "./components/auth/Login.jsx";
-import Signup from "./components/auth/Signup.jsx";
+import Signup from "./components/auth/Signup.jsx"; 
 import React from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-// ✅ Layout with ToastContainer
+// Layout without Navbar
 const Layout = () => (
   <>
-    <ToastContainer position="top-center" autoClose={3000} /> {/* ✅ Add this */}
     <Outlet />
   </>
 );
@@ -19,7 +15,7 @@ const Layout = () => (
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <Layout />, // Layout without Navbar
     children: [
       {
         path: "",
