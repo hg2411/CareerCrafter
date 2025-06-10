@@ -4,9 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const user = false;
+  const {user} = useSelector(store=>store.auth);
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">

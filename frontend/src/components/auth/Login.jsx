@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "../../redux/authSlice";
+import { setLoading, setUser } from "../../redux/authSlice";
 import { Loader2 } from "lucide-react";
 import Navbar from "../shared/Navbar";
 import { USER_API_END_POINT } from "../../utils/constant";
@@ -54,6 +54,7 @@ const Login = () => {
       const data = await res.json();
 
       if (data.success) {
+        dispatch(setUser(data.user));
         toast.success(data.message);
         navigate("/");
       } else {
