@@ -1,4 +1,3 @@
-// App.jsx
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Home from "./components/Home.jsx";
 import Login from "./components/auth/Login.jsx";
@@ -7,6 +6,7 @@ import Jobs from "./components/Jobs.jsx";
 import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Browse from "./components/Browse.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -37,6 +37,10 @@ const appRouter = createBrowserRouter([
       {
         path:"jobs",
         element:<Jobs/>
+      },
+      {
+        path:"browse",
+        element:<Browse/>
       }
     ],
   },
