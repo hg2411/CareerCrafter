@@ -75,7 +75,7 @@ const Navbar = () => {
                 <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
                   <User2 size={18} />
                   <Button variant="link" className="text-sm p-0 text-gray-700">
-                    View Profile
+                   <Link to="/profile"> View Profile</Link>
                   </Button>
                 </div>
                 <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
