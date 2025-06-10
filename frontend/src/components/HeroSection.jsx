@@ -24,7 +24,7 @@ const HeroSection = () => {
       className="h-full px-4 rounded-none bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white"
       style={{ borderRadius: '0 9999px 9999px 0' }}
     >
-      <Search className="h-11 w-5" />
+      <Search className="h-7 w-5" />
     </Button>
   </div>
 </div>
