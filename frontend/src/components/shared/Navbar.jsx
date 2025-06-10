@@ -18,49 +18,50 @@ const Navbar = () => {
 
         {/* Nav Links */}
         <ul className="hidden md:flex font-medium items-center gap-10 text-gray-700 text-[16px]">
-          {["Home", "Job", "Browse"].map((item) => (
+          {["Home", "Jobs", "Browse"].map((item) => (
             <li
               key={item}
               className="hover:text-[#6A38C2] transition-colors duration-200 cursor-pointer"
             >
-              {item}
+              <Link
+                to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                className="block"
+              >
+                {item}
+              </Link>
             </li>
           ))}
         </ul>
-
         {/* Auth Section */}
         {!user ? (
           <div className="flex items-center gap-3">
-            <Link to="/login"> <Button
-              variant="outline"
-              className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-5 py-2 text-sm transition-all"
-            >
-              Login
-            </Button></Link>
-            <Link to="/signup"> <Button
-              className="rounded-full px-5 py-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white text-sm transition-all"
-            >
-              Sign Up
-            </Button> </Link>
-                     
+            <Link to="/login">
+              {" "}
+              <Button
+                variant="outline"
+                className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-5 py-2 text-sm transition-all"
+              >
+                Login
+              </Button>
+            </Link>
+            <Link to="/signup">
+              {" "}
+              <Button className="rounded-full px-5 py-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white text-sm transition-all">
+                Sign Up
+              </Button>{" "}
+            </Link>
           </div>
         ) : (
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage
-                  src="/Passport Size Photo.jpg"
-                  alt="profile"
-                />
+                <AvatarImage src="/Passport Size Photo.jpg" alt="profile" />
               </Avatar>
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-white border border-gray-200 shadow-lg rounded-xl p-4">
               <div className="flex gap-4 items-center">
                 <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src="/Passport Size Photo.jpg"
-                    alt="profile"
-                  />
+                  <AvatarImage src="/Passport Size Photo.jpg" alt="profile" />
                 </Avatar>
                 <div>
                   <h4 className="font-semibold text-gray-800">Himani Goyal</h4>
