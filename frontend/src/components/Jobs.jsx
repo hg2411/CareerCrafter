@@ -21,9 +21,9 @@ const Jobs = () => {
           ) : (
             <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
               <div className="grid grid-cols-3 gap-4">
-                {jobArray.map((item, index) => ( // Changed 'Item' to 'item' for conventional naming
-                  <div key={index}> {/* Added a key prop for list items */}
-                    <Job />
+                {jobArray.map((job) => ( // Changed 'Item' to 'item' for conventional naming
+                  <div key={job._id}> {/* Added a key prop for list items */}
+                    <Job job={job}/>
                   </div>
                 ))}
               </div>
