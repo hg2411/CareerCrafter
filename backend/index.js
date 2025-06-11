@@ -20,7 +20,8 @@ app.use(cookieParser());
 // CORS setup to allow multiple origins
 const allowedOrigins = [
   "http://localhost:5173",  // your old frontend origin
-  "http://localhost:5174",  // your current frontend origin
+  "http://localhost:5174", 
+    "http://localhost:5175", // your current frontend origin
 ];
 
 const corsOptions = {
