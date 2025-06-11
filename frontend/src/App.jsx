@@ -7,6 +7,7 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Browse from "./components/Browse.jsx";
+import Profile from "./components/Profile.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -41,7 +42,11 @@ const appRouter = createBrowserRouter([
       {
         path:"browse",
         element:<Browse/>
-      }
+      },
+      {
+        path:"profile",
+        element:<Profile/>
+      },
     ],
   },
 ]);
