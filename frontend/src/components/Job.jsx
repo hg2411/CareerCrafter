@@ -1,52 +1,72 @@
 import React from "react";
 import { Button } from "./ui/button";
-import {  Bookmark } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { useNavigate } from "react-router-dom";
 
 const Job = () => {
+  const navigate = useNavigate();
+  const jobId = "thisisjob";
+
   return (
-    <div className="p-5 rounded-md  shadow-xl bg-white border-gray-100">
-      <div className="flex items-center gap-2 my-2 ">
-        <p className="text-sm text-gray-500 ">2 days ago</p>
+    <div className="p-5 sm:p-6 md:p-8 rounded-2xl shadow-lg bg-white border border-gray-100 max-w-3xl mx-auto">
+      {/* Top Row */}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-xs sm:text-sm text-gray-500">Posted 2 days ago</p>
         <Button variant="outline" className="rounded-full" size="icon">
-          <Bookmark />
+          <Bookmark className="w-4 h-4" />
         </Button>
       </div>
 
-      <div className="flex item-center gap-2 my-2">
-        <Button>
-          <Avatar>
-            <AvatarImage
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8kjNASp-t4VymZrnRo9hIMRSeTcWNarxbJw&s"
-              className="w-10 h-10 object-cover"
-            />
-          </Avatar>
-        </Button>
+      {/* Company Info */}
+      <div className="flex items-center gap-3 mb-4">
+        <Avatar>
+          <AvatarImage
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8kjNASp-t4VymZrnRo9hIMRSeTcWNarxbJw&s"
+            className="w-12 h-12 object-cover rounded-full"
+          />
+        </Avatar>
         <div>
-          <h1 className="font-medium text-lg ">Company Name</h1>
-          <p className="text-sm  text-gray-500 ">India</p>
+          <h1 className="font-semibold text-base sm:text-lg">TechNova Solutions</h1>
+          <p className="text-sm text-gray-500">Remote | India</p>
         </div>
       </div>
-      <div>
-        <h1 className="font bold  text-lg my-2">Tittle</h1>
-        <p className="text-sm text-gray-600">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Porro
-          corrupti quibusdam omnis consequatur quo aspernatur, perspiciatis
-          consectetur quidem voluptatem nesciunt, est ducimus tempore, quos
-          officiis illum! Quidem obcaecati architecto odio.
+
+      {/* Job Title & Description */}
+      <div className="mb-4">
+        <h1 className="font-bold text-lg sm:text-xl mb-2">Frontend Developer (React)</h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          We are looking for a passionate Frontend Developer proficient in React
+          to design and develop user-friendly web applications. Collaborate with
+          cross-functional teams and create seamless user experiences.
         </p>
       </div>
-      <div className='flex items-center gap-2 mt-4'>
-                <Badge className={'text-blue-700 font-bold'} variant="ghost">Positions</Badge>
-                <Badge className={'text-[#F83002] font-bold'} variant="ghost">Part Time</Badge>
-                <Badge className={'text-[#7209b7] font-bold'} variant="ghost">LPA</Badge>
-            </div>
-            <div className="flex items-center gap-4 mt-4">
-              <Button variant="outline">Details</Button>
-              <Button className=" bg-[#6f0998a5]">Save for later</Button>
-            </div>
+
+      {/* Badges */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <Badge className="text-blue-700 font-bold" variant="ghost">
+          4 Openings
+        </Badge>
+        <Badge className="text-[#F83002] font-bold" variant="ghost">
+          Full-Time
+        </Badge>
+        <Badge className="text-[#7209b7] font-bold" variant="ghost">
+          ₹6-9 LPA
+        </Badge>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <Button onClick={() => navigate(`/description/${jobId}`)} variant="outline" className="w-full sm:w-auto">
+          View Job
+        </Button>
+        <Button className="bg-[#6A38C2] text-white hover:bg-[#5c2aa0] w-full sm:w-auto">
+          Save for Later
+        </Button>
+      </div>
     </div>
   );
 };
+
 export default Job;

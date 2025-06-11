@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Browse from "./components/Browse.jsx";
 import Profile from "./components/Profile.jsx";
+import JobDescription from "./components/JobDecription.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -38,6 +39,10 @@ const appRouter = createBrowserRouter([
       {
         path:"jobs",
         element:<Jobs/>
+      },
+      {
+        path:"description/:id",
+        element:<JobDescription/>
       },
       {
         path:"browse",
