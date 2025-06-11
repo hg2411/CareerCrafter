@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./shared/Navbar";
 import { Avatar } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
@@ -7,11 +7,18 @@ import { Contact, Mail, Pen } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import AppliedJobTable from "./AppliedJobTable";
+import UpdateProfileDialogue from "./UpdateProfileDialogue";
+import { useSelector } from "react-redux";
 
-const skills = ["HTML", "CSS", "JavaScript", "React.js"];
 
+
+// const skills = ["HTML", "CSS", "JavaScript", "React.js"];
+const isResume = true;
 const Profile = () => {
-  const isResume = true;
+   const [open,setOpen]=useState(false);
+   const {user}=useSelector(store=>store.auth);
+
+  
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -26,17 +33,16 @@ const Profile = () => {
               <AvatarImage src="public/Passport Size Photo.jpg" />
             </Avatar>
             <div>
-              <h1 className="font-bold text-2xl text-gray-800">Himani Goyal</h1>
+              <h1 className="font-bold text-2xl text-gray-800">{user?.fullname}</h1>
               <p className="text-gray-600 mt-1">
-                Hello! I’m Himani, currently pursuing my Master’s degree from MNNIT.
-                Passionate about web development and always eager to learn new technologies.
+                {user?.profile?.bio}
               </p>
             </div>
           </div>
 
           {/* Edit Button */}
-          <Button className="text-right" variant="outline">
-            <Pen className="h-4 w-4" />
+          <Button onClick={()=>setOpen(true)} className="text-right" variant="outline">
+            <Pen  className="h-4 w-4" />
           </Button>
         </div>
 
@@ -44,11 +50,11 @@ const Profile = () => {
         <div className="my-6">
           <div className="flex items-center gap-3 my-2 text-gray-700">
             <Mail className="h-5 w-5" />
-            <span>himani@gmail.com</span>
+            <span>{user?.email}</span>
           </div>
           <div className="flex items-center gap-3 my-2 text-gray-700">
             <Contact className="h-5 w-5" />
-            <span>+91 12345 67890</span>
+            <span>{user?.phoneNumber}</span>
           </div>
         </div>
 
@@ -56,8 +62,8 @@ const Profile = () => {
         <div className="mt-6">
           <h1 className="text-md font-bold mb-2">Skills</h1>
           <div className="flex flex-wrap gap-2">
-            {skills.length !== 0 ? (
-              skills.map((item, index) => (
+            {  user?.profile?.skills.length !== 0 ? (
+              user?.profile?.skills.map((item, index) => (
                 <Badge
                   key={index}
                   className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700"
@@ -94,6 +100,8 @@ const Profile = () => {
         <h1 className="font-bold text-lg mb-4">Applied Jobs</h1>
         <AppliedJobTable />
       </div>
+      <UpdateProfileDialogue  open={open} setOpen={setOpen}/>
+
     </div>
   );
 };
