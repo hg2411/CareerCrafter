@@ -8,82 +8,94 @@ import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import AppliedJobTable from "./AppliedJobTable";
 
-const skills = ["Html", "CSS", "Javascript", "Reactjs"];
+const skills = ["HTML", "CSS", "JavaScript", "React.js"];
+
 const Profile = () => {
-     const isResume = true;
+  const isResume = true;
+
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Navbar />
-      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8">
-        <div className="flex justify-between">
-          <div className="flex items-center gap-4">
+
+      {/* Profile Card */}
+      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-8 p-8 shadow-md">
+        <div className="flex justify-between items-start">
+          {/* User Info */}
+          <div className="flex items-center gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8kjNASp-t4VymZrnRo9hIMRSeTcWNarxbJw&s" />
+              <AvatarImage src="public/Passport Size Photo.jpg" />
             </Avatar>
             <div>
-              <h1 className="font-medium  text-xl">Himani Goyal</h1>
-              <p>
-                {" "}
-                Hii guys Himani this side !!! currently i am pursing my masters
-                from MNNIT{" "}
+              <h1 className="font-bold text-2xl text-gray-800">Himani Goyal</h1>
+              <p className="text-gray-600 mt-1">
+                Hello! I’m Himani, currently pursuing my Master’s degree from MNNIT.
+                Passionate about web development and always eager to learn new technologies.
               </p>
             </div>
           </div>
+
+          {/* Edit Button */}
           <Button className="text-right" variant="outline">
-            <Pen />
+            <Pen className="h-4 w-4" />
           </Button>
         </div>
-        <div className="my-5">
-          <div className="flex items-center gap-3 my-2">
-            <Mail />
+
+        {/* Contact Info */}
+        <div className="my-6">
+          <div className="flex items-center gap-3 my-2 text-gray-700">
+            <Mail className="h-5 w-5" />
             <span>himani@gmail.com</span>
           </div>
-          <div className="flex items-center gap-3 my-2">
-            <Contact />
-            <span>1234567890</span>
+          <div className="flex items-center gap-3 my-2 text-gray-700">
+            <Contact className="h-5 w-5" />
+            <span>+91 12345 67890</span>
           </div>
         </div>
-        <div>
-          <h1 className="text-md font-bold">Skills</h1>
-          <div className="flex items-center flex-wrap gap-2">
+
+        {/* Skills */}
+        <div className="mt-6">
+          <h1 className="text-md font-bold mb-2">Skills</h1>
+          <div className="flex flex-wrap gap-2">
             {skills.length !== 0 ? (
               skills.map((item, index) => (
                 <Badge
                   key={index}
-                  className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-800"
+                  className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700"
                 >
                   {item}
                 </Badge>
               ))
             ) : (
-              <span>NA</span>
+              <span>Not Available</span>
             )}
           </div>
         </div>
-        <div className="grid-w-full max-w-sm items-center gap-2 mt-4">
-  <Label className="text-md font-bold"> Resume </Label>
-  {
-    isResume ? (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://drive.google.com/file/d/1x6ywOt68qTc1Kfk4LhGy1YtNl6VXGZdV/view?usp=drive_link " className="text-blue-500 w-full hover:underline cursor-pointer"
-      >
-        Click here 
-      </a>
-    ) : (
-      <span>NA</span>
-    )
-  }
-</div>
-      </div>
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl ">
-  <h1 className="font-bold text-lg m-5 ">Applied Jobs</h1>
-  {/*Applied job  table*/}
-  <AppliedJobTable/>
 
-</div>
+        {/* Resume */}
+        <div className="mt-6">
+          <Label className="text-md font-bold mb-2 block">Resume</Label>
+          {isResume ? (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://drive.google.com/file/d/1x6ywOt68qTc1Kfk4LhGy1YtNl6VXGZdV/view?usp=drive_link"
+              className="text-blue-600 hover:underline cursor-pointer"
+            >
+              View Resume
+            </a>
+          ) : (
+            <span>Not Available</span>
+          )}
+        </div>
+      </div>
+
+      {/* Applied Jobs Section */}
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md mt-8 mb-12 p-6">
+        <h1 className="font-bold text-lg mb-4">Applied Jobs</h1>
+        <AppliedJobTable />
+      </div>
     </div>
   );
 };
-export default Profile
+
+export default Profile;
