@@ -98,7 +98,7 @@ const Profile = () => {
         <h1 className="font-bold text-lg mb-4">Applied Jobs</h1>
         <AppliedJobTable />
       </div>
-      <UpdateProfileDialogue  open={open} setopen={setOpen}/>
+      <UpdateProfileDialogue  open={open} setOpen={setOpen}/>
 
     </div>
   );
