@@ -26,8 +26,8 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
-    skills: user?.profile?.skill?.join(", ") || "",
-    file: null, // resume will be re-uploaded if user chooses
+    skills: user?.profile?.skills?.join(", ") || "", 
+    file: null, 
   });
 
   const dispatch = useDispatch();

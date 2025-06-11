@@ -78,7 +78,7 @@ export const login = async (req, res) => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         role: user.role,
-      // profile:user.profile(he removed the profile field told he will add it later but he had used it here)
+      profile:user.profile
     };
     return res
         .status(200)
@@ -140,7 +140,7 @@ export const updateProfile = async (req, res) => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         role: user.role,
-      // profile:user.profile(he removed the profile field told he will add it later but he had used it here)
+       profile:user.profile
     };
     return res
         .status(200)
