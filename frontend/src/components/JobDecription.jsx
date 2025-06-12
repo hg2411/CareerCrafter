@@ -8,13 +8,14 @@ import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const JobDescription = () => {
-    const isApplied = true;
+   
          const params =useParams();
          const jobId=params.id;
          const {singleJob} =useSelector(store=>store.job);
          const {user}=useSelector(store=>store.auth);
          const dispatch=useDispatch();
-
+            const isApplied = singleJob?.application?.some(app => app.applicant === user?._id) || false;
+`~`
         
          useEffect(()=>{
 
@@ -22,7 +23,7 @@ const JobDescription = () => {
             try{
                const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
                if(res.data.success){
-                       dispatch(setSingleJob(res.data.jobs));
+                       dispatch(setSingleJob(res.data.job));
                }
             }catch(error){
            console.log(error);
@@ -36,7 +37,7 @@ const JobDescription = () => {
             {/* Header Section */}
             <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6'>
                 <div>
-                    <h1 className='font-bold text-2xl text-gray-800 mb-2'>{singleJob?.tittle}</h1>
+                    <h1 className='font-bold text-2xl text-gray-800 mb-2'>{singleJob?.title}</h1>
                     <div className='flex items-center flex-wrap gap-2'>
                         <Badge className='text-blue-700 font-bold bg-blue-100'>{singleJob?.position} Positions</Badge>
                         <Badge className='text-[#F83002] font-bold bg-red-100'>{singleJob?.jobType}</Badge>
@@ -62,7 +63,7 @@ const JobDescription = () => {
             <div className='space-y-4 text-gray-700 text-base'>
                 <div>
                     <span className='font-semibold'>Role:</span>
-                    <span className='pl-4 text-gray-800'>{singleJob?.tittle}</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.title}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Location:</span>
@@ -74,7 +75,7 @@ const JobDescription = () => {
                 </div>
                 <div>
                     <span className='font-semibold'>Experience:</span>
-                    <span className='pl-4 text-gray-800'>{singleJob?.experience}</span>
+                  <span className='pl-4 text-gray-800'>{singleJob?.experience || 'Not Available'}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Salary:</span>
@@ -82,11 +83,11 @@ const JobDescription = () => {
                 </div>
                 <div>
                     <span className='font-semibold'>Total Applicants:</span>
-                    <span className='pl-4 text-gray-800'>4</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.application?.length || 'None'}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Posted Date:</span>
-                    <span className='pl-4 text-gray-800'>11/06/2025</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.createdAt.split("T")[0]}</span>
                 </div>
             </div>
         </div>
