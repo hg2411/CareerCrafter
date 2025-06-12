@@ -17,6 +17,9 @@ export const register = async (req, res) => {
         .status(400)
         .json({ message: "Something is missing", success: false });
     }
+     const file= req.file;
+     const fileuri=getDataUri(file);
+    const cloudResponse=await cloudinary.uploader.upload(fileuri.content)
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -34,6 +37,9 @@ export const register = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
+      profile:{
+                profilePhoto:cloudResponse.secure_url,
+            }
     });
 
     return res

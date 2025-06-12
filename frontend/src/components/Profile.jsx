@@ -24,7 +24,7 @@ const Profile = () => {
           {/* User Info */}
           <div className="flex items-center gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="public/Passport Size Photo.jpg" />
+              <AvatarImage src={user?.profile?.profilePhoto} />
             </Avatar>
             <div>
               <h1 className="font-bold text-2xl text-gray-800">{user?.fullname}</h1>

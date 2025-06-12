@@ -75,18 +75,18 @@ const navigate=useNavigate();
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage src="/Passport Size Photo.jpg" alt="profile" />
+                <AvatarImage src={user?.profile?.profilePhoto} alt="profile" />
               </Avatar>
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-white border border-gray-200 shadow-lg rounded-xl p-4">
               <div className="flex gap-4 items-center">
                 <Avatar className="cursor-pointer">
-                  <AvatarImage src="/Passport Size Photo.jpg" alt="profile" />
+                  <AvatarImage src={user?.profile?.profilePhoto} alt="profile" />
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-gray-800">Himani Goyal</h4>
+                  <h4 className="font-semibold text-gray-800">{user?.fullname}</h4>
                   <p className="text-sm text-gray-500">
-                    This is the job portal
+                   {user?.bio}
                   </p>
                 </div>
               </div>
