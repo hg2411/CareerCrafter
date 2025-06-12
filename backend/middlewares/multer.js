@@ -1,16 +1,15 @@
-// middlewares/multer.js
 import multer from "multer";
 
-// Use memory storage since we're uploading to Cloudinary
+// Memory storage for Cloudinary
 const storage = multer.memoryStorage();
 
+// Filter: Only allow PDFs
 const fileFilter = (req, file, cb) => {
-  // Optional: Restrict file types (e.g., only PDFs)
-  const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+  const allowedTypes = ["application/pdf"];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only PDF, PNG, or JPEG files are allowed"), false);
+    cb(new Error("Only PDF files are allowed for resumes"), false);
   }
 };
 
@@ -21,5 +20,4 @@ const upload = multer({
   fileFilter,
 });
 
-// Exported middleware to be used in routes
 export const singleUpload = upload.single("file"); // <input name="file" />
