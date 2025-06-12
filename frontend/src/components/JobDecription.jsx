@@ -1,20 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { JOB_API_END_POINT } from '@/utils/constant';
+import { setSingleJob } from '@/redux/jobSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const JobDescription = () => {
     const isApplied = true;
+         const params =useParams();
+         const jobId=params.id;
+         const {singleJob} =useSelector(store=>store.job);
+         const {user}=useSelector(store=>store.auth);
+         const dispatch=useDispatch();
+
+        
+         useEffect(()=>{
+
+        const fetchSingleJob=async()=>{
+            try{
+               const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
+               if(res.data.success){
+                       dispatch(setSingleJob(res.data.jobs));
+               }
+            }catch(error){
+           console.log(error);
+            }
+        }
+        fetchSingleJob();
+        },[jobId,dispatch, user?._id]);
 
     return (
         <div className='max-w-7xl mx-auto my-10 p-4'>
             {/* Header Section */}
             <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6'>
                 <div>
-                    <h1 className='font-bold text-2xl text-gray-800 mb-2'>Frontend Developer</h1>
+                    <h1 className='font-bold text-2xl text-gray-800 mb-2'>{singleJob?.tittle}</h1>
                     <div className='flex items-center flex-wrap gap-2'>
-                        <Badge className='text-blue-700 font-bold bg-blue-100'>4 Positions</Badge>
-                        <Badge className='text-[#F83002] font-bold bg-red-100'>Part-Time</Badge>
-                        <Badge className='text-[#7209b7] font-bold bg-purple-100'>35 LPA</Badge>
+                        <Badge className='text-blue-700 font-bold bg-blue-100'>{singleJob?.position} Positions</Badge>
+                        <Badge className='text-[#F83002] font-bold bg-red-100'>{singleJob?.jobType}</Badge>
+                        <Badge className='text-[#7209b7] font-bold bg-purple-100'>{singleJob?.salary}LPA</Badge>
                     </div>
                 </div>
                 <Button
@@ -36,27 +62,27 @@ const JobDescription = () => {
             <div className='space-y-4 text-gray-700 text-base'>
                 <div>
                     <span className='font-semibold'>Role:</span>
-                    <span className='pl-4 text-gray-800'>Frontend Developer</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.tittle}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Location:</span>
-                    <span className='pl-4 text-gray-800'>Delhi</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.location}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Description:</span>
-                    <span className='pl-4 text-gray-800'>Need a frontend developer for our company.</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.description}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Experience:</span>
-                    <span className='pl-4 text-gray-800'>2 years</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.experience}</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Salary:</span>
-                    <span className='pl-4 text-gray-800'>35 LPA</span>
+                    <span className='pl-4 text-gray-800'>{singleJob?.salary}LPA</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Total Applicants:</span>
-                    <span className='pl-4 text-gray-800'>6</span>
+                    <span className='pl-4 text-gray-800'>4</span>
                 </div>
                 <div>
                     <span className='font-semibold'>Posted Date:</span>
