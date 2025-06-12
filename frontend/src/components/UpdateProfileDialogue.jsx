@@ -5,6 +5,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "./ui/dialog";
 import { Form } from "react-router-dom";
 import { Label } from "./ui/label";
@@ -60,7 +61,7 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
 
     try {
       setLoading(true);
-      const res = await axios.post(
+      const res = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
         formData,
         {
@@ -87,11 +88,14 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Update Profile</DialogTitle>
-        </DialogHeader>
+   <Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent className="bg-white sm:max-w-[425px]">
+    <DialogHeader>
+      <DialogTitle>Update Profile</DialogTitle>
+      <DialogDescription>
+        Fill in the form below to update your profile details.
+      </DialogDescription>
+    </DialogHeader>
         <Form onSubmit={submitHandler}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
