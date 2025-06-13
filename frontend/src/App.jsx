@@ -10,6 +10,7 @@ import Browse from "./components/Browse.jsx";
 import Profile from "./components/Profile.jsx";
 import JobDescription from "./components/JobDecription.jsx";
 import Companies from "./components/admin/Companies.jsx";
+import CompanyCreate from "./components/admin/CompanyCreate.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -55,9 +56,13 @@ const appRouter = createBrowserRouter([
       },
        // admin k liye yha se start ho rha h
     {
-      path:"/admin/companies",
+      path:"admin/companies",
       element:<Companies/>
-    }
+    },
+     {
+      path:"admin/companies/create",
+      element:<CompanyCreate/>
+    },
     ],
   },
 ]);
