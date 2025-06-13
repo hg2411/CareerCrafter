@@ -10,15 +10,9 @@ import AppliedJobTable from "./AppliedJobTable";
 import UpdateProfileDialogue from "./UpdateProfileDialogue";
 import { useSelector } from "react-redux";
 
-
-
-// const skills = ["HTML", "CSS", "JavaScript", "React.js"];
-const isResume = true;
 const Profile = () => {
-   const [open,setOpen]=useState(false);
-   const {user}=useSelector(store=>store.auth);
-
-  
+  const [open, setOpen] = useState(false);
+  const { user } = useSelector((store) => store.auth);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -30,19 +24,17 @@ const Profile = () => {
           {/* User Info */}
           <div className="flex items-center gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="public/Passport Size Photo.jpg" />
+              <AvatarImage src={user?.profile?.profilePhoto} />
             </Avatar>
             <div>
               <h1 className="font-bold text-2xl text-gray-800">{user?.fullname}</h1>
-              <p className="text-gray-600 mt-1">
-                {user?.profile?.bio}
-              </p>
+              <p className="text-gray-600 mt-1">{user?.profile?.bio}</p>
             </div>
           </div>
 
           {/* Edit Button */}
-          <Button onClick={()=>setOpen(true)} className="text-right" variant="outline">
-            <Pen  className="h-4 w-4" />
+          <Button onClick={() => setOpen(true)} className="text-right" variant="outline">
+            <Pen className="h-4 w-4" />
           </Button>
         </div>
 
@@ -62,8 +54,8 @@ const Profile = () => {
         <div className="mt-6">
           <h1 className="text-md font-bold mb-2">Skills</h1>
           <div className="flex flex-wrap gap-2">
-            {  user?.profile?.skills.length !== 0 ? (
-              user?.profile?.skills.map((item, index) => (
+            {user?.profile?.skills?.length > 0 ? (
+              user.profile.skills.map((item, index) => (
                 <Badge
                   key={index}
                   className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700"
@@ -80,11 +72,11 @@ const Profile = () => {
         {/* Resume */}
         <div className="mt-6">
           <Label className="text-md font-bold mb-2 block">Resume</Label>
-          {isResume ? (
+          {user?.profile?.resume ? (
             <a
               target="_blank"
               rel="noopener noreferrer"
-              href="https://drive.google.com/file/d/1x6ywOt68qTc1Kfk4LhGy1YtNl6VXGZdV/view?usp=drive_link"
+              href={user.profile.resume}
               className="text-blue-600 hover:underline cursor-pointer"
             >
               View Resume
@@ -100,8 +92,8 @@ const Profile = () => {
         <h1 className="font-bold text-lg mb-4">Applied Jobs</h1>
         <AppliedJobTable />
       </div>
-      <UpdateProfileDialogue  open={open} setOpen={setOpen}/>
 
+      <UpdateProfileDialogue open={open} setOpen={setOpen} />
     </div>
   );
 };

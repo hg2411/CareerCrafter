@@ -5,15 +5,22 @@ import { Badge } from "./ui/badge";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useNavigate } from "react-router-dom";
 
-const Job = () => {
+const Job = ({job}) => {
   const navigate = useNavigate();
-  const jobId = "thisisjob";
+  // const jobId = "thisisjob";
+
+  const daysAgoFunction = (mongodbTime) => {
+          const createdAt=new Date(mongodbTime);
+          const currentTime=new Date();
+          const timedifference = currentTime-createdAt;
+          return Math.floor(timedifference/(1000*24*60*60));
+  }
 
   return (
     <div className="p-5 sm:p-6 md:p-8 rounded-2xl shadow-lg bg-white border border-gray-100 max-w-3xl mx-auto">
       {/* Top Row */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs sm:text-sm text-gray-500">Posted 2 days ago</p>
+        <p className="text-xs sm:text-sm text-gray-500">{daysAgoFunction(job?.createdAt)==0 ? "Today" : `${daysAgoFunction(job?.createdAt)}days ago`}</p>
         <Button variant="outline" className="rounded-full" size="icon">
           <Bookmark className="w-4 h-4" />
         </Button>
@@ -28,37 +35,35 @@ const Job = () => {
           />
         </Avatar>
         <div>
-          <h1 className="font-semibold text-base sm:text-lg">TechNova Solutions</h1>
+          <h1 className="font-semibold text-base sm:text-lg">{job?.company?.name}</h1>
           <p className="text-sm text-gray-500">Remote | India</p>
         </div>
       </div>
 
       {/* Job Title & Description */}
       <div className="mb-4">
-        <h1 className="font-bold text-lg sm:text-xl mb-2">Frontend Developer (React)</h1>
+        <h1 className="font-bold text-lg sm:text-xl mb-2">{job?.tittle}</h1>
         <p className="text-sm sm:text-base text-gray-600">
-          We are looking for a passionate Frontend Developer proficient in React
-          to design and develop user-friendly web applications. Collaborate with
-          cross-functional teams and create seamless user experiences.
+          {job?.description}
         </p>
       </div>
 
       {/* Badges */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Badge className="text-blue-700 font-bold" variant="ghost">
-          4 Openings
+            {job?.position} Positions
         </Badge>
         <Badge className="text-[#F83002] font-bold" variant="ghost">
-          Full-Time
+          {job?.jobType}
         </Badge>
         <Badge className="text-[#7209b7] font-bold" variant="ghost">
-          ₹6-9 LPA
+          {job?.salary}LPA
         </Badge>
       </div>
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-        <Button onClick={() => navigate(`/description/${jobId}`)} variant="outline" className="w-full sm:w-auto">
+        <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className="w-full sm:w-auto">
           View Job
         </Button>
         <Button className="bg-[#6A38C2] text-white hover:bg-[#5c2aa0] w-full sm:w-auto">
