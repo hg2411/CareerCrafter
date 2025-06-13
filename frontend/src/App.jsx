@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Browse from "./components/Browse.jsx";
 import Profile from "./components/Profile.jsx";
 import JobDescription from "./components/JobDecription.jsx";
+import Companies from "./components/admin/Companies.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -52,6 +53,11 @@ const appRouter = createBrowserRouter([
         path:"profile",
         element:<Profile/>
       },
+       // admin k liye yha se start ho rha h
+    {
+      path:"/admin/companies",
+      element:<Companies/>
+    }
     ],
   },
 ]);
