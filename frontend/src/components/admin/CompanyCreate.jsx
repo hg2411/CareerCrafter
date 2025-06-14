@@ -33,10 +33,12 @@ const CompanyCreate = () => {
         const companyId = res?.data?.company?._id;
         navigate(`/admin/companies/${companyId}`);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong while creating company.");
-    }
+   } catch (error) {
+  console.error("Company registration failed:", error);
+  console.log("Backend error response:", error?.response?.data); // 👈 ADD THIS
+  toast.error(error?.response?.data?.message || "Something went wrong while creating company.");
+}
+
   };
 
   return (
