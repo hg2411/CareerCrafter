@@ -12,6 +12,8 @@ import JobDescription from "./components/JobDecription.jsx";
 import Companies from "./components/admin/Companies.jsx";
 import CompanyCreate from "./components/admin/CompanyCreate.jsx";
 import CompanySetup from "./components/admin/CompanySetup.jsx";
+import AdminJobs from "./components/admin/AdminJobs.jsx";
+import PostJob from "./components/admin/PostJob.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -66,8 +68,16 @@ const appRouter = createBrowserRouter([
         element: <CompanyCreate />,
       },
       {
-        path: "admin/companies/:id", // ✅ Dynamic route second
+        path: "admin/companies/:id",
         element: <CompanySetup />,
+      },
+      {
+        path: "/admin/jobs",
+        element: <AdminJobs />,
+      },
+       {
+        path: "/admin/jobs/create",
+        element: <PostJob/>,
       },
     ],
   },
