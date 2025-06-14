@@ -18,7 +18,7 @@ const CompanySetup = () => {
     location: "",
     file: null,
   });
-  const {singleCompany} =useSelector(store=>store.company);
+  const { singleCompany } = useSelector((store) => store.company);
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
@@ -55,9 +55,6 @@ const CompanySetup = () => {
         `${COMPANY_API_END_POINT}/update/${params.id}`,
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
           withCredentials: true,
         }
       );
@@ -77,12 +74,12 @@ const CompanySetup = () => {
   useEffect(() => {
     setInput({
       name: singleCompany.name || "",
-      description:  singleCompany.description || "",
-      website: singleCompany.website ||  "",
+      description: singleCompany.description || "",
+      website: singleCompany.website || "",
       location: singleCompany.location || "",
-      file:singleCompany.file ||  null,
+      file: null,
     });
-  },[singleCompany]);
+  }, [singleCompany]);
 
   return (
     <div className="min-h-screen bg-gray-50">
