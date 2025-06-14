@@ -3,8 +3,15 @@ import Navbar from "../shared/Navbar";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-
-const companyArray = []; // Just placeholder - no backend
+import { useSelector } from "react-redux";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const PostJob = () => {
   const [input, setInput] = useState({
@@ -18,6 +25,8 @@ const PostJob = () => {
     positions: 0,
     companyId: "",
   });
+
+  const { companies = [] } = useSelector((store) => store.company); // default to []
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -139,16 +148,29 @@ const PostJob = () => {
           </div>
 
           <div>
-            <Label className="text-gray-600">Company ID</Label>
-            <Input
-              type="text"
-              name="companyId"
-              value={input.companyId}
-              onChange={changeEventHandler}
-              className="my-1"
-              placeholder="Company ID"
-              required
-            />
+            <Label className="text-gray-600">Select Company</Label>
+            <Select
+              onValueChange={(value) =>
+                setInput({ ...input, companyId: value })
+              }
+            >
+              <SelectTrigger className="mt-1 px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                <SelectValue placeholder="Select a company" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 rounded-md shadow-md z-50">
+                <SelectGroup>
+                  {companies.map((company) => (
+                    <SelectItem
+                      key={company._id}
+                      value={company._id}
+                      className="text-sm cursor-pointer hover:bg-purple-100"
+                    >
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="md:col-span-2 mt-4 flex flex-col items-center gap-2">
@@ -159,7 +181,7 @@ const PostJob = () => {
               Post Job
             </Button>
 
-            {companyArray.length === 0 && (
+            {companies.length === 0 && (
               <p className="text-sm text-red-600 font-semibold text-center mt-2">
                 ⚠️ Please register a company before posting a job.
               </p>
