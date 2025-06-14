@@ -4,32 +4,32 @@ const companySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   description: {
-    type: String
+    type: String,
   },
   website: {
-    type: String
+    type: String,
   },
   location: {
-    type: String
+    type: String,
   },
   logo: {
     public_id: {
       type: String,
-      required: true
+      required: false, // ✅ Changed
     },
     url: {
       type: String,
-      required: true
-    }
+      required: false, // ✅ Changed
+    },
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
-  }
+    required: true,
+  },
 }, { timestamps: true });
 
 export const Company = mongoose.model("Company", companySchema);
