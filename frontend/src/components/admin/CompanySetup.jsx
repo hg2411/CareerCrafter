@@ -94,7 +94,7 @@ const CompanySetup = () => {
               type="button"
               variant="outline"
               onClick={() => navigate("/admin/companies")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-al"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
