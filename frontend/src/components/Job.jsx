@@ -4,23 +4,28 @@ import { Bookmark } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { useNavigate } from "react-router-dom";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 
-const Job = ({job}) => {
+const Job = ({ job }) => {
   const navigate = useNavigate();
   // const jobId = "thisisjob";
 
   const daysAgoFunction = (mongodbTime) => {
-          const createdAt=new Date(mongodbTime);
-          const currentTime=new Date();
-          const timedifference = currentTime-createdAt;
-          return Math.floor(timedifference/(1000*24*60*60));
-  }
+    const createdAt = new Date(mongodbTime);
+    const currentTime = new Date();
+    const timedifference = currentTime - createdAt;
+    return Math.floor(timedifference / (1000 * 24 * 60 * 60));
+  };
 
   return (
     <div className="p-5 sm:p-6 md:p-8 rounded-2xl shadow-lg bg-white border border-gray-100 max-w-3xl mx-auto">
       {/* Top Row */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs sm:text-sm text-gray-500">{daysAgoFunction(job?.createdAt)==0 ? "Today" : `${daysAgoFunction(job?.createdAt)}days ago`}</p>
+        <p className="text-xs sm:text-sm text-gray-500">
+          {daysAgoFunction(job?.createdAt) == 0
+            ? "Today"
+            : `${daysAgoFunction(job?.createdAt)}days ago`}
+        </p>
         <Button variant="outline" className="rounded-full" size="icon">
           <Bookmark className="w-4 h-4" />
         </Button>
@@ -30,12 +35,19 @@ const Job = ({job}) => {
       <div className="flex items-center gap-3 mb-4">
         <Avatar>
           <AvatarImage
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8kjNASp-t4VymZrnRo9hIMRSeTcWNarxbJw&s"
+            src={job?.company?.logo?.url}
+            alt="Company Logo"
             className="w-12 h-12 object-cover rounded-full"
           />
+          <AvatarFallback className="w-12 h-12 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center">
+            {job?.company?.name?.[0] ?? "C"}
+          </AvatarFallback>
         </Avatar>
+
         <div>
-          <h1 className="font-semibold text-base sm:text-lg">{job?.company?.name}</h1>
+          <h1 className="font-semibold text-base sm:text-lg">
+            {job?.company?.name}
+          </h1>
           <p className="text-sm text-gray-500">Remote | India</p>
         </div>
       </div>
@@ -43,15 +55,13 @@ const Job = ({job}) => {
       {/* Job Title & Description */}
       <div className="mb-4">
         <h1 className="font-bold text-lg sm:text-xl mb-2">{job?.tittle}</h1>
-        <p className="text-sm sm:text-base text-gray-600">
-          {job?.description}
-        </p>
+        <p className="text-sm sm:text-base text-gray-600">{job?.description}</p>
       </div>
 
       {/* Badges */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <Badge className="text-blue-700 font-bold" variant="ghost">
-            {job?.position} Positions
+          {job?.position} Positions
         </Badge>
         <Badge className="text-[#F83002] font-bold" variant="ghost">
           {job?.jobType}
@@ -63,7 +73,11 @@ const Job = ({job}) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-        <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className="w-full sm:w-auto">
+        <Button
+          onClick={() => navigate(`/description/${job?._id}`)}
+          variant="outline"
+          className="w-full sm:w-auto"
+        >
           View Job
         </Button>
         <Button className="bg-[#6A38C2] text-white hover:bg-[#5c2aa0] w-full sm:w-auto">
