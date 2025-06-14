@@ -9,11 +9,15 @@ import "react-toastify/dist/ReactToastify.css";
 import Browse from "./components/Browse.jsx";
 import Profile from "./components/Profile.jsx";
 import JobDescription from "./components/JobDecription.jsx";
+import Companies from "./components/admin/Companies.jsx";
+import CompanyCreate from "./components/admin/CompanyCreate.jsx";
+import CompanySetup from "./components/admin/CompanySetup.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
   <>
-    <ToastContainer position="top-center" autoClose={3000} /> {/* ✅ Add this */}
+    <ToastContainer position="top-center" autoClose={3000} />{" "}
+    {/* ✅ Add this */}
     <Outlet />
   </>
 );
@@ -37,20 +41,33 @@ const appRouter = createBrowserRouter([
         element: <Signup />,
       },
       {
-        path:"jobs",
-        element:<Jobs/>
+        path: "jobs",
+        element: <Jobs />,
       },
       {
-        path:"description/:id",
-        element:<JobDescription/>
+        path: "description/:id",
+        element: <JobDescription />,
       },
       {
-        path:"browse",
-        element:<Browse/>
+        path: "browse",
+        element: <Browse />,
       },
       {
-        path:"profile",
-        element:<Profile/>
+        path: "profile",
+        element: <Profile />,
+      },
+      // admin k liye yha se start ho rha h
+      {
+        path: "admin/companies",
+        element: <Companies />,
+      },
+      {
+        path: "admin/companies/create",
+        element: <CompanyCreate />,
+      },
+      {
+        path: "admin/companies/:id", // ✅ Dynamic route second
+        element: <CompanySetup />,
       },
     ],
   },

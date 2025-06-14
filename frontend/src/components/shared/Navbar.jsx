@@ -6,27 +6,29 @@ import { LogOut, User2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import axios from 'axios'
+import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 
 const Navbar = () => {
-  const {user} = useSelector(store=>store.auth);
-  const dispatch=useDispatch();
-const navigate=useNavigate();
-  const logoutHandler = async () =>{
-     try{
-           const res = await axios.get(`${USER_API_END_POINT}/logout`,{withCredential:true});
-           if(res.data.success){
-          dispatch(setUser(null));
-            navigate("/");
-            toast.success(res.data.message);
-           }
-     }catch(error){
+  const { user } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const logoutHandler = async () => {
+    try {
+      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredential: true,
+      });
+      if (res.data.success) {
+        dispatch(setUser(null));
+        navigate("/");
+        toast.success(res.data.message);
+      }
+    } catch (error) {
       console.log(error);
-      toast.error(error.respons.data.message)
-     }
-  }
+      toast.error(error.respons.data.message);
+    }
+  };
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -38,20 +40,34 @@ const navigate=useNavigate();
 
         {/* Nav Links */}
         <ul className="hidden md:flex font-medium items-center gap-10 text-gray-700 text-[16px]">
-          {["Home", "Jobs", "Browse"].map((item) => (
-            <li
-              key={item}
-              className="hover:text-[#6A38C2] transition-colors duration-200 cursor-pointer"
-            >
-              <Link
-                to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                className="block"
-              >
-                {item}
-              </Link>
-            </li>
-          ))}
+          {user && user.role === "recruiter" ? (
+            <>
+              <li>
+                <Link to="/admin/companies">Companies</Link>
+              </li>
+              <li>
+                <Link to="/admin/jobs">Jobs</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              {["Home", "Jobs", "Browse"].map((item) => (
+                <li
+                  key={item}
+                  className="hover:text-[#6A38C2] transition-colors duration-200 cursor-pointer"
+                >
+                  <Link
+                    to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                    className="block"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </>
+          )}
         </ul>
+
         {/* Auth Section */}
         {!user ? (
           <div className="flex items-center gap-3">
@@ -81,25 +97,37 @@ const navigate=useNavigate();
             <PopoverContent className="w-64 bg-white border border-gray-200 shadow-lg rounded-xl p-4">
               <div className="flex gap-4 items-center">
                 <Avatar className="cursor-pointer">
-                  <AvatarImage src={user?.profile?.profilePhoto} alt="profile" />
+                  <AvatarImage
+                    src={user?.profile?.profilePhoto}
+                    alt="profile"
+                  />
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-gray-800">{user?.fullname}</h4>
-                  <p className="text-sm text-gray-500">
-                   {user?.bio}
-                  </p>
+                  <h4 className="font-semibold text-gray-800">
+                    {user?.fullname}
+                  </h4>
+                  <p className="text-sm text-gray-500">{user?.bio}</p>
                 </div>
               </div>
               <div className="mt-4 space-y-2 text-sm text-gray-700">
-                <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
+                {
+                  user && user.role === 'student' && (
+                     <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
                   <User2 size={18} />
                   <Button variant="link" className="text-sm p-0 text-gray-700">
-                   <Link to="/profile"> View Profile</Link>
+                    <Link to="/profile"> View Profile</Link>
                   </Button>
                 </div>
+                  )
+                }
+               
                 <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
                   <LogOut size={18} />
-                  <Button  onClick={logoutHandler} variant="link" className="text-sm p-0 text-gray-700">
+                  <Button
+                    onClick={logoutHandler}
+                    variant="link"
+                    className="text-sm p-0 text-gray-700"
+                  >
                     Logout
                   </Button>
                 </div>
