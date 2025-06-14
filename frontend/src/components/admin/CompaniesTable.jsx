@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,11 +12,23 @@ import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { Edit2, MoreHorizontal } from "lucide-react";
 import { useSelector } from "react-redux";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const CompaniesTable = () => {
-  const { companies } = useSelector((store) => store.company);
+  const { companies, searchCompanyByText } = useSelector((store) => store.company);
+  const [filterCompany, setFilterCompany] = useState(companies);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const filteredCompany = companies.filter((company) => {
+      if (!searchCompanyByText) {
+        return true;
+      }
+      return company?.name?.toLowerCase().includes(searchCompanyByText.toLowerCase());
+    });
+    setFilterCompany(filteredCompany);
+  }, [companies, searchCompanyByText]);
 
-  if (!companies) {
+  if (companies.length === 0) {
     return (
       <div className="max-w-6xl mx-auto mt-10 text-center text-gray-500">
         Loading companies...
@@ -39,14 +51,14 @@ const CompaniesTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companies.length === 0 ? (
+          {filterCompany.length === 0 ? (
             <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-gray-500">
                 No Companies
               </TableCell>
             </TableRow>
           ) : (
-            companies.map((company) => (
+            filterCompany.map((company) => (
               <TableRow
                 key={company._id}
                 className="hover:bg-gray-50 transition duration-200"
@@ -72,7 +84,7 @@ const CompaniesTable = () => {
                       <MoreHorizontal className="cursor-pointer hover:text-gray-700" />
                     </PopoverTrigger>
                     <PopoverContent className="w-28 p-1.5 shadow-xl rounded-md bg-white border border-gray-200">
-                      <div className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 transition text-sm cursor-pointer">
+                      <div onClick={()=> navigate(`/admin/companies/${company._id}`)} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 transition text-sm cursor-pointer">
                         <Edit2 className="w-4 h-4 text-gray-700" />
                         <span>Edit</span>
                       </div>
