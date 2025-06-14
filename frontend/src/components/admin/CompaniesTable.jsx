@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,9 +14,20 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 
 const CompaniesTable = () => {
-  const { companies } = useSelector((store) => store.company);
+  const { companies, searchCompanyByText } = useSelector((store) => store.company);
+  const [filterCompany, setFilterCompany] = useState(companies);
 
-  if (!companies) {
+  useEffect(() => {
+    const filteredCompany = companies.filter((company) => {
+      if (!searchCompanyByText) {
+        return true;
+      }
+      return company?.name?.toLowerCase().includes(searchCompanyByText.toLowerCase());
+    });
+    setFilterCompany(filteredCompany);
+  }, [companies, searchCompanyByText]);
+
+  if (companies.length === 0) {
     return (
       <div className="max-w-6xl mx-auto mt-10 text-center text-gray-500">
         Loading companies...
@@ -39,14 +50,14 @@ const CompaniesTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companies.length === 0 ? (
+          {filterCompany.length === 0 ? (
             <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-gray-500">
                 No Companies
               </TableCell>
             </TableRow>
           ) : (
-            companies.map((company) => (
+            filterCompany.map((company) => (
               <TableRow
                 key={company._id}
                 className="hover:bg-gray-50 transition duration-200"
