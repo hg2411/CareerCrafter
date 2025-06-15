@@ -31,7 +31,7 @@ const CompaniesTable = () => {
   if (companies.length === 0) {
     return (
       <div className="max-w-6xl mx-auto mt-10 text-center text-gray-500">
-        Loading companies...
+        no new companies added by you....
       </div>
     );
   }
