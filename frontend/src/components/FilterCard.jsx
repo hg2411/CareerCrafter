@@ -27,9 +27,13 @@ const FilterCard = () => {
     console.log(`Selected [${group}]: ${value}`);
   };
 
+  const clearFilters = () => {
+    setSelectedFilters({});
+    dispatch(setSearchedQuery({}));
+  };
+
   useEffect(() => {
     dispatch(setSearchedQuery(selectedFilters));
-        dispatch(setSearchedQuery(selectedFilters))
   }, [selectedFilters]);
 
   return (
@@ -60,6 +64,14 @@ const FilterCard = () => {
           </div>
         </div>
       ))}
+
+      {/* Clear Filters Button */}
+      <button
+        onClick={clearFilters}
+        className="w-full mt-2 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md"
+      >
+        Clear Filters
+      </button>
     </div>
   );
 };
