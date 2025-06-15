@@ -1,6 +1,6 @@
-import { Label } from "@radix-ui/react-label";
-import { RadioGroup, RadioGroupItem } from "@radix-ui/react-radio-group";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setSearchedQuery } from "@/redux/jobSlice";
 
 const filterData = [
   {
@@ -13,40 +13,51 @@ const filterData = [
   },
   {
     filterType: "Salary",
-    array: ["0-40K", "41k-1 lakh", "1lakh-5lakhs"],
+    array: ["0-40k", "42-1lakh", "1lakh to 5lakh"],
   },
 ];
 
 const FilterCard = () => {
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const dispatch = useDispatch();
+
+  const changeHandler = (group, value) => {
+    const updated = { ...selectedFilters, [group]: value };
+    setSelectedFilters(updated);
+    console.log(`Selected [${group}]: ${value}`);
+  };
+
+  useEffect(() => {
+    dispatch(setSearchedQuery(selectedFilters));
+        dispatch(setSearchedQuery(selectedFilters))
+  }, [selectedFilters]);
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">Filter Jobs</h1>
-      <hr className="my-3" />
-      {filterData.map((data, groupIndex) => (
-        <div key={groupIndex} className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">{data.filterType}</h2>
-          <RadioGroup className="space-y-2">
-            {data.array.map((item, index) => {
-              const id = `${data.filterType}-${index}`;
+    <div className="p-6 bg-white rounded-lg shadow-md max-w-xs border">
+      <h2 className="text-xl font-bold mb-4">Filter Jobs</h2>
+      <hr className="mb-4" />
+      {filterData.map((group, index) => (
+        <div key={index} className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">{group.filterType}</h3>
+          <div className="space-y-2">
+            {group.array.map((item, idx) => {
+              const id = `${group.filterType}-${idx}`;
               return (
-                <div key={id} className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={item}
+                <label key={id} htmlFor={id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
                     id={id}
-                    className="
-                      w-5 h-5 rounded-full border-2 border-gray-600
-                      flex items-center justify-center
-                      focus:outline-none focus:ring-2 focus:ring-black
-                    "
-                  >
-                    {/* Dot only shows when selected */}
-                    <div className="w-2 h-2 rounded-full bg-black data-[state=unchecked]:hidden" />
-                  </RadioGroupItem>
-                  <Label htmlFor={id}>{item}</Label>
-                </div>
+                    name={group.filterType}
+                    value={item}
+                    checked={selectedFilters[group.filterType] === item}
+                    onChange={() => changeHandler(group.filterType, item)}
+                    className="cursor-pointer"
+                  />
+                  <span className="text-sm text-gray-800">{item}</span>
+                </label>
               );
             })}
-          </RadioGroup>
+          </div>
         </div>
       ))}
     </div>
