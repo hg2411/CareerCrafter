@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
-import { Edit2, MoreHorizontal } from "lucide-react";
+import { Edit2, Eye, MoreHorizontal } from "lucide-react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -96,6 +96,10 @@ const {allAdminJobs,searchJobByText}=useSelector(store=>store.job);
                       >
                         <Edit2 className="w-4 h-4 text-gray-700" />
                         <span>Edit</span>
+                      </div>
+                      <div onClick={()=> navigate(`/admin/jobs/${job._id}/applicants`)} className='flex items-center w-fit gap-2 cursor-pointer mt-2'>
+                        <Eye className='w-4'/>
+                        <span>Applicants</span>
                       </div>
                     </PopoverContent>
                   </Popover>
