@@ -13,13 +13,34 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, CheckCircle2, XCircle } from "lucide-react";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { APPLICATION_API_END_POINT } from "@/utils/constant";
+import { toast } from "sonner";
 
-const shortlistingStatus = ["Accepted", "Rejected"];
+const shortlistingStatus = [
+  { label: "Accepted", icon: <CheckCircle2 className="w-4 h-4 text-green-600 mr-2" /> },
+  { label: "Rejected", icon: <XCircle className="w-4 h-4 text-red-600 mr-2" /> },
+];
 
 const ApplicantsTable = () => {
   const { applicants } = useSelector((store) => store.application);
+
+  const statusHandler = async (status, id) => {
+    try {
+      const res = await axios.post(
+        `${APPLICATION_API_END_POINT}/status/${id}/update`,
+        { status },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
 
   return (
     <div className="p-6 rounded-2xl shadow-lg border border-gray-200 bg-white max-w-6xl mx-auto">
@@ -75,14 +96,15 @@ const ApplicantsTable = () => {
                       <MoreHorizontal className="w-5 h-5 text-gray-600" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-32 bg-white border border-gray-200 rounded-md shadow-md p-2">
-                    {shortlistingStatus.map((status, index) => (
+                  <PopoverContent className="w-40 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
+                    {shortlistingStatus.map(({ label, icon }, index) => (
                       <div
                         key={index}
-                        className="px-3 py-1 hover:bg-gray-100 rounded cursor-pointer text-sm text-gray-700"
-                        // onClick={() => statusHandler(status, item?._id)}
+                        className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-md cursor-pointer text-sm text-gray-700 font-medium transition"
+                        onClick={() => statusHandler(label, item?._id)}
                       >
-                        {status}
+                        {icon}
+                        <span>{label}</span>
                       </div>
                     ))}
                   </PopoverContent>
