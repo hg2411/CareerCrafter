@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setLoading } from "@/redux/authSlice";
+import { useEffect } from "react";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -21,7 +22,7 @@ const Signup = () => {
     file: null,
   });
 
-  const { loading } = useSelector((state) => state.auth);
+  const { loading,user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,6 +67,11 @@ const Signup = () => {
       dispatch(setLoading(false));
     }
   };
+  useEffect(()=>{
+    if(user){
+      navigate("/");
+    }
+  })
 
   return (
     <div>

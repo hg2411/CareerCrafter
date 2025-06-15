@@ -9,6 +9,7 @@ import { setLoading, setUser } from "../../redux/authSlice";
 import { Loader2 } from "lucide-react";
 import Navbar from "../shared/Navbar";
 import { USER_API_END_POINT } from "../../utils/constant";
+import { useEffect } from "react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -17,7 +18,7 @@ const Login = () => {
     role: "",
   });
 
-  const { loading } = useSelector((state) => state.auth);
+  const { loading,user} = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -67,7 +68,11 @@ const Login = () => {
       dispatch(setLoading(false));
     }
   };
-
+ useEffect(() =>{
+  if(user){
+    navigate("/");
+  }
+ })
   return (
     <div>
       <Navbar />
