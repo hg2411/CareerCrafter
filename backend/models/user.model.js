@@ -4,8 +4,9 @@ const userSchema = new mongoose.Schema(
   {
     fullname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phoneNumber: { type: Number, required: true },
-    password: { type: String, required: true },
+    phoneNumber: { type: Number }, // Make phone optional for Google auth
+    password: { type: String }, // Make password optional for Google auth
+    googleId: { type: String, unique: true, sparse: true }, // For Google login
     role: { type: String, enum: ["student", "recruiter"], required: true },
     profile: {
       bio: { type: String },
