@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,6 @@ import { setLoading, setUser } from "../../redux/authSlice";
 import { Loader2 } from "lucide-react";
 import Navbar from "../shared/Navbar";
 import { USER_API_END_POINT } from "../../utils/constant";
-import { useEffect } from "react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -18,7 +17,7 @@ const Login = () => {
     role: "",
   });
 
-  const { loading,user} = useSelector((state) => state.auth);
+  const { loading, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,7 +30,6 @@ const Login = () => {
 
     const { email, password, role } = input;
 
-    // 🔴 Form validation
     if (!email || !password || !role) {
       toast.error("Please fill in all fields.");
       return;
@@ -68,11 +66,18 @@ const Login = () => {
       dispatch(setLoading(false));
     }
   };
- useEffect(() =>{
-  if(user){
-    navigate("/");
-  }
- })
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  // 🔥 Function to trigger Google login
+  const googleLoginHandler = () => {
+    window.location.href = "http://localhost:8000/auth/google";
+  };
+
   return (
     <div>
       <Navbar />
@@ -149,6 +154,15 @@ const Login = () => {
               Login
             </Button>
           )}
+
+          {/* 🔥 Google Login Button */}
+          <Button
+            type="button"
+            onClick={googleLoginHandler}
+            className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all"
+          >
+            Login with Google
+          </Button>
 
           <p className="text-center text-sm mt-5 text-gray-600">
             Don't have an account?{" "}
