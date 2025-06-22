@@ -17,81 +17,89 @@ const Profile = () => {
   const { user } = useSelector((store) => store.auth);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gradient-to-br from-[#faf8ff] via-[#f6f3fc] to-[#fdfcff] min-h-screen pb-16">
       <Navbar />
 
-      {/* Profile Card */}
-      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-8 p-8 shadow-md">
-        <div className="flex justify-between items-start">
-          {/* User Info */}
+      {/* Profile Header Card */}
+      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-3xl mt-12 p-8 shadow-lg shadow-purple-100">
+        <div className="flex justify-between items-start flex-col sm:flex-row gap-6">
+          {/* Avatar & Info */}
           <div className="flex items-center gap-6">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={user?.profile?.profilePhoto} />
+            <Avatar className="h-24 w-24 border-4 border-white shadow-md shadow-purple-200">
+              <AvatarImage
+                src={user?.profile?.profilePhoto}
+                className="rounded-full object-cover"
+              />
             </Avatar>
             <div>
-              <h1 className="font-bold text-2xl text-gray-800">{user?.fullname}</h1>
-              <p className="text-gray-600 mt-1">{user?.profile?.bio}</p>
+              <h1 className="font-bold text-3xl text-gray-800">{user?.fullname}</h1>
+              <p className="text-gray-600 mt-2 max-w-sm">{user?.profile?.bio || "No bio available."}</p>
             </div>
           </div>
 
           {/* Edit Button */}
-          <Button onClick={() => setOpen(true)} className="text-right" variant="outline">
+          <Button
+            onClick={() => setOpen(true)}
+            variant="outline"
+            className="text-sm flex items-center gap-2 hover:bg-purple-50"
+          >
             <Pen className="h-4 w-4" />
+            Edit Profile
           </Button>
         </div>
 
         {/* Contact Info */}
-        <div className="my-6">
-          <div className="flex items-center gap-3 my-2 text-gray-700">
-            <Mail className="h-5 w-5" />
-            <span>{user?.email}</span>
+        <div className="border-t pt-6 mt-6 space-y-3 text-gray-700">
+          <div className="flex items-center gap-3">
+            <Mail className="h-5 w-5 text-purple-600" />
+            <span>{user?.email || "Email not provided"}</span>
           </div>
-          <div className="flex items-center gap-3 my-2 text-gray-700">
-            <Contact className="h-5 w-5" />
-            <span>{user?.phoneNumber}</span>
+          <div className="flex items-center gap-3">
+            <Contact className="h-5 w-5 text-purple-600" />
+            <span>{user?.phoneNumber || "Phone not provided"}</span>
           </div>
         </div>
 
         {/* Skills */}
-        <div className="mt-6">
-          <h1 className="text-md font-bold mb-2">Skills</h1>
-          <div className="flex flex-wrap gap-2">
-            {user?.profile?.skills?.length > 0 ? (
-              user.profile.skills.map((item, index) => (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">Skills</h2>
+          {user?.profile?.skills?.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {user.profile.skills.map((item, index) => (
                 <Badge
                   key={index}
-                  className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700"
+                  className="px-3 py-1 text-sm rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
                 >
                   {item}
                 </Badge>
-              ))
-            ) : (
-              <span>Not Available</span>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500">No skills added.</p>
+          )}
         </div>
 
         {/* Resume */}
-        <div className="mt-6">
-          <Label className="text-md font-bold mb-2 block">Resume</Label>
+        <div className="mt-8">
+          <Label className="text-md font-semibold mb-2 block text-gray-800">Resume</Label>
           {user?.profile?.resume ? (
             <a
               target="_blank"
               rel="noopener noreferrer"
               href={user.profile.resume}
-              className="text-blue-600 hover:underline cursor-pointer"
+              className="text-blue-600 hover:underline font-medium"
             >
               View Resume
             </a>
           ) : (
-            <span>Not Available</span>
+            <span className="text-gray-500">No resume uploaded.</span>
           )}
         </div>
       </div>
 
       {/* Applied Jobs Section */}
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md mt-8 mb-12 p-6">
-        <h1 className="font-bold text-lg mb-4">Applied Jobs</h1>
+      <div className="max-w-4xl mx-auto mt-10 bg-white rounded-3xl shadow-md p-6 border border-gray-200">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Applied Jobs</h2>
         <AppliedJobTable />
       </div>
 
