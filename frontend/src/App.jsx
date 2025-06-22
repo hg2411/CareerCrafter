@@ -16,6 +16,8 @@ import AdminJobs from "./components/admin/AdminJobs.jsx";
 import PostJob from "./components/admin/PostJob.jsx";
 import Applicants from "./components/admin/Applicants.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
+import SelectRole from "./pages/SelectRole.jsx";
+
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -84,6 +86,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/admin/jobs/:id/applicants",
         element:<ProtectedRoute> <Applicants/></ProtectedRoute>,
+      },
+        {
+        path: "select-role",
+        element: <SelectRole />,
       },
     ],
   },

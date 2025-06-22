@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
@@ -14,11 +14,32 @@ const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // ✅ Fetch session user on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/auth/me", {
+          withCredentials: true,
+        });
+
+        if (res.data.success) {
+          dispatch(setUser(res.data.user));
+        }
+      } catch (error) {
+        console.error("User not logged in:", error);
+      }
+    };
+
+    fetchUser();
+  }, [dispatch]);
+
   const logoutHandler = async () => {
     try {
       const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-        withCredential: true,
+        withCredentials: true,
       });
+
       if (res.data.success) {
         dispatch(setUser(null));
         navigate("/");
@@ -26,7 +47,7 @@ const Navbar = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.respons.data.message);
+      toast.error(error?.response?.data?.message || "Logout failed.");
     }
   };
 
@@ -68,11 +89,10 @@ const Navbar = () => {
           )}
         </ul>
 
-        {/* Auth Section */}
-        {!user ? (
+        {/* ✅ Auth Section */}
+        {!user || user?.temp ? (
           <div className="flex items-center gap-3">
             <Link to="/login">
-              {" "}
               <Button
                 variant="outline"
                 className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-5 py-2 text-sm transition-all"
@@ -81,24 +101,26 @@ const Navbar = () => {
               </Button>
             </Link>
             <Link to="/signup">
-              {" "}
               <Button className="rounded-full px-5 py-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white text-sm transition-all">
                 Sign Up
-              </Button>{" "}
+              </Button>
             </Link>
           </div>
         ) : (
           <Popover>
             <PopoverTrigger asChild>
               <Avatar className="cursor-pointer">
-                <AvatarImage src={user?.profile?.profilePhoto} alt="profile" />
+                <AvatarImage
+                  src={user?.profile?.profilePhoto || "/default-avatar.png"}
+                  alt="profile"
+                />
               </Avatar>
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-white border border-gray-200 shadow-lg rounded-xl p-4">
               <div className="flex gap-4 items-center">
                 <Avatar className="cursor-pointer">
                   <AvatarImage
-                    src={user?.profile?.profilePhoto}
+                    src={user?.profile?.profilePhoto || "/default-avatar.png"}
                     alt="profile"
                   />
                 </Avatar>
@@ -106,21 +128,25 @@ const Navbar = () => {
                   <h4 className="font-semibold text-gray-800">
                     {user?.fullname}
                   </h4>
-                  <p className="text-sm text-gray-500">{user?.bio}</p>
+                  <p className="text-sm text-gray-500">
+                    {user?.profile?.bio || user?.email}
+                  </p>
                 </div>
               </div>
+
               <div className="mt-4 space-y-2 text-sm text-gray-700">
-                {
-                  user && user.role === 'student' && (
-                     <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
-                  <User2 size={18} />
-                  <Button variant="link" className="text-sm p-0 text-gray-700">
-                    <Link to="/profile"> View Profile</Link>
-                  </Button>
-                </div>
-                  )
-                }
-               
+                {user?.role === "student" && (
+                  <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
+                    <User2 size={18} />
+                    <Button
+                      variant="link"
+                      className="text-sm p-0 text-gray-700"
+                    >
+                      <Link to="/profile"> View Profile</Link>
+                    </Button>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-2 hover:text-[#6A38C2] cursor-pointer transition-colors">
                   <LogOut size={18} />
                   <Button
