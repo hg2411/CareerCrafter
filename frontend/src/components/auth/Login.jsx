@@ -9,6 +9,7 @@ import { setLoading, setUser } from "../../redux/authSlice";
 import { Loader2 } from "lucide-react";
 import Navbar from "../shared/Navbar";
 import { USER_API_END_POINT } from "../../utils/constant";
+import { SiGoogle } from "react-icons/si";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -25,6 +26,8 @@ const Login = () => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -32,6 +35,11 @@ const Login = () => {
 
     if (!email || !password || !role) {
       toast.error("Please fill in all fields.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address.");
       return;
     }
 
@@ -73,10 +81,11 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  // 🔥 Function to trigger Google login
   const googleLoginHandler = () => {
     window.location.href = "http://localhost:8000/auth/google";
   };
+
+  const roles = ["student", "recruiter"];
 
   return (
     <div>
@@ -116,33 +125,24 @@ const Login = () => {
 
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 text-gray-600 text-sm">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === "student"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                Student
-              </label>
-              <label className="flex items-center gap-2 text-gray-600 text-sm">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === "recruiter"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                Recruiter
-              </label>
+              {roles.map((roleOption) => (
+                <label key={roleOption} className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+                  <Input
+                    type="radio"
+                    name="role"
+                    value={roleOption}
+                    checked={input.role === roleOption}
+                    onChange={changeEventHandler}
+                    className="cursor-pointer"
+                  />
+                  {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
+                </label>
+              ))}
             </div>
           </div>
 
           {loading ? (
-            <Button className="w-full bg-[#6A38C2] text-white">
+            <Button className="w-full bg-[#6A38C2] text-white" disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please Wait
             </Button>
@@ -150,17 +150,26 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-all"
+              disabled={loading}
             >
               Login
             </Button>
           )}
 
-          {/* 🔥 Google Login Button */}
+          {/* Divider */}
+          <div className="my-4 flex items-center">
+            <hr className="flex-grow border-gray-300" />
+            <span className="px-3 text-gray-500 text-sm">OR</span>
+            <hr className="flex-grow border-gray-300" />
+          </div>
+
+          {/* Google Login Button */}
           <Button
             type="button"
             onClick={googleLoginHandler}
-            className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all"
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all flex items-center justify-center gap-2"
           >
+            <SiGoogle className="w-4 h-4" />
             Login with Google
           </Button>
 
