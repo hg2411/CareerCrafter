@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../shared/Navbar";
@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setLoading } from "@/redux/authSlice";
-import { useEffect } from "react";
+import { SiGoogle } from "react-icons/si";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -22,7 +22,7 @@ const Signup = () => {
     file: null,
   });
 
-  const { loading,user } = useSelector((state) => state.auth);
+  const { loading, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,15 +34,35 @@ const Signup = () => {
     setInput({ ...input, file: e.target.files?.[0] });
   };
 
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const isValidPhone = (phone) => /^\d{10}$/.test(phone);
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    const { fullname, email, phoneNumber, password, role } = input;
+
+    if (!fullname || !email || !phoneNumber || !password || !role) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!isValidPhone(phoneNumber)) {
+      toast.error("Phone number must be exactly 10 digits.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("fullname", input.fullname);
-    formData.append("email", input.email);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("password", input.password);
-    formData.append("role", input.role);
+    formData.append("fullname", fullname);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("password", password);
+    formData.append("role", role);
     if (input.file) formData.append("file", input.file);
 
     try {
@@ -67,11 +87,18 @@ const Signup = () => {
       dispatch(setLoading(false));
     }
   };
-  useEffect(()=>{
-    if(user){
+
+  useEffect(() => {
+    if (user) {
       navigate("/");
     }
-  })
+  }, [user, navigate]);
+
+  const googleSignupHandler = () => {
+    window.location.href = "http://localhost:8000/auth/google";
+  };
+
+  const roles = ["student", "recruiter"];
 
   return (
     <div>
@@ -116,7 +143,7 @@ const Signup = () => {
               value={input.phoneNumber}
               name="phoneNumber"
               onChange={changeEventHandler}
-              placeholder="XXX-XXX-XXXX"
+              placeholder="XXXXXXXXXX"
               className="mt-1 shadow-sm"
             />
           </div>
@@ -135,28 +162,19 @@ const Signup = () => {
 
           <div className="flex flex-col gap-4 mb-4">
             <div className="flex gap-6 items-center">
-              <label className="flex items-center gap-2 text-gray-600 text-sm">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === "student"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                Student
-              </label>
-              <label className="flex items-center gap-2 text-gray-600 text-sm">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === "recruiter"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                Recruiter
-              </label>
+              {roles.map((roleOption) => (
+                <label key={roleOption} className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+                  <Input
+                    type="radio"
+                    name="role"
+                    value={roleOption}
+                    checked={input.role === roleOption}
+                    onChange={changeEventHandler}
+                    className="cursor-pointer"
+                  />
+                  {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
+                </label>
+              ))}
             </div>
 
             <div className="flex items-center gap-2">
@@ -171,7 +189,7 @@ const Signup = () => {
           </div>
 
           {loading ? (
-            <Button className="w-full bg-[#6A38C2] text-white">
+            <Button className="w-full bg-[#6A38C2] text-white" disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Please Wait
             </Button>
@@ -183,6 +201,23 @@ const Signup = () => {
               Sign Up
             </Button>
           )}
+
+          {/* Divider */}
+          <div className="my-4 flex items-center">
+            <hr className="flex-grow border-gray-300" />
+            <span className="px-3 text-gray-500 text-sm">OR</span>
+            <hr className="flex-grow border-gray-300" />
+          </div>
+
+          {/* Google Signup Button */}
+          <Button
+            type="button"
+            onClick={googleSignupHandler}
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all flex items-center justify-center gap-2"
+          >
+            <SiGoogle className="w-4 h-4" />
+            Sign Up with Google
+          </Button>
 
           <p className="text-center text-sm mt-5 text-gray-600">
             Already have an account?{" "}
