@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Bookmark } from "lucide-react";
 import { Badge } from "./ui/badge";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(false);
 
   const daysAgoFunction = (mongodbTime) => {
     const createdAt = new Date(mongodbTime);
@@ -15,16 +16,18 @@ const Job = ({ job }) => {
     return Math.floor(timedifference / (1000 * 60 * 60 * 24));
   };
 
+  useEffect(() => {
+    const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+    const alreadySaved = savedJobs.some((j) => j._id === job._id);
+    setIsSaved(alreadySaved);
+  }, [job]);
+
   const handleSave = () => {
     const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
-    const isAlreadySaved = savedJobs.find((savedJob) => savedJob._id === job._id);
-
-    if (!isAlreadySaved) {
+    if (!savedJobs.find((savedJob) => savedJob._id === job._id)) {
       savedJobs.push(job);
       localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-      alert("Job saved for later!");
-    } else {
-      alert("Job already saved.");
+      setIsSaved(true);
     }
   };
 
@@ -91,11 +94,17 @@ const Job = ({ job }) => {
         >
           View Job
         </Button>
+
         <Button
           onClick={handleSave}
-          className="bg-[#6A38C2] text-white hover:bg-[#5c2aa0] w-full sm:w-auto"
+          disabled={isSaved}
+          className={`w-full sm:w-auto ${
+            isSaved
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-[#6A38C2] text-white hover:bg-[#5c2aa0]"
+          }`}
         >
-          Save for Later
+          {isSaved ? "Saved" : "Save for Later"}
         </Button>
       </div>
     </div>
