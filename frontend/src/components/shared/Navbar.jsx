@@ -49,7 +49,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
+    <div className="bg-white sticky top-0 z-50 border-b border-gray-200">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-20 px-6">
         {/* Logo */}
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-wide cursor-pointer">
@@ -85,7 +85,7 @@ const Navbar = () => {
         </ul>
 
         {/* Auth Section - Desktop */}
-        {!user || user?.temp ? (
+        {!user ? (
           <div className="hidden md:flex items-center gap-4">
             <Link to="/login">
               <Button variant="outline" className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-6 py-2 text-base transition-all hover:scale-105">
@@ -166,7 +166,7 @@ const Navbar = () => {
             </>
           )}
 
-          {!user || user?.temp ? (
+          {!user ? (
             <div className="flex flex-col gap-3 mt-4">
               <Link to="/login" onClick={() => setMenuOpen(false)}>
                 <Button variant="outline" className="w-full rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-6 py-2 text-base transition-all hover:scale-105">
