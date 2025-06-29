@@ -69,7 +69,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {["Home", "Jobs", "Browse"].map((item) => (
+              {["Home", "Jobs", "Browse" ,"Saved"].map((item) => (
                 <li key={item} className="relative group cursor-pointer">
                   <Link
                     to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
@@ -153,7 +153,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {["Home", "Jobs", "Browse"].map((item) => (
+              {["Home", "Jobs", "Browse", "Saved"].map((item) => (
                 <Link
                   key={item}
                   to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
