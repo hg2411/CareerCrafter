@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Bookmark } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useNavigate } from "react-router-dom";
-import { AvatarFallback } from "@radix-ui/react-avatar";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  // const jobId = "thisisjob";
+  const [isSaved, setIsSaved] = useState(false);
 
   const daysAgoFunction = (mongodbTime) => {
     const createdAt = new Date(mongodbTime);
     const currentTime = new Date();
     const timedifference = currentTime - createdAt;
-    return Math.floor(timedifference / (1000 * 24 * 60 * 60));
+    return Math.floor(timedifference / (1000 * 60 * 60 * 24));
+  };
+
+  useEffect(() => {
+    const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+    const alreadySaved = savedJobs.some((j) => j._id === job._id);
+    setIsSaved(alreadySaved);
+  }, [job]);
+
+  const handleSave = () => {
+    const savedJobs = JSON.parse(localStorage.getItem("savedJobs")) || [];
+    if (!savedJobs.find((savedJob) => savedJob._id === job._id)) {
+      savedJobs.push(job);
+      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+      setIsSaved(true);
+    }
   };
 
   return (
@@ -22,9 +36,9 @@ const Job = ({ job }) => {
       {/* Top Row */}
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs sm:text-sm text-gray-500">
-          {daysAgoFunction(job?.createdAt) == 0
+          {daysAgoFunction(job?.createdAt) === 0
             ? "Today"
-            : `${daysAgoFunction(job?.createdAt)}days ago`}
+            : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
         <Button variant="outline" className="rounded-full" size="icon">
           <Bookmark className="w-4 h-4" />
@@ -67,7 +81,7 @@ const Job = ({ job }) => {
           {job?.jobType}
         </Badge>
         <Badge className="text-[#7209b7] font-bold" variant="ghost">
-          {job?.salary}LPA
+          {job?.salary} LPA
         </Badge>
       </div>
 
@@ -80,8 +94,17 @@ const Job = ({ job }) => {
         >
           View Job
         </Button>
-        <Button className="bg-[#6A38C2] text-white hover:bg-[#5c2aa0] w-full sm:w-auto">
-          Save for Later
+
+        <Button
+          onClick={handleSave}
+          disabled={isSaved}
+          className={`w-full sm:w-auto ${
+            isSaved
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-[#6A38C2] text-white hover:bg-[#5c2aa0]"
+          }`}
+        >
+          {isSaved ? "Saved" : "Save for Later"}
         </Button>
       </div>
     </div>
