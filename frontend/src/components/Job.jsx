@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Bookmark } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useNavigate } from "react-router-dom";
 
-const Job = ({ job }) => {
+const Job = ({ job, onRemove }) => {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
 
@@ -32,21 +32,29 @@ const Job = ({ job }) => {
   };
 
   return (
-    <div className="p-5 sm:p-6 md:p-8 rounded-2xl shadow-lg bg-white border border-gray-100 max-w-3xl mx-auto">
+    <div className="p-6 sm:p-7 md:p-8 rounded-2xl shadow hover:shadow-lg transition-shadow border border-gray-100 bg-gradient-to-br from-white to-gray-50 max-w-3xl mx-auto space-y-4">
       {/* Top Row */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <p className="text-xs sm:text-sm text-gray-500">
           {daysAgoFunction(job?.createdAt) === 0
             ? "Today"
             : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
-        <Button variant="outline" className="rounded-full" size="icon">
-          <Bookmark className="w-4 h-4" />
-        </Button>
+        {/* Show remove trash only if isSaved is true */}
+        {isSaved && (
+          <Button
+            onClick={onRemove}
+            variant="outline"
+            size="icon"
+            className="rounded-full text-red-600 hover:bg-red-50 border-red-200 hover:border-red-300 transition"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        )}
       </div>
 
       {/* Company Info */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-4">
         <Avatar>
           <AvatarImage
             src={job?.company?.logo?.url}
@@ -59,21 +67,19 @@ const Job = ({ job }) => {
         </Avatar>
 
         <div>
-          <h1 className="font-semibold text-base sm:text-lg">
-            {job?.company?.name}
-          </h1>
+          <h2 className="font-semibold text-base sm:text-lg text-gray-800">{job?.company?.name}</h2>
           <p className="text-sm text-gray-500">Remote | India</p>
         </div>
       </div>
 
       {/* Job Title & Description */}
-      <div className="mb-4">
-        <h1 className="font-bold text-lg sm:text-xl mb-2">{job?.tittle}</h1>
+      <div>
+        <h1 className="font-bold text-lg sm:text-xl mb-2 text-gray-900">{job?.tittle}</h1>
         <p className="text-sm sm:text-base text-gray-600">{job?.description}</p>
       </div>
 
       {/* Badges */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+      <div className="flex flex-wrap items-center gap-2">
         <Badge className="text-blue-700 font-bold" variant="ghost">
           {job?.position} Positions
         </Badge>
