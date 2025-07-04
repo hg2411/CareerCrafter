@@ -81,9 +81,15 @@ export const parseStoredResume = async (req, res) => {
     const linkedin = text.match(/linkedin\.com\/in\/[a-zA-Z0-9-]+/)?.[0] || "N/A";
     const github = text.match(/github\.com\/[a-zA-Z0-9-]+/)?.[0] || "N/A";
 
-    const skillsMatch = text.match(/Skills\s*[:\-]?\s*(.*)/i);
-    const skills = skillsMatch ? skillsMatch[1].split(/[,\n]/).map(skill => skill.trim()).filter(Boolean) : [];
+    let skills = [];
+    const skillsSection = text.match(/skills\s*[:\-]?\s*([\s\S]*?)(?=\n\S|$)/i);
 
+    if (skillsSection) {
+      skills = skillsSection[1]
+        .split(/[,•\n\-–]+/) // Split on commas, bullets, dashes, or newlines
+        .map(s => s.trim())
+        .filter(s => s.length > 1 && s.length < 50); // Remove junk
+    }
     return res.status(200).json({
       success: true,
       data: {
