@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { setUser } from "@/redux/authSlice";
 
-const UpdateProfileDialogue = ({ open, setOpen, parsedData }) => {
+const UpdateProfileDialogue = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
@@ -32,18 +32,6 @@ const UpdateProfileDialogue = ({ open, setOpen, parsedData }) => {
     file: null,
     profilePhoto: null,
   });
-
-  // Autofill from parsed resume data
-  useEffect(() => {
-    if (parsedData && Object.keys(parsedData).length > 0) {
-      setInput((prev) => ({
-        ...prev,
-        bio: parsedData.bio || prev.bio,
-        phoneNumber: parsedData.phone || prev.phoneNumber,
-        skills: parsedData.skills?.join(", ") || prev.skills,
-      }));
-    }
-  }, [parsedData]);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });

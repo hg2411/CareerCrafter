@@ -15,9 +15,7 @@ import ResumeUpload from "./ResumeUpload";
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
-  const [parsedData, setParsedData] = useState({});
   const { user } = useSelector((store) => store.auth);
-  console.log("Parsed Resume Data:", parsedData);
 
   return (
     <div className="bg-gradient-to-br from-[#faf8ff] via-[#f6f3fc] to-[#fdfcff] min-h-screen pb-16">
@@ -98,9 +96,6 @@ const Profile = () => {
   ) : (
     <span className="text-gray-500 block mb-2">No resume uploaded.</span>
   )}
-
-  {/* Upload & Parse Resume */}
-  <ResumeUpload setParsedData={setParsedData} />
 </div>
       </div>
 
@@ -110,7 +105,7 @@ const Profile = () => {
         <AppliedJobTable />
       </div>
 
-      <UpdateProfileDialogue open={open} setOpen={setOpen} parsedData={parsedData} />
+      <UpdateProfileDialogue open={open} setOpen={setOpen} />
 
     </div>
   );
