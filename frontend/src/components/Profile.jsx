@@ -10,11 +10,14 @@ import AppliedJobTable from "./AppliedJobTable";
 import UpdateProfileDialogue from "./UpdateProfileDialogue";
 import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
+import ResumeUpload from "./ResumeUpload"; 
 
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
+  const [parsedData, setParsedData] = useState({});
   const { user } = useSelector((store) => store.auth);
+  console.log("Parsed Resume Data:", parsedData);
 
   return (
     <div className="bg-gradient-to-br from-[#faf8ff] via-[#f6f3fc] to-[#fdfcff] min-h-screen pb-16">
@@ -79,22 +82,26 @@ const Profile = () => {
           )}
         </div>
 
-        {/* Resume */}
-        <div className="mt-8">
-          <Label className="text-md font-semibold mb-2 block text-gray-800">Resume</Label>
-          {user?.profile?.resume ? (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href={user.profile.resume}
-              className="text-blue-600 hover:underline font-medium"
-            >
-              View Resume
-            </a>
-          ) : (
-            <span className="text-gray-500">No resume uploaded.</span>
-          )}
-        </div>
+        {/* Resume Upload and View */}
+<div className="mt-8">
+  <Label className="text-md font-semibold mb-2 block text-gray-800">Resume</Label>
+  
+  {user?.profile?.resume ? (
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href={user.profile.resume}
+      className="text-blue-600 hover:underline font-medium"
+    >
+      View Resume
+    </a>
+  ) : (
+    <span className="text-gray-500 block mb-2">No resume uploaded.</span>
+  )}
+
+  {/* Upload & Parse Resume */}
+  <ResumeUpload setParsedData={setParsedData} />
+</div>
       </div>
 
       {/* Applied Jobs Section */}
@@ -103,7 +110,8 @@ const Profile = () => {
         <AppliedJobTable />
       </div>
 
-      <UpdateProfileDialogue open={open} setOpen={setOpen} />
+      <UpdateProfileDialogue open={open} setOpen={setOpen} parsedData={parsedData} />
+
     </div>
   );
 };

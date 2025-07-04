@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,8 @@ const shortlistingStatus = [
 
 const ApplicantsTable = () => {
   const { applicants } = useSelector((store) => store.application);
+  const [parsedData, setParsedData] = useState(null);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
 
   const statusHandler = async (status, id) => {
     try {
@@ -39,6 +41,26 @@ const ApplicantsTable = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const fetchParsedResume = async (studentId) => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/v1/resume/parse/${studentId}`, {
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        setParsedData(res.data.data);
+        setSelectedApplicant(studentId);
+      }
+    } catch (error) {
+      const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to fetch parsed resume";
+      toast.error(message);
+    console.error("Error fetching parsed resume:", error);
     }
   };
 
@@ -59,6 +81,7 @@ const ApplicantsTable = () => {
             <TableHead className="text-gray-700">Contact</TableHead>
             <TableHead className="text-gray-700">Resume</TableHead>
             <TableHead className="text-gray-700">Date</TableHead>
+            <TableHead className="text-gray-700">Parsed</TableHead>
             <TableHead className="text-right text-gray-700">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -89,6 +112,14 @@ const ApplicantsTable = () => {
               <TableCell>
                 {item?.applicant?.createdAt?.split("T")[0] || "N/A"}
               </TableCell>
+              <TableCell>
+                <button
+                  onClick={() => fetchParsedResume(item?.applicant?._id)}
+                  className="text-sm text-blue-500 hover:underline"
+                >
+                  View Parsed
+                </button>
+              </TableCell>
               <TableCell className="text-right">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -114,6 +145,18 @@ const ApplicantsTable = () => {
           ))}
         </TableBody>
       </Table>
+
+      {parsedData && selectedApplicant && (
+        <div className="mt-8 p-4 border rounded bg-gray-50 max-w-4xl mx-auto">
+          <h3 className="font-semibold mb-2 text-lg">Parsed Resume Info:</h3>
+          <p><strong>Name:</strong> {parsedData.name}</p>
+          <p><strong>Email:</strong> {parsedData.email}</p>
+          <p><strong>Phone:</strong> {parsedData.phone}</p>
+          <p><strong>LinkedIn:</strong> {parsedData.linkedin}</p>
+          <p><strong>GitHub:</strong> {parsedData.github}</p>
+          <p><strong>Skills:</strong> {parsedData.skills.join(", ")}</p>
+        </div>
+      )}
     </div>
   );
 };
