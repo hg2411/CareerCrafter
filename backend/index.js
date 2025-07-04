@@ -13,6 +13,7 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import authRoute from "./routes/auth.route.js";
+import resumeRoutes from "./routes/resume.route.js";
 
 dotenv.config();
 
@@ -120,6 +121,7 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/auth", authRoute); // contains login, logout, role
+app.use("/api/v1/resume",resumeRoutes);
 
 // ✅ 6. Start server
 const PORT = process.env.PORT || 8000;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { setUser } from "@/redux/authSlice";
 
-const UpdateProfileDialogue = ({ open, setOpen }) => {
+const UpdateProfileDialogue = ({ open, setOpen, parsedData }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
@@ -30,21 +30,30 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
     bio: user?.profile?.bio || "",
     skills: user?.profile?.skills?.join(", ") || "",
     file: null,
-    profilePhoto: null, // optional, in case you want to upload photo too
+    profilePhoto: null,
   });
 
-  // Handle text input change
+  // Autofill from parsed resume data
+  useEffect(() => {
+    if (parsedData && Object.keys(parsedData).length > 0) {
+      setInput((prev) => ({
+        ...prev,
+        bio: parsedData.bio || prev.bio,
+        phoneNumber: parsedData.phone || prev.phoneNumber,
+        skills: parsedData.skills?.join(", ") || prev.skills,
+      }));
+    }
+  }, [parsedData]);
+
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  // Handle resume file change
   const fileChangeHandler = (e) => {
     const file = e.target.files?.[0];
     setInput({ ...input, file });
   };
 
-  // (Optional) handle profile photo change
   const profilePhotoChangeHandler = (e) => {
     const file = e.target.files?.[0];
     setInput({ ...input, profilePhoto: file });
@@ -76,7 +85,7 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
     try {
       setLoading(true);
       const res = await axios.put(
-        `${USER_API_END_POINT}/profile/update`, // ✅ fixed route to match backend
+        `${USER_API_END_POINT}/profile/update`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -109,22 +118,16 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
         </DialogHeader>
         <Form onSubmit={submitHandler}>
           <div className="grid gap-4 py-4">
-            {[
-              { label: "Name", name: "fullname", type: "text", value: input.fullname },
-              { label: "Email", name: "email", type: "email", value: input.email },
-              { label: "Phone Number", name: "phoneNumber", type: "text", value: input.phoneNumber },
-              { label: "Bio", name: "bio", type: "text", value: input.bio },
-              { label: "Skills", name: "skills", type: "text", value: input.skills },
-            ].map((field) => (
-              <div key={field.name} className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor={field.name} className="text-right">
-                  {field.label}
+            {["fullname", "email", "phoneNumber", "bio", "skills"].map((field) => (
+              <div key={field} className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor={field} className="text-right capitalize">
+                  {field.replace(/([A-Z])/g, " $1")}
                 </Label>
                 <Input
-                  id={field.name}
-                  name={field.name}
-                  type={field.type}
-                  value={field.value}
+                  id={field}
+                  name={field}
+                  type={field === "email" ? "email" : "text"}
+                  value={input[field]}
                   onChange={changeEventHandler}
                   className="col-span-3"
                 />
@@ -141,7 +144,6 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
                 className="col-span-3"
               />
             </div>
-            {/* (Optional) Profile photo upload */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="profilePhoto" className="text-right">Profile Photo</Label>
               <Input
