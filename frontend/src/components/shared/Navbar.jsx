@@ -33,20 +33,21 @@ const Navbar = () => {
   }, [dispatch]);
 
   const logoutHandler = async () => {
-    try {
-      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-        withCredentials: true,
-      });
-      if (res.data.success) {
-        dispatch(setUser(null));
-        navigate("/");
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || "Logout failed.");
+  try {
+    const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+      withCredentials: true,
+    });
+
+    if (res.data.success) {
+      dispatch(setUser(null));
+      toast.success(res.data.message); // ✅ Show toast here only
+      navigate("/login", { replace: true }); // ✅ Go to login
     }
-  };
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response?.data?.message || "Logout failed.");
+  }
+};
 
   return (
     <div className="bg-white sticky top-0 z-50 border-b border-gray-200">

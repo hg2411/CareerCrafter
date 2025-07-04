@@ -75,11 +75,11 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+ useEffect(() => {
+  if (user && window.location.pathname === "/login") {
+    navigate("/", { replace: true });
+  }
+}, []);
 
   const googleLoginHandler = () => {
     window.location.href = "http://localhost:8000/auth/google";
