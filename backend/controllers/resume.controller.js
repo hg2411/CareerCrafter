@@ -140,12 +140,12 @@ export const parseStoredResume = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: {
-        name: name || student.fullname || "N/A",
+        name: name || student.fullname || "",
         email,
         phone,
         linkedin,
         github,
-        skills,
+        skills:skills.length>0?skills:["Not found"],
       },
     });
   } catch (error) {
