@@ -9,8 +9,15 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
+    const justLoggedOut = sessionStorage.getItem("justLoggedOut");
+
     if (!user) {
-      toast.error("Please login/signup to access this page");
+      // Show toast only if not just logged out
+      if (location.pathname !== "/login" && !justLoggedOut) {
+        toast.error("Please login/signup to access this page");
+      }
+
+      sessionStorage.removeItem("justLoggedOut"); // clean up
       navigate("/login", { state: { from: location }, replace: true });
     }
   }, [user, navigate, location]);

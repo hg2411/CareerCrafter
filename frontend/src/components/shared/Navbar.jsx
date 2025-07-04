@@ -17,6 +17,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+  if (user === null) {
     const fetchUser = async () => {
       try {
         const res = await axios.get("http://localhost:8000/auth/me", {
@@ -29,8 +30,10 @@ const Navbar = () => {
         console.error("User not logged in:", error);
       }
     };
+
     fetchUser();
-  }, [dispatch]);
+  }
+}, [user, dispatch]);
 
   const logoutHandler = async () => {
   try {
@@ -40,8 +43,9 @@ const Navbar = () => {
 
     if (res.data.success) {
       dispatch(setUser(null));
-      toast.success(res.data.message); // ✅ Show toast here only
-      navigate("/login", { replace: true }); // ✅ Go to login
+      sessionStorage.setItem("justLoggedOut", "true"); // 👈 set logout flag
+      toast.success(res.data.message);
+      navigate("/login", { replace: true });
     }
   } catch (error) {
     console.log(error);
