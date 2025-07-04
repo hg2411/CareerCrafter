@@ -18,6 +18,9 @@ passport.use(
             email: profile.emails[0].value,
             googleId: profile.id,
             role: "student", // or prompt later
+            profile: {
+              profilePhoto: profile.photos?.[0]?.value, // ✅ take Gmail profile photo
+            },
           });
         }
 
