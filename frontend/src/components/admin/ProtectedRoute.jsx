@@ -1,19 +1,22 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const ProtectedRoute =({children}) => {
-    const {user} =useSelector(store=>store.auth);
-    const navigate=useNavigate();
-    useEffect(()=>{
-        if(user === null || user.role != 'recruiter'){
-            navigate("/");
-        }
-    },[]);
-    return (
-        <>
-        {children}
-        </>
-    )  
+const ProtectedRoute = ({ children }) => {
+  const { user } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login/signup to access this page");
+      navigate("/login", { state: { from: location }, replace: true });
+    }
+  }, [user, navigate, location]);
+
+  // Show nothing until check completes, or always show children if user exists
+  return user ? children : null;
 };
-export default ProtectedRoute
+
+export default ProtectedRoute;

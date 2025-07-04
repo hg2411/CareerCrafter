@@ -140,30 +140,17 @@ export const getMe = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
-    const file = req.file;
 
-    let cloudResponse = null;
-
-    if (file) {
-      const fileUri = getDataUri(file);
-      const fileExtension = path.extname(file.originalname).substring(1);
-
-      const uploadOptions = {
-        resource_type: "raw",
-        folder: "resumes",
-        public_id: file.originalname.split(".")[0],
-      };
-
-      if (fileExtension) {
-        uploadOptions.format = fileExtension;
-      }
-
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content, uploadOptions);
-    }
+    // ✅ get uploaded files from multer.fields
+    const file = req.files?.file?.[0];                // resume (PDF)
+    const profilePhoto = req.files?.profilePhoto?.[0]; // profile photo (image)
 
     let skillsArray;
     if (skills) {
-      skillsArray = skills.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0);
+      skillsArray = skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter((skill) => skill.length > 0);
     }
 
     const userId = req.id;
@@ -180,14 +167,30 @@ export const updateProfile = async (req, res) => {
     if (bio) user.profile.bio = bio;
     if (skills !== undefined) user.profile.skills = skillsArray;
 
-    if (cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url;
+    // ✅ upload new profile photo if provided
+    if (profilePhoto) {
+      const fileUri = getDataUri(profilePhoto);
+      const upload = await cloudinary.uploader.upload(fileUri.content, {
+        folder: "profile_photos",
+      });
+      user.profile.profilePhoto = upload.secure_url;
+    }
+
+    // ✅ upload new resume if provided
+    if (file) {
+      const fileUri = getDataUri(file);
+      const upload = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "raw",
+        folder: "resumes",
+        public_id: file.originalname.split(".")[0],
+      });
+      user.profile.resume = upload.secure_url;
       user.profile.resumeOriginalName = file.originalname;
     }
 
     await user.save();
 
-    user = {
+    const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -196,7 +199,9 @@ export const updateProfile = async (req, res) => {
       profile: user.profile,
     };
 
-    return res.status(200).json({ message: "Profile updated successfully", user, success: true });
+    return res
+      .status(200)
+      .json({ message: "Profile updated successfully", user: updatedUser, success: true });
   } catch (error) {
     console.error("Update Profile Error:", error);
     return res.status(500).json({ message: "Internal Server Error", success: false });
