@@ -3,19 +3,22 @@ import Navbar from "./shared/Navbar";
 import { Avatar } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Button } from "./ui/button";
-import { Contact, Mail, Pen } from "lucide-react";
+import { Contact, Mail, Pen, X } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import AppliedJobTable from "./AppliedJobTable";
 import UpdateProfileDialogue from "./UpdateProfileDialogue";
 import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
-import ResumeUpload from "./ResumeUpload"; 
+import { calculateProfileCompletion } from "@/utils/calculateProfileCompletion";
 
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
+  const [showMissing, setShowMissing] = useState(false);
   const { user } = useSelector((store) => store.auth);
+
+  const { percentage: completion, missingFields } = calculateProfileCompletion(user);
 
   return (
     <div className="bg-gradient-to-br from-[#faf8ff] via-[#f6f3fc] to-[#fdfcff] min-h-screen pb-16">
@@ -23,6 +26,55 @@ const Profile = () => {
 
       {/* Profile Header Card */}
       <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-3xl mt-12 p-8 shadow-lg shadow-purple-100">
+
+        {/* Profile Completion Bar */}
+        <div className="mb-6 cursor-pointer" onClick={() => {
+          if (completion < 100) setShowMissing(true);
+        }}>
+          <Label className="text-gray-700 font-semibold mb-2">
+            Profile Completion: {completion}%
+          </Label>
+          <div className="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div
+              className="bg-green-600 h-3 rounded-full transition-all duration-500"
+              style={{ width: `${completion}%` }}
+            ></div>
+          </div>
+          {completion < 100 && (
+            <p className="text-xs text-red-500 mt-2">
+              Click here to see what’s missing!
+            </p>
+          )}
+        </div>
+
+        {/* Modal for missing fields */}
+        {showMissing && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+            <div className="bg-white rounded-lg max-w-sm w-full p-6 shadow-lg relative">
+              <button
+                className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+                onClick={() => setShowMissing(false)}
+                aria-label="Close"
+              >
+                <X size={24} />
+              </button>
+              <h3 className="text-lg font-semibold mb-4">Complete Your Profile</h3>
+              <p className="mb-3">To improve your chances, please add the following:</p>
+              <ul className="list-disc list-inside space-y-1 text-gray-700">
+                {missingFields.map((field, idx) => (
+                  <li key={idx}>{field}</li>
+                ))}
+              </ul>
+              <div className="mt-6 text-right">
+                <Button onClick={() => { setShowMissing(false); setOpen(true); }}>
+                  Update Profile Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Rest of your profile content */}
         <div className="flex justify-between items-start flex-col sm:flex-row gap-6">
           {/* Avatar & Info */}
           <div className="flex items-center gap-6">
@@ -81,22 +133,22 @@ const Profile = () => {
         </div>
 
         {/* Resume Upload and View */}
-<div className="mt-8">
-  <Label className="text-md font-semibold mb-2 block text-gray-800">Resume</Label>
-  
-  {user?.profile?.resume ? (
-    <a
-      target="_blank"
-      rel="noopener noreferrer"
-      href={user.profile.resume}
-      className="text-blue-600 hover:underline font-medium"
-    >
-      View Resume
-    </a>
-  ) : (
-    <span className="text-gray-500 block mb-2">No resume uploaded.</span>
-  )}
-</div>
+        <div className="mt-8">
+          <Label className="text-md font-semibold mb-2 block text-gray-800">Resume</Label>
+
+          {user?.profile?.resume ? (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={user.profile.resume}
+              className="text-blue-600 hover:underline font-medium"
+            >
+              View Resume
+            </a>
+          ) : (
+            <span className="text-gray-500 block mb-2">No resume uploaded.</span>
+          )}
+        </div>
       </div>
 
       {/* Applied Jobs Section */}
@@ -106,7 +158,6 @@ const Profile = () => {
       </div>
 
       <UpdateProfileDialogue open={open} setOpen={setOpen} />
-
     </div>
   );
 };
