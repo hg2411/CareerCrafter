@@ -2,56 +2,65 @@ import React, { useState, useEffect } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { LogOut, User2, Menu, X } from "lucide-react";
+import { LogOut, User2, Menu, X, Bell } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
+import { getAllNotifications, markNotificationsAsRead } from "@/redux/notificationSlice";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
+  const { notifications } = useSelector((store) => store.notification);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const unreadNotifications = (notifications || []).filter((n) => !n.read);
+
   useEffect(() => {
-  if (user === null) {
     const fetchUser = async () => {
       try {
         const res = await axios.get("http://localhost:8000/auth/me", {
           withCredentials: true,
         });
-        if (res.data.success) {
-          dispatch(setUser(res.data.user));
-        }
+        if (res.data.success) dispatch(setUser(res.data.user));
       } catch (error) {
         console.error("User not logged in:", error);
       }
     };
 
-    fetchUser();
-  }
-}, [user, dispatch]);
+    if (!user) fetchUser();
+    if (user?._id) dispatch(getAllNotifications());
+  }, [user, dispatch]);
 
   const logoutHandler = async () => {
-  try {
-    const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-      withCredentials: true,
-    });
-
-    if (res.data.success) {
-      dispatch(setUser(null));
-      sessionStorage.setItem("justLoggedOut", "true"); // 👈 set logout flag
-      toast.success(res.data.message);
-      navigate("/login", { replace: true });
+    try {
+      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        dispatch(setUser(null));
+        sessionStorage.setItem("justLoggedOut", "true");
+        toast.success(res.data.message);
+        navigate("/login", { replace: true });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Logout failed.");
     }
-  } catch (error) {
-    console.log(error);
-    toast.error(error?.response?.data?.message || "Logout failed.");
-  }
-};
+  };
+
+  const markAllReadHandler = async () => {
+    try {
+      await dispatch(markNotificationsAsRead());
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Logout failed.");
+    }
+  };
 
   return (
     <div className="bg-white sticky top-0 z-50 border-b border-gray-200">
@@ -61,140 +70,131 @@ const Navbar = () => {
           <Link to="/">Career<span className="text-blue-600">Crafter</span></Link>
         </h1>
 
-        {/* Desktop Nav Links */}
-        <ul className="hidden md:flex font-medium items-center gap-12 text-gray-700 text-lg">
-          {user && user.role === "recruiter" ? (
+        {/* Desktop Nav */}
+        <ul className="hidden md:flex items-center gap-10 text-gray-700 text-lg font-medium">
+          {user?.role === "recruiter" ? (
             <>
-              <li className="hover:text-blue-600 hover:underline cursor-pointer transition-all">
-                <Link to="/admin/companies">Companies</Link>
-              </li>
-              <li className="hover:text-blue-600 hover:underline cursor-pointer transition-all">
-                <Link to="/admin/jobs">Jobs</Link>
-              </li>
+              <li><Link to="/admin/companies" className="hover:text-blue-600">Companies</Link></li>
+              <li><Link to="/admin/jobs" className="hover:text-blue-600">Jobs</Link></li>
             </>
           ) : (
-            <>
-              {["Home", "Jobs", "Browse" ,"Saved"].map((item) => (
-                <li key={item} className="relative group cursor-pointer">
-                  <Link
-                    to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                    className="block group-hover:text-blue-600 transition-all"
-                  >
-                    {item}
-                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all"></span>
-                  </Link>
-                </li>
-              ))}
-            </>
+            ["Home", "Jobs", "Browse", "Saved"].map((item) => (
+              <li key={item}>
+                <Link to={item === "Home" ? "/" : `/${item.toLowerCase()}`} className="hover:text-blue-600">
+                  {item}
+                </Link>
+              </li>
+            ))
           )}
         </ul>
 
-        {/* Auth Section - Desktop */}
+        {/* Auth & Actions */}
         {!user ? (
-          <div className="hidden md:flex items-center gap-4">
-            <Link to="/login">
-              <Button variant="outline" className="rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-6 py-2 text-base transition-all hover:scale-105">
-                Login
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="rounded-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-base transition-all hover:scale-105 shadow-md">
-                Sign Up
-              </Button>
-            </Link>
+          <div className="hidden md:flex gap-4">
+            <Link to="/login"><Button variant="outline">Login</Button></Link>
+            <Link to="/signup"><Button>Sign Up</Button></Link>
           </div>
         ) : (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Avatar className="cursor-pointer hover:scale-105 transition-transform">
-                <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} alt="profile" />
-              </Avatar>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 bg-white border border-gray-200 shadow-lg rounded-xl p-4">
-              <div className="flex gap-4 items-center">
-                <Avatar>
-                  <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} alt="profile" />
-                </Avatar>
-                <div>
-                  <h4 className="font-semibold text-gray-800">{user?.fullname}</h4>
-                  <p className="text-sm text-gray-500">{user?.profile?.bio || user?.email}</p>
+          <div className="flex items-center gap-4">
+            {/* 🔔 Notifications */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="relative cursor-pointer">
+                  <Bell className="text-gray-600 hover:text-blue-600" />
+                  {unreadNotifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
+                      {unreadNotifications.length > 9 ? "9+" : unreadNotifications.length}
+                    </span>
+                  )}
                 </div>
-              </div>
-              <div className="mt-4 space-y-2 text-sm text-gray-700">
-                {user?.role === "student" && (
-                  <div className="flex items-center gap-2 hover:text-blue-600 cursor-pointer transition-colors">
-                    <User2 size={18} />
-                    <Button variant="link" className="text-sm p-0 text-gray-700">
-                      <Link to="/profile">View Profile</Link>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="font-semibold text-gray-800 mb-2">Notifications</div>
+                {notifications?.length ? (
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {notifications.map((n) => (
+                      <div key={n._id} className="p-2 rounded-md text-sm border bg-gray-50">
+                        {n.message}
+                      </div>
+                    ))}
+                    <Button onClick={markAllReadHandler} className="mt-3 w-full" size="sm">
+                      Mark all as read
                     </Button>
                   </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No notifications.</p>
                 )}
-                <div className="flex items-center gap-2 hover:text-blue-600 cursor-pointer transition-colors">
-                  <LogOut size={18} />
-                  <Button onClick={logoutHandler} variant="link" className="text-sm p-0 text-gray-700">
-                    Logout
-                  </Button>
+              </PopoverContent>
+            </Popover>
+
+            {/* 🧑‍🎓 Profile */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} />
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent className="w-64">
+                <div className="flex gap-4 items-center">
+                  <Avatar><AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} /></Avatar>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">{user?.fullname}</h4>
+                    <p className="text-sm text-gray-500">{user?.email}</p>
+                  </div>
                 </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+                <div className="mt-4 space-y-2 text-sm text-gray-700">
+                  {user?.role === "student" && (
+                    <Link to="/profile" className="flex items-center gap-2 hover:text-blue-600">
+                      <User2 size={18} /> View Profile
+                    </Link>
+                  )}
+                  <div onClick={logoutHandler} className="flex items-center gap-2 hover:text-blue-600 cursor-pointer">
+                    <LogOut size={18} /> Logout
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         )}
 
-        {/* Hamburger Menu - Mobile */}
-        <div className="md:hidden flex items-center">
+        {/* Mobile Menu Toggle */}
+        <div className="md:hidden">
           <button onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={30} /> : <Menu size={30} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* 📱 Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 px-6 py-4 space-y-4">
-          {user && user.role === "recruiter" ? (
-            <>
-              <Link to="/admin/companies" onClick={() => setMenuOpen(false)} className="block text-gray-700 text-lg hover:text-blue-600">Companies</Link>
-              <Link to="/admin/jobs" onClick={() => setMenuOpen(false)} className="block text-gray-700 text-lg hover:text-blue-600">Jobs</Link>
-            </>
-          ) : (
-            <>
-              {["Home", "Jobs", "Browse", "Saved"].map((item) => (
-                <Link
-                  key={item}
-                  to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                  onClick={() => setMenuOpen(false)}
-                  className="block text-gray-700 text-lg hover:text-blue-600"
-                >
-                  {item}
-                </Link>
-              ))}
-            </>
-          )}
+        <div className="md:hidden px-6 py-4 bg-white border-t border-gray-200">
+          {(user?.role === "recruiter" ? ["Companies", "Jobs"] : ["Home", "Jobs", "Browse", "Saved"]).map((item) => (
+            <Link
+              key={item}
+              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+              onClick={() => setMenuOpen(false)}
+              className="block py-2 text-gray-700 hover:text-blue-600"
+            >
+              {item}
+            </Link>
+          ))}
 
           {!user ? (
-            <div className="flex flex-col gap-3 mt-4">
-              <Link to="/login" onClick={() => setMenuOpen(false)}>
-                <Button variant="outline" className="w-full rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 px-6 py-2 text-base transition-all hover:scale-105">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/signup" onClick={() => setMenuOpen(false)}>
-                <Button className="w-full rounded-full px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-base transition-all hover:scale-105 shadow-md">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
+            <>
+              <Link to="/login"><Button variant="outline" className="w-full mt-2">Login</Button></Link>
+              <Link to="/signup"><Button className="w-full mt-2">Sign Up</Button></Link>
+            </>
           ) : (
-            <div className="flex flex-col gap-3 mt-4">
+            <>
               {user?.role === "student" && (
-                <Link to="/profile" onClick={() => setMenuOpen(false)} className="block text-gray-700 text-lg hover:text-blue-600">
+                <Link to="/profile" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 hover:text-blue-600">
                   View Profile
                 </Link>
               )}
-              <button onClick={() => { logoutHandler(); setMenuOpen(false); }} className="text-left text-gray-700 text-lg hover:text-blue-600">
+              <button onClick={() => { logoutHandler(); setMenuOpen(false); }} className="block py-2 text-gray-700 hover:text-blue-600">
                 Logout
               </button>
-            </div>
+            </>
           )}
         </div>
       )}

@@ -36,7 +36,7 @@ const Profile = () => {
           </Label>
           <div className="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div
-              className="bg-purple-600 h-3 rounded-full transition-all duration-500"
+              className="bg-green-600 h-3 rounded-full transition-all duration-500"
               style={{ width: `${completion}%` }}
             ></div>
           </div>
