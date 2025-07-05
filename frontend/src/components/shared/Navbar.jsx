@@ -118,9 +118,21 @@ const Navbar = () => {
 
         {/* Auth & Actions */}
         {!user ? (
-          <div className="hidden md:flex gap-4">
-            <Link to="/login"><Button variant="outline">Login</Button></Link>
-            <Link to="/signup"><Button>Sign Up</Button></Link>
+          <div className="hidden md:flex gap-3">
+            <Link to="/login">
+              <Button
+                className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2 rounded-full font-semibold transition duration-300"
+              >
+                Login
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-full font-semibold shadow-md transition duration-300"
+              >
+                Sign Up
+              </Button>
+            </Link>
           </div>
         ) : (
           <div className="flex items-center gap-4">
@@ -220,8 +232,12 @@ const Navbar = () => {
 
           {!user ? (
             <>
-              <Link to="/login"><Button variant="outline" className="w-full mt-2">Login</Button></Link>
-              <Link to="/signup"><Button className="w-full mt-2">Sign Up</Button></Link>
+              <Link to="/login">
+                <Button variant="outline" className="w-full mt-2">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="w-full mt-2">Sign Up</Button>
+              </Link>
             </>
           ) : (
             <>
