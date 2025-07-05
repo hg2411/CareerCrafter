@@ -8,11 +8,11 @@ import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 
 const category = [
-  { name: "Frontend Developer", icon: <Monitor className="w-5 h-5" />, color: "from-[#6A38C2] to-[#9D50BB]" },
-  { name: "Backend Developer", icon: <Database className="w-5 h-5" />, color: "from-[#4FD1C5] to-[#2C7A7B]" },
-  { name: "Data Science", icon: <Layers className="w-5 h-5" />, color: "from-[#F6AD55] to-[#DD6B20]" },
-  { name: "Graphic Designer", icon: <PenTool className="w-5 h-5" />, color: "from-[#FC8181] to-[#E53E3E]" },
-  { name: "FullStack Developer", icon: <Code className="w-5 h-5" />, color: "from-[#68D391] to-[#38A169]" }
+  { name: "Frontend Developer", icon: <Monitor className="w-4 h-4" />, color: "from-purple-500 to-purple-700" },
+  { name: "Backend Developer", icon: <Database className="w-4 h-4" />, color: "from-teal-500 to-teal-700" },
+  { name: "Data Science", icon: <Layers className="w-4 h-4" />, color: "from-orange-400 to-orange-600" },
+  { name: "Graphic Designer", icon: <PenTool className="w-4 h-4" />, color: "from-red-400 to-red-600" },
+  { name: "FullStack Developer", icon: <Code className="w-4 h-4" />, color: "from-green-400 to-green-600" },
 ];
 
 const CategoryCarousel = () => {
@@ -21,17 +21,17 @@ const CategoryCarousel = () => {
 
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
-    slides: { perView: 3, spacing: 15 },
+    slides: { perView: 3, spacing: 12 },
+    breakpoints: {
+      "(max-width: 768px)": { slides: { perView: 2, spacing: 10 } },
+      "(max-width: 480px)": { slides: { perView: 1.5, spacing: 8 } },
+    },
   });
 
-  // Auto-scroll effect
   useEffect(() => {
-    let interval = setInterval(() => {
-      if (instanceRef.current) {
-        instanceRef.current.next();
-      }
-    }, 2000); // Change slide every 2 seconds
-
+    const interval = setInterval(() => {
+      instanceRef.current?.next();
+    }, 2500);
     return () => clearInterval(interval);
   }, [instanceRef]);
 
@@ -41,17 +41,20 @@ const CategoryCarousel = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 my-20">
-      <h2 className="text-3xl font-extrabold text-center mb-10">Browse Job Categories</h2>
+    <div className="max-w-6xl mx-auto px-2 my-8">
+      <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 text-gray-800">
+        Browse Job Categories
+      </h2>
 
       <div ref={sliderRef} className="keen-slider">
         {category.map((cat, index) => (
-          <div key={index} className="keen-slider__slide flex justify-center p-4">
+          <div key={index} className="keen-slider__slide flex justify-center">
             <Button
               onClick={() => searchJobHandler(cat.name)}
-              className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-gradient-to-r ${cat.color} text-white text-lg hover:opacity-90 transition-all shadow-lg`}
+              className={`flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-gradient-to-r ${cat.color} text-white text-sm md:text-base hover:opacity-90 transition-all duration-200`}
             >
-              {cat.icon} {cat.name}
+              {cat.icon}
+              <span>{cat.name}</span>
             </Button>
           </div>
         ))}
