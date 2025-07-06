@@ -77,15 +77,16 @@ passport.use(
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          // Temporary user until role is selected
-          const tempUser = {
+          // Option A: create immediately with default role (student/recruiter)
+          user = await User.create({
             fullname: profile.displayName,
             email: profile.emails[0].value,
             googleId: profile.id,
-          };
-          return done(null, { temp: true, ...tempUser });
+            role: "student",  // default; you can change logic later
+          });
         }
 
+        // ✅ Done
         return done(null, user);
       } catch (err) {
         console.error("Google Strategy Error:", err);
@@ -94,6 +95,7 @@ passport.use(
     }
   )
 );
+
 
 passport.serializeUser((user, done) => {
   if (user._id) {
