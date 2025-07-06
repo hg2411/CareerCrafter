@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
-import { getAllNotifications, markNotificationsAsRead } from "@/redux/notificationSlice";
+import { getAllNotifications, markAllNotificationsAsRead } from "@/redux/notificationSlice";
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -20,7 +20,7 @@ const Navbar = () => {
   const currentPath = location.pathname;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const unreadNotifications = (notifications || []).filter((n) => !n.read);
+  const unreadNotifications = (notifications || []).filter((n) => !n.isRead);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,9 +56,9 @@ const Navbar = () => {
   };
 
   const markAllReadHandler = async () => {
-    try {
-      await dispatch(markNotificationsAsRead());
-    } catch (error) {
+  try {
+    await dispatch(markAllNotificationsAsRead());
+  } catch (error) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Failed to mark as read.");
     }
@@ -154,7 +154,10 @@ const Navbar = () => {
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {notifications.map((n) => (
                       <div key={n._id} className="p-2 rounded-md text-sm border bg-gray-50">
-                        {n.message}
+                        <p className="font-medium text-gray-800">{n.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(n.createdAt).toLocaleString()}
+                        </p>
                       </div>
                     ))}
                     <Button onClick={markAllReadHandler} className="mt-3 w-full" size="sm">

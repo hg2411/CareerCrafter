@@ -1,10 +1,10 @@
-// src/redux/notificationSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Replace with your real API endpoint
+// ✅ Correct base URL
 const NOTIFICATION_API = "http://localhost:8000/api/v1/notifications";
 
+// ✅ Fetch all notifications
 export const getAllNotifications = createAsyncThunk(
   "notifications/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -14,25 +14,27 @@ export const getAllNotifications = createAsyncThunk(
       });
       return res.data.notifications;
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response?.data?.message || "Error fetching notifications");
     }
   }
 );
 
-export const markNotificationsAsRead = createAsyncThunk(
-  "notifications/markAsRead",
+export const markAllNotificationsAsRead = createAsyncThunk(
+  "notifications/markAllAsRead",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`${NOTIFICATION_API}/mark-all-read`, {}, {
-        withCredentials: true,
-      });
-      return res.data.updatedNotifications;
+      const res = await axios.put(
+        "http://localhost:8000/api/v1/notifications/mark-all-as-read",
+        {},
+        { withCredentials: true }
+      );
+      return res.data.notifications; // or whatever you return from the backend
     } catch (error) {
       return rejectWithValue(error.response.data.message);
     }
   }
 );
-
+// ✅ Slice
 const notificationSlice = createSlice({
   name: "notification",
   initialState: {
@@ -54,8 +56,7 @@ const notificationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
-      .addCase(markNotificationsAsRead.fulfilled, (state, action) => {
+      .addCase(markAllNotificationsAsRead.fulfilled, (state, action) => {
         state.notifications = action.payload;
       });
   },
