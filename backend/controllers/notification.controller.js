@@ -24,3 +24,13 @@ export const markAsRead = async (req, res) => {
     res.status(500).json({ success: false, message: "Error updating notification." });
   }
 };
+export const markAllAsRead = async (req, res) => {
+  try {
+    const userId = req.id;
+    await Notification.updateMany({ user: userId, isRead: false }, { isRead: true });
+    const notifications = await Notification.find({ user: userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, notifications });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error updating notifications." });
+  }
+};

@@ -52,6 +52,13 @@ export const applyJob = async (req, res) => {
             message: `New application for "${job.title}" by ${user?.fullname || "a user"}.`,
         });
 
+        // Also send notification to the applicant (student)
+        await Notification.create({
+        user: userId,
+        message: `🎉 You have applied for the job successfully!`,
+        type: "success",
+        });
+
         return res.status(201).json({
             message: "Job applied successfully.",
             success: true,
