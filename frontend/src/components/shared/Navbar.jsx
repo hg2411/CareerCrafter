@@ -20,7 +20,7 @@ const Navbar = () => {
   const currentPath = location.pathname;
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const unreadNotifications = (notifications || []).filter((n) => !n.read);
+  const unreadNotifications = (notifications || []).filter((n) => !n.isRead);
 
   useEffect(() => {
     const fetchUser = async () => {

@@ -9,7 +9,7 @@ import Signup from "./components/auth/Signup.jsx";
 import Jobs from "./components/Jobs.jsx";
 import Browse from "./components/Browse.jsx";
 import Profile from "./components/Profile.jsx";
-import JobDescription from "./components/JobDecription.jsx";
+import JobDescription from "./components/JobDescription.jsx";
 import Companies from "./components/admin/Companies.jsx";
 import CompanyCreate from "./components/admin/CompanyCreate.jsx";
 import CompanySetup from "./components/admin/CompanySetup.jsx";
@@ -20,6 +20,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
 import SelectRole from "./pages/SelectRole.jsx";
 import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
+import Notification from "./components/Notification.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -58,6 +59,7 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs/create", element: <PostJob /> },
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
           { path: "resume/upload", element: <ResumeUpload/> },
+          { path: "notifications", element: <Notification /> },
         ],
       },
     ],

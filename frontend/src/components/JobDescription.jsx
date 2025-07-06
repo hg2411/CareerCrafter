@@ -12,39 +12,65 @@ import { MapPin, Users, Briefcase, IndianRupee, CalendarDays, FileText } from "l
 const JobDescription = () => {
   const { singleJob } = useSelector((store) => store.job);
   const { user } = useSelector((store) => store.auth);
-  const isInitiallyApplied =
-    singleJob?.applications?.some((application) => application.applicant === user?._id) || false;
+  const [userApplication, setUserApplication] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [isApplied, setIsApplied] = useState(isInitiallyApplied);
   const params = useParams();
   const jobId = params.id;
   const dispatch = useDispatch();
 
   const applyJobHandler = async () => {
     try {
-      const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
+      setLoading(true);
+      const res = await axios.post(
+        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        {},
+        { withCredentials: true }
+      );
+      setLoading(false);
+
       if (res.data.success) {
-        setIsApplied(true);
+        const newApp = res.data.application;
+
         const updatedSingleJob = {
           ...singleJob,
-          applications: [...singleJob.applications, { applicant: user?._id }],
+          applications: [...(singleJob.applications || []), {
+            ...newApp,
+            applicant: user?._id
+          }]
         };
+
         dispatch(setSingleJob(updatedSingleJob));
+        setUserApplication({ ...newApp, applicant: user?._id });
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || 'Application failed');
+      setLoading(false);
+      if (error.response?.status === 409) {
+        toast.info("You have already applied to this job.");
+        // Try setting the status again from already fetched job
+        const existing = singleJob?.applications?.find(
+          (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+        );
+        setUserApplication(existing || null);
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong.");
+      }
     }
   };
 
   useEffect(() => {
     const fetchSingleJob = async () => {
       try {
-        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+        const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, { withCredentials: true });
         if (res.data.success) {
           dispatch(setSingleJob(res.data.job));
-          setIsApplied(res.data.job.applications.some((application) => application.applicant === user?._id));
+
+          const foundApplication = res.data.job.applications?.find(
+            (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+          );
+
+          setUserApplication(foundApplication || null);
         }
       } catch (error) {
         console.log(error);
@@ -52,6 +78,19 @@ const JobDescription = () => {
     };
     fetchSingleJob();
   }, [jobId, dispatch, user?._id]);
+
+  const isApplied = !!userApplication;
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'accepted':
+        return 'bg-green-600';
+      case 'rejected':
+        return 'bg-red-600';
+      default:
+        return 'bg-yellow-500';
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 mt-10 bg-white rounded-2xl shadow-xl">
@@ -73,15 +112,25 @@ const JobDescription = () => {
         </div>
 
         {/* Apply Button */}
-        <Button
-          onClick={isApplied ? null : applyJobHandler}
-          disabled={isApplied}
-          className={`text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 ${
-            isApplied ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90'
-          }`}
-        >
-          {isApplied ? 'Already Applied' : 'Apply Now'}
-        </Button>
+        <div className="flex flex-col gap-2 items-end">
+          <Button
+            onClick={isApplied || loading ? null : applyJobHandler}
+            disabled={isApplied || loading}
+            className={`text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 ${
+              isApplied || loading
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90'
+            }`}
+          >
+            {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
+          </Button>
+
+          {isApplied && (
+            <Badge className={`mt-1 text-white px-3 py-1 ${getStatusColor(userApplication?.status)}`}>
+              Status: {userApplication?.status?.toUpperCase() || 'APPLIED'}
+            </Badge>
+          )}
+        </div>
       </div>
 
       {/* Divider */}

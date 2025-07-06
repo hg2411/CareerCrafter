@@ -1,5 +1,7 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
 
 // =========================== APPLY FOR A JOB ===========================
 export const applyJob = async (req, res) => {
@@ -43,6 +45,12 @@ export const applyJob = async (req, res) => {
             job.applications.push(newApplication._id);
             await job.save();
         }
+
+        const user = await User.findById(userId); // get full name/email
+        await Notification.create({
+            user: job.created_by, // company user
+            message: `New application for "${job.title}" by ${user?.fullname || "a user"}.`,
+        });
 
         return res.status(201).json({
             message: "Job applied successfully.",
