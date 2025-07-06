@@ -21,19 +21,21 @@ const Notification = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-200 py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-gray-100 rounded-3xl shadow-xl p-8">
-        <h2 className="text-3xl font-semibold mb-8 text-center text-gray-800">🔔 Notifications</h2>
+    <div className="min-h-screen bg-gray-200 flex justify-center items-start py-12 px-4">
+      <div className="w-full max-w-3xl bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-2xl p-8">
+        <h2 className="text-4xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
+          🔔 Notifications
+        </h2>
         {notifications.length === 0 ? (
-          <p className="text-gray-600 text-center">No notifications yet.</p>
+          <p className="text-gray-600 text-center mt-4">No notifications yet.</p>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-4 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pr-2">
             {notifications.map((notif) => (
               <li
                 key={notif._id}
-                className="p-5 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-shadow flex justify-between items-center border border-gray-200"
+                className="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all flex justify-between items-center border border-gray-100"
               >
-                <span className="text-gray-700">{notif.message}</span>
+                <span className="text-gray-700 text-base">{notif.message}</span>
                 <Badge className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
                   {new Date(notif.createdAt).toLocaleDateString()}
                 </Badge>

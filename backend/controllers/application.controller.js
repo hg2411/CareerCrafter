@@ -141,38 +141,46 @@ export const getApplicants = async (req, res) => {
 
 // =========================== ADMIN: UPDATE STATUS OF A JOB APPLICATION ===========================
 export const updateStatus = async (req, res) => {
-    try {
-        const { status } = req.body;
-        const applicationId = req.params.id;
+  try {
+    const { status } = req.body;
+    const applicationId = req.params.id;
 
-        if (!status) {
-            return res.status(400).json({
-                message: "Status is required.",
-                success: false
-            });
-        }
-
-        const application = await Application.findById(applicationId);
-        if (!application) {
-            return res.status(404).json({
-                message: "Application not found.",
-                success: false
-            });
-        }
-
-        application.status = status.toLowerCase();
-        await application.save();
-
-        return res.status(200).json({
-            message: "Status updated successfully.",
-            success: true
-        });
-
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Internal server error.",
-            success: false
-        });
+    if (!status) {
+      return res.status(400).json({
+        message: "Status is required.",
+        success: false
+      });
     }
+
+    const application = await Application.findById(applicationId).populate('applicant').populate('job');
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found.",
+        success: false
+      });
+    }
+
+    application.status = status.toLowerCase();
+    await application.save();
+
+    // ✅ Send notification if status is 'accepted'
+    if (status.toLowerCase() === "accepted") {
+      await Notification.create({
+        user: application.applicant._id,
+        message: `🎉 Congratulations! You have been selected for the job: ${application.job.title}`
+      });
+    }
+
+    return res.status(200).json({
+      message: "Status updated successfully.",
+      success: true
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false
+    });
+  }
 };
