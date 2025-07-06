@@ -3,7 +3,7 @@ import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { LogOut, User2, Menu, X, Bell } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -16,6 +16,8 @@ const Navbar = () => {
   const { notifications } = useSelector((store) => store.notification);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const [menuOpen, setMenuOpen] = useState(false);
 
   const unreadNotifications = (notifications || []).filter((n) => !n.read);
@@ -58,7 +60,7 @@ const Navbar = () => {
       await dispatch(markNotificationsAsRead());
     } catch (error) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "Logout failed.");
+      toast.error(error?.response?.data?.message || "Failed to mark as read.");
     }
   };
 
@@ -71,32 +73,70 @@ const Navbar = () => {
         </h1>
 
         {/* Desktop Nav */}
-        <ul className="hidden md:flex items-center gap-10 text-gray-700 text-lg font-medium">
+        <ul className="hidden md:flex items-center gap-10 text-lg font-medium">
           {user?.role === "recruiter" ? (
             <>
-              <li><Link to="/admin/companies" className="hover:text-blue-600">Companies</Link></li>
-              <li><Link to="/admin/jobs" className="hover:text-blue-600">Jobs</Link></li>
+              {[
+                { name: "Companies", path: "/admin/companies" },
+                { name: "Jobs", path: "/admin/jobs" },
+              ].map(({ name, path }) => (
+                <li key={name}>
+                  <Link
+                    to={path}
+                    className={`relative transition-colors duration-300 ${
+                      currentPath === path
+                        ? "text-blue-600 font-semibold after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500"
+                        : "text-gray-700 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500 hover:after:w-full hover:text-blue-600"
+                    }`}
+                  >
+                    {name}
+                  </Link>
+                </li>
+              ))}
             </>
           ) : (
-            ["Home", "Jobs", "Browse", "Saved"].map((item) => (
-              <li key={item}>
-                <Link to={item === "Home" ? "/" : `/${item.toLowerCase()}`} className="hover:text-blue-600">
-                  {item}
-                </Link>
-              </li>
-            ))
+            ["Home", "Jobs", "Browse", "Saved"].map((item) => {
+              const path = item === "Home" ? "/" : `/${item.toLowerCase()}`;
+              const isActive = currentPath === path;
+              return (
+                <li key={item}>
+                  <Link
+                    to={path}
+                    className={`relative transition-colors duration-300 ${
+                      isActive
+                        ? "text-blue-600 font-semibold after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500"
+                        : "text-gray-700 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500 hover:after:w-full hover:text-blue-600"
+                    }`}
+                  >
+                    {item}
+                  </Link>
+                </li>
+              );
+            })
           )}
         </ul>
 
         {/* Auth & Actions */}
         {!user ? (
-          <div className="hidden md:flex gap-4">
-            <Link to="/login"><Button variant="outline">Login</Button></Link>
-            <Link to="/signup"><Button>Sign Up</Button></Link>
+          <div className="hidden md:flex gap-3">
+            <Link to="/login">
+              <Button
+                className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2 rounded-full font-semibold transition duration-300"
+              >
+                Login
+              </Button>
+            </Link>
+            <Link to="/signup">
+              <Button
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-full font-semibold shadow-md transition duration-300"
+              >
+                Sign Up
+              </Button>
+            </Link>
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            {/* 🔔 Notifications */}
+            {/* Notifications */}
             <Popover>
               <PopoverTrigger asChild>
                 <div className="relative cursor-pointer">
@@ -127,7 +167,7 @@ const Navbar = () => {
               </PopoverContent>
             </Popover>
 
-            {/* 🧑‍🎓 Profile */}
+            {/* Profile */}
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
@@ -165,33 +205,57 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 📱 Mobile Menu */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden px-6 py-4 bg-white border-t border-gray-200">
-          {(user?.role === "recruiter" ? ["Companies", "Jobs"] : ["Home", "Jobs", "Browse", "Saved"]).map((item) => (
+          {(user?.role === "recruiter"
+            ? [
+                { name: "Companies", path: "/admin/companies" },
+                { name: "Jobs", path: "/admin/jobs" },
+              ]
+            : ["Home", "Jobs", "Browse", "Saved"].map((item) => ({
+                name: item,
+                path: item === "Home" ? "/" : `/${item.toLowerCase()}`,
+              }))
+          ).map(({ name, path }) => (
             <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+              key={name}
+              to={path}
               onClick={() => setMenuOpen(false)}
-              className="block py-2 text-gray-700 hover:text-blue-600"
+              className={`block py-2 transition-colors duration-300 hover:text-blue-600 ${
+                currentPath === path ? "text-blue-600 font-semibold scale-105" : "text-gray-700"
+              }`}
             >
-              {item}
+              {name}
             </Link>
           ))}
 
           {!user ? (
             <>
-              <Link to="/login"><Button variant="outline" className="w-full mt-2">Login</Button></Link>
-              <Link to="/signup"><Button className="w-full mt-2">Sign Up</Button></Link>
+              <Link to="/login">
+                <Button variant="outline" className="w-full mt-2">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="w-full mt-2">Sign Up</Button>
+              </Link>
             </>
           ) : (
             <>
               {user?.role === "student" && (
-                <Link to="/profile" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 hover:text-blue-600">
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className={`block py-2 transition-colors duration-300 hover:text-blue-600 ${
+                    currentPath === "/profile" ? "text-blue-600 font-semibold scale-105" : "text-gray-700"
+                  }`}
+                >
                   View Profile
                 </Link>
               )}
-              <button onClick={() => { logoutHandler(); setMenuOpen(false); }} className="block py-2 text-gray-700 hover:text-blue-600">
+              <button
+                onClick={() => { logoutHandler(); setMenuOpen(false); }}
+                className="block py-2 text-gray-700 hover:text-blue-600"
+              >
                 Logout
               </button>
             </>
