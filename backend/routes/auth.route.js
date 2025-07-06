@@ -19,60 +19,59 @@ const router = express.Router();
 // 🔹 Google OAuth Routes
 // ------------------------
 
-// 1. Start Google Login
+// 1️⃣ Start Google login
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// 2. Google Callback → ✅ set JWT token cookie
+// 2️⃣ Google callback → set JWT cookie
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    req.session.save(() => {
-      try {
-        if (!req.user) {
-          return res.redirect("http://localhost:5173/login"); // fallback
-        }
-
-        // ✅ if user hasn't selected role yet → go to select-role page
-        if (!req.user.role) {
-          return res.redirect("http://localhost:5173/select-role");
-        }
-
-        // ✅ generate JWT token
-        const token = jwt.sign(
-          { userId: req.user._id },
-          process.env.SECRET_KEY,
-          { expiresIn: "1d" }
-        );
-
-        // ✅ set token cookie
-        res.cookie("token", token, {
-          httpOnly: true,
-          sameSite: "strict",
-          secure: process.env.NODE_ENV === "production",
-          maxAge: 24 * 60 * 60 * 1000,
-        });
-
-        // ✅ redirect based on user role
-        if (req.user.role === "student") {
-          return res.redirect("http://localhost:5173/");
-        } else if (req.user.role === "recruiter") {
-          return res.redirect("http://localhost:5173/admin/companies");
-        } else {
-          return res.redirect("http://localhost:5173/");
-        }
-      } catch (err) {
-        console.error("Google callback error:", err);
+  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+  async (req, res) => {
+    try {
+      if (!req.user) {
         return res.redirect("http://localhost:5173/login");
       }
-    });
+
+      // If user has no role → redirect to role selection page
+      if (!req.user.role) {
+        return res.redirect("http://localhost:5173/select-role");
+      }
+
+      // ✅ generate JWT token
+      const token = jwt.sign(
+        { userId: req.user._id },
+        process.env.SECRET_KEY,
+        { expiresIn: "1d" }
+      );
+
+      // ✅ set cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax", // better for frontend cross-origin
+        secure: process.env.NODE_ENV === "production", // true only in prod
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      // redirect user based on role
+      if (req.user.role === "student") {
+        return res.redirect("http://localhost:5173/");
+      } else if (req.user.role === "recruiter") {
+        return res.redirect("http://localhost:5173/admin/companies");
+      } else {
+        return res.redirect("http://localhost:5173/");
+      }
+
+    } catch (err) {
+      console.error("Google callback error:", err);
+      return res.redirect("http://localhost:5173/login");
+    }
   }
 );
 
-// 3. Set role for Google users (first time)
+// 3️⃣ Set role after Google login (first time)
 router.post("/set-role", ensureAuthenticated, async (req, res) => {
   try {
     const { role } = req.body;
@@ -80,7 +79,7 @@ router.post("/set-role", ensureAuthenticated, async (req, res) => {
     let user = await User.findOne({ googleId: req.user.googleId });
 
     if (!user) {
-      // first time user → create in DB
+      // first time Google user → create user
       user = await User.create({
         fullname: req.user.fullname,
         email: req.user.email,
@@ -88,7 +87,7 @@ router.post("/set-role", ensureAuthenticated, async (req, res) => {
         role,
       });
     } else {
-      // user already exists → just set role
+      // user exists → just set role
       user.role = role;
       await user.save();
     }
@@ -99,7 +98,7 @@ router.post("/set-role", ensureAuthenticated, async (req, res) => {
         return res.status(500).json({ success: false, message: "Session update failed" });
       }
 
-      // ✅ also generate and set JWT token cookie
+      // also set JWT token
       const token = jwt.sign(
         { userId: user._id },
         process.env.SECRET_KEY,
@@ -108,7 +107,7 @@ router.post("/set-role", ensureAuthenticated, async (req, res) => {
 
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
       });
@@ -121,15 +120,16 @@ router.post("/set-role", ensureAuthenticated, async (req, res) => {
   }
 });
 
+
 // ------------------------
-// 🔹 JWT Auth Routes
+// 🔹 Classic JWT Auth Routes
 // ------------------------
 
-router.post("/register", singleUpload, register);      // with profile photo
-router.post("/login", login);                          // classic login → sets token
-router.get("/logout", logout);                          // clears token + session
+router.post("/register", singleUpload, register);
+router.post("/login", login);
+router.get("/logout", logout);
 
-// ⚠️ Use JWT-based auth for /me and /update-profile
+// ⚠️ Protected: need token in cookie
 router.get("/me", isAuthenticated, getMe);
 router.put("/update-profile", isAuthenticated, singleUpload, updateProfile);
 
