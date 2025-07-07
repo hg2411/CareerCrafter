@@ -59,25 +59,25 @@ const JobDescription = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchSingleJob = async () => {
-      try {
-        const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, { withCredentials: true });
-        if (res.data.success) {
-          dispatch(setSingleJob(res.data.job));
+useEffect(() => {
+  const fetchSingleJob = async () => {
+    try {
+      const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, { withCredentials: true });
+      if (res.data.success) {
+        dispatch(setSingleJob(res.data.job));
 
-          const foundApplication = res.data.job.applications?.find(
-            (app) => app.applicant?._id === user?._id || app.applicant === user?._id
-          );
-
-          setUserApplication(foundApplication || null);
-        }
-      } catch (error) {
-        console.log(error);
+        const foundApplication = res.data.job.applications?.find(
+          (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+        );
+        setUserApplication(foundApplication || null);
       }
-    };
-    fetchSingleJob();
-  }, [jobId, dispatch, user?._id]);
+    } catch (error) {
+      console.log(error);
+      toast.error("Job not found or has been removed.");
+    }
+  };
+  fetchSingleJob();
+}, [jobId, dispatch, user?._id]);
 
   const isApplied = !!userApplication;
 
