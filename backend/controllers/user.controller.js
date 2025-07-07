@@ -1,11 +1,131 @@
 import { User } from "../models/user.model.js";
+import { OtpVerification } from "../models/otpVerification.model.js"; // ✅ new
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/getDataUri.js";
 import cloudinary from "../utils/cloudinary.js";
-import path from "path";
+import sendMail from "../utils/sendMail.js"; // ✅ new
 
-// ====================== Register ======================
+
+// ====================== Send OTP ======================
+export const sendOtpForRegistration = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res
+        .status(400)
+        .json({ message: "Email is required", success: false });
+
+    // ✅ Strong regex to check email format
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isValidEmail) {
+      return res
+        .status(400)
+        .json({
+          message: "Please enter a valid email address.",
+          success: false,
+        });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({
+          message: "User already exists with this email",
+          success: false,
+        });
+    }
+
+    // Generate random 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Try sending email
+    const mailSent = await sendMail(
+      email,
+      "Verify your email",
+      `Your OTP is: ${otp}`
+    );
+    if (!mailSent) {
+      return res
+        .status(400)
+        .json({
+          message: "Could not send email. Please enter a correct email.",
+          success: false,
+        });
+    }
+
+    // Save OTP in DB
+    await OtpVerification.create({ email, otp });
+
+    return res
+      .status(200)
+      .json({ message: "OTP sent to email", success: true });
+  } catch (error) {
+    console.error("Send OTP Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
+  }
+};
+
+// ====================== Verify OTP & Register ======================
+export const verifyOtpAndRegister = async (req, res) => {
+  try {
+    const { fullname, email, phoneNumber, password, role, otp } = req.body;
+
+    if (!fullname || !email || !phoneNumber || !password || !role || !otp) {
+      return res
+        .status(400)
+        .json({ message: "All fields & OTP are required", success: false });
+    }
+
+    const latestOtp = await OtpVerification.findOne({ email }).sort({
+      createdAt: -1,
+    });
+    if (!latestOtp || latestOtp.otp !== otp) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired OTP", success: false });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const file = req.file;
+    let profilePhotoUrl = "";
+    if (file) {
+      const fileuri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileuri.content);
+      profilePhotoUrl = cloudResponse.secure_url;
+    }
+
+    await User.create({
+      fullname,
+      email,
+      phoneNumber,
+      password: hashedPassword,
+      role,
+      profile: {
+        profilePhoto: profilePhotoUrl,
+      },
+    });
+
+    // Clean up used OTPs
+    await OtpVerification.deleteMany({ email });
+
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", success: true });
+  } catch (error) {
+    console.error("Verify OTP & Register Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
+  }
+};
+
+// ====================== Original Register (e.g., Google signup) ======================
 export const register = async (req, res) => {
   console.log("BODY:", req.body);
   console.log("FILE:", req.file);
@@ -13,7 +133,9 @@ export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password, role } = req.body;
     if (!fullname || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({ message: "Something is missing", success: false });
+      return res
+        .status(400)
+        .json({ message: "Something is missing", success: false });
     }
 
     const file = req.file;
@@ -22,7 +144,12 @@ export const register = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists with this email", success: false });
+      return res
+        .status(400)
+        .json({
+          message: "User already exists with this email",
+          success: false,
+        });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,10 +165,14 @@ export const register = async (req, res) => {
       },
     });
 
-    return res.status(201).json({ message: "User registered successfully", success: true });
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", success: true });
   } catch (error) {
     console.error("Register Error:", error);
-    return res.status(500).json({ message: "Internal Server Error", success: false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
@@ -50,25 +181,37 @@ export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
     if (!email || !password || !role) {
-      return res.status(400).json({ message: "Something is missing", success: false });
+      return res
+        .status(400)
+        .json({ message: "Something is missing", success: false });
     }
 
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Incorrect email or Password", success: false });
+      return res
+        .status(400)
+        .json({ message: "Incorrect email or Password", success: false });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(400).json({ message: "Incorrect email or Password", success: false });
+      return res
+        .status(400)
+        .json({ message: "Incorrect email or Password", success: false });
     }
 
     if (role !== user.role) {
-      return res.status(400).json({ message: "Account does not exist with the selected role", success: false });
+      return res
+        .status(400)
+        .json({
+          message: "Account does not exist with the selected role",
+          success: false,
+        });
     }
 
-    const tokenData = { userId: user._id };
-    const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
 
     user = {
       _id: user._id,
@@ -90,7 +233,9 @@ export const login = async (req, res) => {
       .json({ message: `Welcome back ${user.fullname}`, user, success: true });
   } catch (error) {
     console.error("Login Error:", error);
-    return res.status(500).json({ message: "Internal Server Error", success: false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
@@ -108,16 +253,20 @@ export const logout = async (req, res) => {
       .json({ message: "Logged out successfully", success: true });
   } catch (error) {
     console.error("Logout Error:", error);
-    return res.status(500).json({ message: "Internal Server Error", success: false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
 
-// ====================== Get Current User (GET /auth/me) ======================
+// ====================== Get Current User ======================
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.id); // req.id should be set by auth middleware
+    const user = await User.findById(req.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     const safeUser = {
@@ -141,9 +290,8 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
 
-    // ✅ get uploaded files from multer.fields
-    const file = req.files?.file?.[0];                // resume (PDF)
-    const profilePhoto = req.files?.profilePhoto?.[0]; // profile photo (image)
+    const file = req.files?.file?.[0]; // resume
+    const profilePhoto = req.files?.profilePhoto?.[0]; // profile picture
 
     let skillsArray;
     if (skills) {
@@ -153,10 +301,11 @@ export const updateProfile = async (req, res) => {
         .filter((skill) => skill.length > 0);
     }
 
-    const userId = req.id;
-    let user = await User.findById(userId);
+    const user = await User.findById(req.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     if (fullname) user.fullname = fullname;
@@ -167,7 +316,6 @@ export const updateProfile = async (req, res) => {
     if (bio) user.profile.bio = bio;
     if (skills !== undefined) user.profile.skills = skillsArray;
 
-    // ✅ upload new profile photo if provided
     if (profilePhoto) {
       const fileUri = getDataUri(profilePhoto);
       const upload = await cloudinary.uploader.upload(fileUri.content, {
@@ -176,7 +324,6 @@ export const updateProfile = async (req, res) => {
       user.profile.profilePhoto = upload.secure_url;
     }
 
-    // ✅ upload new resume if provided
     if (file) {
       const fileUri = getDataUri(file);
       const upload = await cloudinary.uploader.upload(fileUri.content, {
@@ -201,9 +348,15 @@ export const updateProfile = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Profile updated successfully", user: updatedUser, success: true });
+      .json({
+        message: "Profile updated successfully",
+        user: updatedUser,
+        success: true,
+      });
   } catch (error) {
     console.error("Update Profile Error:", error);
-    return res.status(500).json({ message: "Internal Server Error", success: false });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", success: false });
   }
 };
