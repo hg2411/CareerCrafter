@@ -108,17 +108,29 @@ export const selectStudentForJob = async (req, res) => {
     if (!student || !job) {
       return res.status(404).json({ success: false, message: "Student or job not found" });
     }
+// email content
+// email content
+const subject = `🎉🎉 CONGRATULATIONS, ${student.name}! You've been selected for the role of ${job.title} 🌟`;
 
-    // email content
-    const subject = `🎉 Congratulations! You've been selected for ${job.title}`;
-    const text = `Hi ${student.name},
+const text = `👋 Hi ${student.name},
 
-Good news! You have been selected for the job: "${job.title}" at "${job.company.name || "the company"}".
+✨ We’re thrilled to share some fantastic news — you have been **successfully selected** for the position of **"${job.title}"** at **"${job.company.name || "the company"}"!** 🎯🎊
 
-  Please! contact your recruiter soon for further details.
+This is a **big milestone** and truly reflects your dedication, skills, and hard work! 🙌🚀
 
-Best wishes,
-CareerCrafter Team`;
+✅ **Next steps:**
+- 📞 Please contact your recruiter or the HR team at the company as soon as possible to discuss onboarding, paperwork, and further details.
+- 📝 Prepare your documents and keep an eye out for upcoming emails or calls.
+
+We’re so happy to see your career taking this exciting step forward! 🌱💼
+
+If you have any questions or need support, don’t hesitate to reach out. 🤝
+
+🎉 **Once again, congratulations and best wishes for your new journey!** 🎉
+
+Warm regards,  
+✨ **The CareerCrafter Team** ✨
+`;
 
     // send email
     const mailSent = await sendMail(student.email, subject, text);
