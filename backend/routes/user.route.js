@@ -1,19 +1,25 @@
-// routes/user.routes.js
 import express from "express";
 import {
   login,
   logout,
   register,
   updateProfile,
+  sendOtpForRegistration,      // ✅ add this
+  verifyOtpAndRegister        // ✅ add this
 } from "../controllers/user.controller.js";
-import isAuthenticated from "../middlewares/isAuthenticated.js"; // ✅// Named export
-import { multipleUpload } from "../middlewares/multer.js";
-import { singleUpload } from "../middlewares/multer.js"; // ✅// Named export
-
+import isAuthenticated from "../middlewares/isAuthenticated.js";
+import { multipleUpload, singleUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
-// Register with file upload (e.g., profile picture or resume)
+// Send OTP before registration
+router.post("/send-otp", sendOtpForRegistration);           // ✅ new route
+
+// Verify OTP & register
+router.post("/verify-otp-register", singleUpload, verifyOtpAndRegister);
+  // ✅ new route
+
+// Register with file upload (e.g., for Google signup etc.)
 router.post("/register", singleUpload, register);
 
 // Login
@@ -22,7 +28,7 @@ router.post("/login", login);
 // Logout
 router.get("/logout", logout);
 
-// Update profile (authenticated + file upload)
+// Update profile
 router.put("/profile/update", isAuthenticated, multipleUpload, updateProfile);
 
 export default router;

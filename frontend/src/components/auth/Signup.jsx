@@ -21,10 +21,15 @@ const Signup = () => {
     role: "",
     file: null,
   });
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState(1); // 1: fill form & send otp, 2: enter otp
 
   const { loading, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const isValidPhone = (phone) => /^\d{10}$/.test(phone);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -34,10 +39,7 @@ const Signup = () => {
     setInput({ ...input, file: e.target.files?.[0] });
   };
 
-  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const isValidPhone = (phone) => /^\d{10}$/.test(phone);
-
-  const submitHandler = async (e) => {
+  const sendOtpHandler = async (e) => {
     e.preventDefault();
 
     const { fullname, email, phoneNumber, password, role } = input;
@@ -46,29 +48,57 @@ const Signup = () => {
       toast.error("Please fill in all fields.");
       return;
     }
-
     if (!isValidEmail(email)) {
       toast.error("Please enter a valid email address.");
       return;
     }
-
     if (!isValidPhone(phoneNumber)) {
       toast.error("Phone number must be exactly 10 digits.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("fullname", fullname);
-    formData.append("email", email);
-    formData.append("phoneNumber", phoneNumber);
-    formData.append("password", password);
-    formData.append("role", role);
-    if (input.file) formData.append("file", input.file);
-
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        `${USER_API_END_POINT.replace(/\/$/, "")}/register`,
+        `${USER_API_END_POINT}/send-otp`,
+        { email },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setStep(2); // move to OTP input
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to send OTP");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const verifyAndRegisterHandler = async (e) => {
+    e.preventDefault();
+    const { fullname, email, phoneNumber, password, role } = input;
+
+    if (!otp) {
+      toast.error("Please enter the OTP sent to your email.");
+      return;
+    }
+
+    try {
+      dispatch(setLoading(true));
+
+      const formData = new FormData();
+      formData.append("fullname", fullname);
+      formData.append("email", email);
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("password", password);
+      formData.append("role", role);
+      formData.append("otp", otp);
+      if (input.file) formData.append("file", input.file);
+
+      const res = await axios.post(
+        `${USER_API_END_POINT}/verify-otp-register`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -82,16 +112,14 @@ const Signup = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       dispatch(setLoading(false));
     }
   };
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
+    if (user) navigate("/");
   }, [user, navigate]);
 
   const googleSignupHandler = () => {
@@ -105,100 +133,102 @@ const Signup = () => {
       <Navbar />
       <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
         <form
-          onSubmit={submitHandler}
+          onSubmit={step === 1 ? sendOtpHandler : verifyAndRegisterHandler}
           className="w-full max-w-md bg-white border border-gray-200 shadow-lg rounded-2xl p-8 mt-10"
         >
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
             Create Account 📝
           </h1>
 
+          {/* Step 1: Fill details */}
           <div className="mb-4">
             <Label className="text-gray-700">Full Name</Label>
             <Input
               type="text"
-              value={input.fullname}
               name="fullname"
+              value={input.fullname}
               onChange={changeEventHandler}
               placeholder="Your Name"
-              className="mt-1 shadow-sm"
             />
           </div>
-
           <div className="mb-4">
             <Label className="text-gray-700">Email</Label>
             <Input
               type="email"
-              value={input.email}
               name="email"
+              value={input.email}
               onChange={changeEventHandler}
               placeholder="abc123@gmail.com"
-              className="mt-1 shadow-sm"
             />
           </div>
-
           <div className="mb-4">
             <Label className="text-gray-700">Phone Number</Label>
             <Input
               type="text"
-              value={input.phoneNumber}
               name="phoneNumber"
+              value={input.phoneNumber}
               onChange={changeEventHandler}
               placeholder="XXXXXXXXXX"
-              className="mt-1 shadow-sm"
             />
           </div>
-
           <div className="mb-4">
             <Label className="text-gray-700">Password</Label>
             <Input
               type="password"
-              value={input.password}
               name="password"
+              value={input.password}
               onChange={changeEventHandler}
               placeholder="********"
-              className="mt-1 shadow-sm"
             />
           </div>
 
-          <div className="flex flex-col gap-4 mb-4">
-            <div className="flex gap-6 items-center">
-              {roles.map((roleOption) => (
-                <label key={roleOption} className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
-                  <Input
-                    type="radio"
-                    name="role"
-                    value={roleOption}
-                    checked={input.role === roleOption}
-                    onChange={changeEventHandler}
-                    className="cursor-pointer"
-                  />
-                  {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
-                </label>
-              ))}
-            </div>
+          <div className="flex gap-6 mb-4">
+            {roles.map((roleOption) => (
+              <label key={roleOption} className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+                <Input
+                  type="radio"
+                  name="role"
+                  value={roleOption}
+                  checked={input.role === roleOption}
+                  onChange={changeEventHandler}
+                />
+                {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
+              </label>
+            ))}
+          </div>
 
-            <div className="flex items-center gap-2">
-              <Label className="text-gray-700">Profile</Label>
+          <div className="flex items-center gap-2 mb-4">
+            <Label className="text-gray-700">Profile</Label>
+            <Input
+              accept="image/*"
+              type="file"
+              onChange={changeFileHandler}
+            />
+          </div>
+
+          {/* Step 2: OTP input */}
+          {step === 2 && (
+            <div className="mb-4">
+              <Label className="text-gray-700">Enter OTP</Label>
               <Input
-                accept="image/*"
-                type="file"
-                onChange={changeFileHandler}
-                className="cursor-pointer file:mr-2 file:py-1 file:px-2 file:border-0 file:rounded file:bg-gray-100 file:text-sm"
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="6-digit code"
               />
             </div>
-          </div>
+          )}
 
           {loading ? (
             <Button className="w-full bg-[#6A38C2] text-white" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please Wait
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please Wait
             </Button>
           ) : (
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-all"
             >
-              Sign Up
+              {step === 1 ? "Send OTP" : "Verify & Register"}
             </Button>
           )}
 
@@ -209,11 +239,10 @@ const Signup = () => {
             <hr className="flex-grow border-gray-300" />
           </div>
 
-          {/* Google Signup Button */}
           <Button
             type="button"
             onClick={googleSignupHandler}
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all flex items-center justify-center gap-2"
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full flex items-center justify-center gap-2"
           >
             <SiGoogle className="w-4 h-4" />
             Sign Up with Google
