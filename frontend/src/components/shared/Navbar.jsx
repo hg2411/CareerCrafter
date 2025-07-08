@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
-import { setUser } from "@/redux/authSlice";
+import { setUser, logout } from "@/redux/authSlice";
 import { getAllNotifications, markAllNotificationsAsRead } from "@/redux/notificationSlice";
 
 const Navbar = () => {
@@ -34,9 +34,13 @@ const Navbar = () => {
       }
     };
 
-    if (!user) fetchUser();
+    // 🩹 Avoid refetching user on /login and /signup pages
+    if (!user && currentPath !== "/login" && currentPath !== "/signup") {
+      fetchUser();
+    }
+
     if (user?._id) dispatch(getAllNotifications());
-  }, [user, dispatch]);
+  }, [user, dispatch, currentPath]);
 
   const logoutHandler = async () => {
     try {
@@ -44,7 +48,7 @@ const Navbar = () => {
         withCredentials: true,
       });
       if (res.data.success) {
-        dispatch(setUser(null));
+        dispatch(logout());
         sessionStorage.setItem("justLoggedOut", "true");
         toast.success(res.data.message);
         navigate("/login", { replace: true });
@@ -56,9 +60,9 @@ const Navbar = () => {
   };
 
   const markAllReadHandler = async () => {
-  try {
-    await dispatch(markAllNotificationsAsRead());
-  } catch (error) {
+    try {
+      await dispatch(markAllNotificationsAsRead());
+    } catch (error) {
       console.error(error);
       toast.error(error?.response?.data?.message || "Failed to mark as read.");
     }
@@ -120,16 +124,12 @@ const Navbar = () => {
         {!user ? (
           <div className="hidden md:flex gap-3">
             <Link to="/login">
-              <Button
-                className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2 rounded-full font-semibold transition duration-300"
-              >
+              <Button className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-5 py-2 rounded-full font-semibold transition duration-300">
                 Login
               </Button>
             </Link>
             <Link to="/signup">
-              <Button
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-full font-semibold shadow-md transition duration-300"
-              >
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-full font-semibold shadow-md transition duration-300">
                 Sign Up
               </Button>
             </Link>

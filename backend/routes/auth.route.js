@@ -2,7 +2,6 @@ import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
-import ensureAuthenticated from "../middlewares/ensureAuthenticated.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import {
   register,
@@ -25,7 +24,7 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// 2️⃣ Google callback → set JWT cookie
+// 2️⃣ Google callback → find/create user & issue JWT
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
@@ -35,27 +34,27 @@ router.get(
         return res.redirect("http://localhost:5173/login");
       }
 
-      // If user has no role → redirect to role selection page
+      // If user has no role → redirect to frontend role selection
       if (!req.user.role) {
         return res.redirect("http://localhost:5173/select-role");
       }
 
-      // ✅ generate JWT token
+      // ✅ Generate JWT
       const token = jwt.sign(
         { userId: req.user._id },
         process.env.SECRET_KEY,
         { expiresIn: "1d" }
       );
 
-      // ✅ set cookie
+      // ✅ Set cookie
       res.cookie("token", token, {
         httpOnly: true,
-        sameSite: "lax", // better for frontend cross-origin
-        secure: process.env.NODE_ENV === "production", // true only in prod
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 24 * 60 * 60 * 1000,
       });
 
-      // redirect user based on role
+      // Redirect based on role
       if (req.user.role === "student") {
         return res.redirect("http://localhost:5173/");
       } else if (req.user.role === "recruiter") {
@@ -72,54 +71,39 @@ router.get(
 );
 
 // 3️⃣ Set role after Google login (first time)
-router.post("/set-role", ensureAuthenticated, async (req, res) => {
+router.post("/set-role", async (req, res) => {
   try {
-    const { role } = req.body;
+    const { googleId, role } = req.body;
 
-    let user = await User.findOne({ googleId: req.user.googleId });
+    let user = await User.findOne({ googleId });
 
     if (!user) {
-      // first time Google user → create user
-      user = await User.create({
-        fullname: req.user.fullname,
-        email: req.user.email,
-        googleId: req.user.googleId,
-        role,
-      });
-    } else {
-      // user exists → just set role
-      user.role = role;
-      await user.save();
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // update passport session
-    req.login(user, (err) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: "Session update failed" });
-      }
+    user.role = role;
+    await user.save();
 
-      // also set JWT token
-      const token = jwt.sign(
-        { userId: user._id },
-        process.env.SECRET_KEY,
-        { expiresIn: "1d" }
-      );
+    // ✅ Issue new JWT
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-
-      return res.status(200).json({ success: true, user });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
     });
+
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Set-role error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
-
 
 // ------------------------
 // 🔹 Classic JWT Auth Routes
@@ -129,7 +113,7 @@ router.post("/register", singleUpload, register);
 router.post("/login", login);
 router.get("/logout", logout);
 
-// ⚠️ Protected: need token in cookie
+// ⚠️ Protected routes: need JWT in cookie
 router.get("/me", isAuthenticated, getMe);
 router.put("/update-profile", isAuthenticated, singleUpload, updateProfile);
 
