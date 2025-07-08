@@ -3,23 +3,20 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import passport from "./passport.js";  // ✅ import your configured passport
 import connectDB from "./utils/db.js";
-import { User } from "./models/user.model.js";
 
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
-import authRoute from "./routes/auth.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 
 dotenv.config();
 
 const app = express();
 
-// ✅ 1. CORS must come first
+// ✅ 1. CORS first
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -27,108 +24,50 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin(origin, callback) {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: Access denied for origin ${origin}`), false);
   },
   credentials: true,
 };
+app.use(cors(corsOptions));
 
-app.use(cors(corsOptions)); // ✅ must come before session
-
-// ✅ 2. General Middleware
+// ✅ 2. General middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ 3. Session middleware (after CORS)
+// ✅ 3. Session (needed for passport)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "defaultsecret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // for local development
+      secure: false,            // true if using HTTPS in prod
       httpOnly: true,
-      sameSite: "lax", // ✅ allows cross-site cookie from 5173 to 8000
+      sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
 
-// ✅ 4. Passport setup
+// ✅ 4. Passport init
 app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:8000/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await User.findOne({ googleId: profile.id });
-
-        if (!user) {
-          // Option A: create immediately with default role (student/recruiter)
-          user = await User.create({
-            fullname: profile.displayName,
-            email: profile.emails[0].value,
-            googleId: profile.id,
-            role: "student",  // default; you can change logic later
-          });
-        }
-
-        // ✅ Done
-        return done(null, user);
-      } catch (err) {
-        console.error("Google Strategy Error:", err);
-        return done(err, null);
-      }
-    }
-  )
-);
-
-
-passport.serializeUser((user, done) => {
-  if (user._id) {
-    done(null, user._id); // DB user
-  } else {
-    done(null, user); // Temp user
-  }
-});
-
-passport.deserializeUser(async (data, done) => {
-  try {
-    if (data.temp) {
-      return done(null, data); // temp user, not in DB yet
-    }
-
-    const user = await User.findById(data);
-    return done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
+app.use(passport.session());  // only needed if you mix sessions (fine to keep)
 
 // ✅ 5. Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
-app.use("/auth", authRoute); // contains login, logout, role
-app.use("/api/v1/notifications",notificationRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
-// ✅ 6. Start server
+// ✅ 6. Connect DB & start server
 const PORT = process.env.PORT || 8000;
+connectDB();
 
 app.listen(PORT, () => {
-  connectDB();
-  console.log(`✅ Server running at port ${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
