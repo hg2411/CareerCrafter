@@ -34,8 +34,6 @@ const shortlistingStatus = [
 
 const ApplicantsTable = ({ jobId }) => {
   const { applicants } = useSelector((store) => store.application);
-  const [parsedData, setParsedData] = useState(null);
-  const [selectedApplicant, setSelectedApplicant] = useState(null);
   const [selectingId, setSelectingId] = useState(null);
 
   const statusHandler = async (status, id) => {
@@ -77,22 +75,6 @@ const ApplicantsTable = ({ jobId }) => {
     }
   };
 
-  const fetchParsedResume = async (studentId) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/v1/resume/parse/${studentId}`,
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        setParsedData(res.data.data);
-        setSelectedApplicant(studentId);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to fetch parsed resume");
-    }
-  };
-
   return (
     <div className="p-6 rounded-2xl shadow-lg border border-gray-200 bg-white max-w-6xl mx-auto">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
@@ -111,7 +93,6 @@ const ApplicantsTable = ({ jobId }) => {
               <TableHead>Contact</TableHead>
               <TableHead>Resume</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Parsed</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
@@ -162,14 +143,6 @@ const ApplicantsTable = ({ jobId }) => {
                   </TableCell>
                   <TableCell>
                     {new Date(item?.createdAt).toLocaleDateString("en-IN")}
-                  </TableCell>
-                  <TableCell>
-                    <button
-                      onClick={() => fetchParsedResume(item?.applicant?._id)}
-                      className="text-sm text-blue-500 hover:underline"
-                    >
-                      View Parsed
-                    </button>
                   </TableCell>
                   <TableCell>
                     <span
@@ -250,30 +223,6 @@ const ApplicantsTable = ({ jobId }) => {
           </TableBody>
         </Table>
       </div>
-
-      {parsedData && selectedApplicant && (
-        <div className="mt-8 p-4 border rounded bg-gray-50 max-w-4xl mx-auto">
-          <h3 className="font-semibold mb-2 text-lg">Parsed Resume Info:</h3>
-          <p>
-            <strong>Name:</strong> {parsedData.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {parsedData.email}
-          </p>
-          <p>
-            <strong>Phone:</strong> {parsedData.phone}
-          </p>
-          <p>
-            <strong>LinkedIn:</strong> {parsedData.linkedin}
-          </p>
-          <p>
-            <strong>GitHub:</strong> {parsedData.github}
-          </p>
-          <p>
-            <strong>Skills:</strong> {parsedData.skills.join(", ")}
-          </p>
-        </div>
-      )}
     </div>
   );
 };
