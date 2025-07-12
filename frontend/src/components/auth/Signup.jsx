@@ -123,7 +123,7 @@ const Signup = () => {
   }, [user, navigate]);
 
   const googleSignupHandler = () => {
-    window.location.href = "http://localhost:8000/auth/google";
+    window.location.href = "http://localhost:8000/api/v1/user/auth/google";
   };
 
   const roles = ["student", "recruiter"];
