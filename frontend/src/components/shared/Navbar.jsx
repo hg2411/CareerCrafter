@@ -25,7 +25,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/auth/me", {
+        const res = await axios.get("http://localhost:8000/api/v1/user/auth/me", {
           withCredentials: true,
         });
         if (res.data.success) dispatch(setUser(res.data.user));

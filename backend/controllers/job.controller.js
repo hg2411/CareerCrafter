@@ -69,19 +69,28 @@ export const getAllJobs = async (req, res) => {
 };
 
 // get job by ID
+// job.controller.js
 export const getJobById = async (req, res) => {
   try {
-    const jobId = req.params.id;
-    const job = await Job.findById(jobId).populate("company");
+    const job = await Job.findById(req.params.id)
+      .populate({
+        path: 'applications',
+        populate: {
+          path: 'applicant', // make sure applicant is populated
+        }
+      });
+
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
-    return res.status(200).json({ success: true, job });
+
+    res.status(200).json({ success: true, job });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("getJobById error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
 
 // get jobs posted by the admin (current user)
 export const getAdminJobs = async (req, res) => {

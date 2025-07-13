@@ -6,44 +6,48 @@ import {
   logout,
   sendOtpForRegistration,
   verifyOtpAndRegister,
-  updateProfile
+  updateProfile,
+  getLoggedInUser
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { multipleUpload, singleUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
-// 📩 Send OTP before registration
-router.post("/send-otp", sendOtpForRegistration);
+// Registration Flow
+router.post("/register/send-otp", sendOtpForRegistration);
+router.post("/register/verify-otp", singleUpload, verifyOtpAndRegister);
 
-// 📝 Verify OTP & register (manual register with OTP)
-router.post("/verify-otp-register", singleUpload, verifyOtpAndRegister);
-
-// 🔐 Manual login
+// Auth Flow
 router.post("/login", login);
-
-// 🚪 Logout
 router.get("/logout", logout);
+router.get("/auth/me", isAuthenticated, getLoggedInUser);
 
-// ✏️ Update profile
+// Profile
 router.put("/profile/update", isAuthenticated, multipleUpload, updateProfile);
 
-// 🔑 Google OAuth login (redirects to Google)
+// Google OAuth
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-// ✅ Google OAuth callback → create same JWT & set cookie
 router.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login", session: false }),
+  passport.authenticate("google", {
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
+    session: false,
+  }),
   async (req, res) => {
-    const token = jwt.sign({ userId: req.user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: req.user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
 
-    res.cookie("token", token, {
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-    }).redirect(process.env.FRONTEND_URL); // ✅ redirect to your frontend
+    res
+      .cookie("token", token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      })
+      .redirect(process.env.FRONTEND_URL);
   }
 );
 

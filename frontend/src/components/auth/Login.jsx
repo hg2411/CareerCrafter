@@ -82,7 +82,8 @@ const Login = () => {
 }, []);
 
   const googleLoginHandler = () => {
-    window.location.href = "http://localhost:8000/auth/google";
+    console.log("Redirecting to Google...");
+    window.location.href = "http://localhost:8000/api/v1/user/auth/google";
   };
 
   const roles = ["student", "recruiter"];

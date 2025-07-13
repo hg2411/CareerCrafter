@@ -13,20 +13,31 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         // Check if user already exists
-        let user = await User.findOne({ googleId: profile.id });
+        // 1️⃣ Try to find user by googleId
+      let user = await User.findOne({ googleId: profile.id });
 
-        if (!user) {
-          // Create new user with default role
+      if (!user) {
+        // 2️⃣ If not found, try to find user by email
+        const existingUserByEmail = await User.findOne({ email: profile.emails?.[0]?.value });
+
+        if (existingUserByEmail) {
+          // Link Google ID to the existing email account
+          existingUserByEmail.googleId = profile.id;
+          existingUserByEmail.profile.profilePhoto = profile.photos?.[0]?.value;
+          user = await existingUserByEmail.save();
+        } else {
+          // 3️⃣ Create new user
           user = await User.create({
             fullname: profile.displayName,
             email: profile.emails?.[0]?.value,
             googleId: profile.id,
-            role: "student", // or prompt in frontend later
+            role: "student",
             profile: {
               profilePhoto: profile.photos?.[0]?.value,
             },
           });
         }
+      }
 
         return done(null, user);
       } catch (err) {
