@@ -245,9 +245,16 @@ export const updateProfile = async (req, res) => {
 // controllers/user.controller.js
 export const getLoggedInUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
     res.status(200).json({ success: true, user });
   } catch (error) {
+    console.error("Get LoggedIn User Error:", error);
     res.status(500).json({ success: false, message: "User fetch failed" });
   }
 };
+
