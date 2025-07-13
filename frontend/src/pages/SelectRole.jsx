@@ -57,7 +57,7 @@ const SelectRole = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="bg-white shadow-lg p-10 rounded-xl text-center max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6">Choose Your Role</h2>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           <button
             onClick={() => handleSelect("student")}
             className="bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition"
