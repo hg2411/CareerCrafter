@@ -21,6 +21,7 @@ import SelectRole from "./pages/SelectRole.jsx";
 import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
 import Notification from "./components/Notification.jsx";
+import SetPassword from "./components/SetPassword.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -60,6 +61,7 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
           { path: "resume/upload", element: <ResumeUpload/> },
           { path: "notifications", element: <Notification /> },
+          { path: "/set-password", element: <SetPassword />},
         ],
       },
     ],

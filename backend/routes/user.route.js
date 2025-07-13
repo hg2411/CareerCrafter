@@ -7,7 +7,8 @@ import {
   sendOtpForRegistration,
   verifyOtpAndRegister,
   updateProfile,
-  getLoggedInUser
+  getLoggedInUser,
+  setPassword
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { multipleUpload, singleUpload } from "../middlewares/multer.js";
@@ -50,5 +51,7 @@ router.get(
       .redirect(process.env.FRONTEND_URL);
   }
 );
-
+console.log("✅ Routes loaded");
+// routes/user.route.js
+router.post("/set-password", isAuthenticated, setPassword);
 export default router;

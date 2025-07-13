@@ -245,16 +245,51 @@ export const updateProfile = async (req, res) => {
 // controllers/user.controller.js
 export const getLoggedInUser = async (req, res) => {
   try {
-    const user = await User.findById(req.id).select("-password");
+    const user = await User.findById(req.id);
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({ success: true, user });
+    const safeUser = {
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+      hasPassword: !!user.password
+    };
+
+    res.status(200).json({ success: true, user: safeUser });
   } catch (error) {
     console.error("Get LoggedIn User Error:", error);
     res.status(500).json({ success: false, message: "User fetch failed" });
+  }
+};
+
+// controllers/user.controller.js
+export const setPassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters", success: false });
+    }
+
+    const user = await User.findById(req.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password set successfully" });
+  } catch (error) {
+    console.error("Set Password Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
