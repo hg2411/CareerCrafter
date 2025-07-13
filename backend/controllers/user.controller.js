@@ -164,7 +164,7 @@ export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
+      return res.status(401).json({ message: "User not found", success: false });
     }
 
     const safeUser = {
@@ -240,5 +240,14 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error("Update Profile Error:", error);
     return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+// controllers/user.controller.js
+export const getLoggedInUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "User fetch failed" });
   }
 };

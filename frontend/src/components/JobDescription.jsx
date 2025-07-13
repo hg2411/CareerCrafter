@@ -80,6 +80,18 @@ useEffect(() => {
 }, [jobId, dispatch, user?._id]);
 
   const isApplied = !!userApplication;
+  
+  useEffect(() => {
+  if (singleJob?.applications && !userApplication) {
+    const found = singleJob.applications.find(
+      (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+    );
+    if (found) {
+      setUserApplication(found);
+    }
+  }
+}, [singleJob, user?._id]);
+
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
