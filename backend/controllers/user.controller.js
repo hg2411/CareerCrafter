@@ -258,7 +258,8 @@ export const getLoggedInUser = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
-      hasPassword: !!user.password
+      hasPassword: !!user.password,
+      needsRole: !user.role
     };
 
     res.status(200).json({ success: true, user: safeUser });
@@ -292,4 +293,37 @@ export const setPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+// ====================== Set Role and Password (for first-time Google users) ======================
+export const setRoleAndPassword = async (req, res) => {
+  try {
+    const { role, password } = req.body;
+
+    if (!role || !password) {
+      return res.status(400).json({ success: false, message: "Role and password are required" });
+    }
+
+    if (!["student", "recruiter"].includes(role)) {
+      return res.status(400).json({ success: false, message: "Invalid role" });
+    }
+
+    const user = await User.findById(req.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (user.role) {
+      return res.status(400).json({ success: false, message: "Role already set" });
+    }
+
+    user.role = role;
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Role and password set successfully", user });
+  } catch (error) {
+    console.error("SetRoleAndPassword Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 
