@@ -117,4 +117,6 @@ router.get("/logout", logout);
 router.get("/me", isAuthenticated, getMe);
 router.put("/update-profile", isAuthenticated, singleUpload, updateProfile);
 
+
+
 export default router;

@@ -325,5 +325,85 @@ export const setRoleAndPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+// forgotPassword
 
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res.status(400).json({ message: "Email is required", success: false });
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(404).json({ message: "User not found", success: false });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // (Optional: use sendMail) 
+    const mailSent = await sendMail(email, "Reset Password OTP", `Your OTP is: ${otp}`);
+    if (!mailSent) {
+      return res.status(400).json({ message: "Could not send email. Please enter a correct email.", success: false });
+    }
+
+    // Save OTP & expiry in user
+    user.resetOTP = otp;
+    user.resetOTPExpires = Date.now() + 10 * 60 * 1000; // valid for 10 mins
+    await user.save();
+
+    return res.status(200).json({ message: "OTP sent to email", success: true });
+  } catch (error) {
+    console.error("ForgotPassword Error:", error);
+    return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+//verfiy forgot password OTP
+export const verifyForgotPasswordOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp)
+      return res.status(400).json({ message: "Email and OTP are required", success: false });
+
+    const user = await User.findOne({
+      email,
+      resetOTP: otp,
+      resetOTPExpires: { $gt: Date.now() }
+    });
+
+    if (!user)
+      return res.status(400).json({ message: "Invalid or expired OTP", success: false });
+
+    return res.status(200).json({ message: "OTP verified successfully", success: true });
+  } catch (error) {
+    console.error("VerifyForgotPasswordOTP Error:", error);
+    return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+
+//reset password
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword)
+      return res.status(400).json({ message: "Email and new password are required", success: false });
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(404).json({ message: "User not found", success: false });
+
+    // Update password
+    user.password = await bcrypt.hash(newPassword, 10);
+    // Clear OTP fields
+    user.resetOTP = undefined;
+    user.resetOTPExpires = undefined;
+
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successful", success: true });
+  } catch (error) {
+    console.error("ResetPassword Error:", error);
+    return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
 

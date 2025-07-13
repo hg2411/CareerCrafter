@@ -22,6 +22,9 @@ import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
 import Notification from "./components/Notification.jsx";
 import SetPassword from "./components/SetPassword.jsx";
+import VerifyOTP from "./pages/VerifyOTP.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -39,7 +42,12 @@ const appRouter = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "first-time-setup", element: <SelectRole /> }, // ✅ updated route
+      { path: "first-time-setup", element: <SelectRole /> },
+
+      // ✅ Forgot password flow (public, no login required)
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "verify-otp", element: <VerifyOTP /> },
+      { path: "reset-password", element: <ResetPassword /> },
 
       {
         element: (
@@ -67,7 +75,7 @@ const appRouter = createBrowserRouter([
     ],
   },
 ]);
- 
+
 function App() {
   return <RouterProvider router={appRouter} />;
 }

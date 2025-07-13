@@ -9,7 +9,10 @@ import {
   updateProfile,
   getLoggedInUser,
   setPassword,
-  setRoleAndPassword
+  setRoleAndPassword,
+  forgotPassword,
+  verifyForgotPasswordOTP,
+  resetPassword
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { multipleUpload, singleUpload } from "../middlewares/multer.js";
@@ -68,5 +71,9 @@ router.post("/auth/set-role-and-password", isAuthenticated, setRoleAndPassword);
 
 // Optional: allow normal users to set password later
 router.post("/set-password", isAuthenticated, setPassword);
+// ✅ Forgot password flow
+router.post("/forgot-password", forgotPassword);
+router.post("/verify-forgot-password-otp",verifyForgotPasswordOTP);
+router.post("/reset-password", resetPassword);
 
 export default router;
