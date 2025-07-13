@@ -48,7 +48,6 @@ const JobDescription = () => {
       setLoading(false);
       if (error.response?.status === 409) {
         toast.info("You have already applied to this job.");
-        // Try setting the status again from already fetched job
         const existing = singleJob?.applications?.find(
           (app) => app.applicant?._id === user?._id || app.applicant === user?._id
         );
@@ -59,39 +58,65 @@ const JobDescription = () => {
     }
   };
 
-useEffect(() => {
-  const fetchSingleJob = async () => {
-    try {
-      const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, { withCredentials: true });
-      if (res.data.success) {
-        dispatch(setSingleJob(res.data.job));
+  const handleWithdraw = async () => {
+    const confirm = window.confirm("Are you sure you want to withdraw your application?");
+    if (!confirm) return;
 
-        const foundApplication = res.data.job.applications?.find(
-          (app) => app.applicant?._id === user?._id || app.applicant === user?._id
-        );
-        setUserApplication(foundApplication || null);
+    try {
+      setLoading(true);
+      const res = await axios.delete(
+        `${APPLICATION_API_END_POINT}/withdraw/${jobId}`,
+        { withCredentials: true }
+      );
+      setLoading(false);
+
+      if (res.data.success) {
+        toast.success("Application withdrawn successfully.");
+        setUserApplication(null);
+        dispatch(setSingleJob({
+          ...singleJob,
+          applications: singleJob.applications.filter(
+            (app) => app.applicant?._id !== user?._id && app.applicant !== user?._id
+          )
+        }));
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Job not found or has been removed.");
+      setLoading(false);
+      toast.error(error.response?.data?.message || "Failed to withdraw application.");
     }
   };
-  fetchSingleJob();
-}, [jobId, dispatch, user?._id]);
+
+  useEffect(() => {
+    const fetchSingleJob = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, { withCredentials: true });
+        if (res.data.success) {
+          dispatch(setSingleJob(res.data.job));
+          const foundApplication = res.data.job.applications?.find(
+            (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+          );
+          setUserApplication(foundApplication || null);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Job not found or has been removed.");
+      }
+    };
+    fetchSingleJob();
+  }, [jobId, dispatch, user?._id]);
+
+  useEffect(() => {
+    if (singleJob?.applications && !userApplication) {
+      const found = singleJob.applications.find(
+        (app) => app.applicant?._id === user?._id || app.applicant === user?._id
+      );
+      if (found) {
+        setUserApplication(found);
+      }
+    }
+  }, [singleJob, user?._id]);
 
   const isApplied = !!userApplication;
-  
-  useEffect(() => {
-  if (singleJob?.applications && !userApplication) {
-    const found = singleJob.applications.find(
-      (app) => app.applicant?._id === user?._id || app.applicant === user?._id
-    );
-    if (found) {
-      setUserApplication(found);
-    }
-  }
-}, [singleJob, user?._id]);
-
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -106,7 +131,6 @@ useEffect(() => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 mt-10 bg-white rounded-2xl shadow-xl">
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-3">{singleJob?.title}</h1>
@@ -123,32 +147,34 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Apply Button */}
         <div className="flex flex-col gap-2 items-end">
-          <Button
-            onClick={isApplied || loading ? null : applyJobHandler}
-            disabled={isApplied || loading}
-            className={`text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 ${
-              isApplied || loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90'
-            }`}
-          >
-            {loading ? 'Applying...' : isApplied ? 'Already Applied' : 'Apply Now'}
-          </Button>
-
-          {isApplied && (
-            <Badge className={`mt-1 text-white px-3 py-1 ${getStatusColor(userApplication?.status)}`}>
-              Status: {userApplication?.status?.toUpperCase() || 'APPLIED'}
-            </Badge>
+          {isApplied ? (
+            <>
+              <Button
+                onClick={handleWithdraw}
+                disabled={loading}
+                className="bg-red-600 text-white hover:bg-red-700 font-semibold px-6 py-3 rounded-full"
+              >
+                {loading ? 'Withdrawing...' : 'Withdraw Application'}
+              </Button>
+              <Badge className={`mt-1 text-white px-3 py-1 ${getStatusColor(userApplication?.status)}`}>
+                Status: {userApplication?.status?.toUpperCase() || 'APPLIED'}
+              </Badge>
+            </>
+          ) : (
+            <Button
+              onClick={applyJobHandler}
+              disabled={loading}
+              className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white hover:opacity-90 font-semibold px-6 py-3 rounded-full"
+            >
+              {loading ? 'Applying...' : 'Apply Now'}
+            </Button>
           )}
         </div>
       </div>
 
-      {/* Divider */}
       <h2 className="text-xl font-semibold text-gray-800 border-b pb-3 mb-8">Job Details</h2>
 
-      {/* Job Details Section */}
       <div className="space-y-6 text-gray-700">
         <DetailRow label="Role" value={singleJob?.title} icon={<Briefcase className="w-5 h-5 text-[#6A38C2]" />} />
         <DetailRow label="Location" value={singleJob?.location} icon={<MapPin className="w-5 h-5 text-[#6A38C2]" />} />
@@ -162,7 +188,6 @@ useEffect(() => {
   );
 };
 
-// 🔹 Detail Row Component
 const DetailRow = ({ label, value, icon }) => (
   <div className="flex gap-4 items-start">
     {icon && <div className="pt-1">{icon}</div>}

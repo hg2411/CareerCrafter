@@ -184,3 +184,52 @@ export const updateStatus = async (req, res) => {
     });
   }
 };
+// =========================== WITHDRAW APPLICATION ===========================
+export const withdrawApplication = async (req, res) => {
+  try {
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    // Get the job (for notification message)
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found.",
+        success: false,
+      });
+    }
+
+    // Delete the application
+    const application = await Application.findOneAndDelete({ job: jobId, applicant: userId });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found.",
+        success: false,
+      });
+    }
+
+    // Remove application reference from the job
+    await Job.findByIdAndUpdate(jobId, {
+      $pull: { applications: application._id },
+    });
+
+    // Add notification
+    await Notification.create({
+      user: userId,
+      message: `❌ You have withdrawn your application for: ${job.title}`,
+    });
+
+    return res.status(200).json({
+      message: "Application withdrawn successfully.",
+      success: true,
+    });
+
+  } catch (error) {
+    console.error("Withdraw error:", error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+    });
+  }
+};
