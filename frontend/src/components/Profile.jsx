@@ -11,14 +11,12 @@ import UpdateProfileDialogue from "./UpdateProfileDialogue";
 import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
 import { calculateProfileCompletion } from "@/utils/calculateProfileCompletion";
-import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
   const [showMissing, setShowMissing] = useState(false);
   const { user } = useSelector((store) => store.auth);
-  const navigate = useNavigate();
   const { percentage: completion, missingFields } = calculateProfileCompletion(user);
 
   return (
@@ -100,17 +98,6 @@ const Profile = () => {
             <Pen className="h-4 w-4" />
             Edit Profile
           </Button>
-          {!user?.hasPassword && (
-          <Button
-            variant="outline"
-            className="text-sm flex items-center gap-2 hover:bg-red-50 text-red-600 border-red-200"
-            onClick={() => navigate("/set-password")}
-          >
-            <Pen className="h-4 w-4" />
-            Set Password
-          </Button>
-        )}
-
         </div>
 
         {/* Contact Info */}

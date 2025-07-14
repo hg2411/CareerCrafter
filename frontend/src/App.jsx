@@ -21,7 +21,6 @@ import SelectRole from "./pages/SelectRole.jsx"; // ✅ make sure your file is n
 import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
 import Notification from "./components/Notification.jsx";
-import SetPassword from "./components/SetPassword.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
@@ -69,7 +68,6 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
           { path: "resume/upload", element: <ResumeUpload /> },
           { path: "notifications", element: <Notification /> },
-          { path: "set-password", element: <SetPassword /> },
         ],
       },
     ],
