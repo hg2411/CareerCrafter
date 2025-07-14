@@ -76,50 +76,77 @@ const SelectRole = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white shadow-xl p-8 rounded-2xl max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center mb-6">Complete Your Profile</h2>
-        
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div
-            onClick={() => setSelectedRole("student")}
-            className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center transition ${
-              selectedRole === "student"
-                ? "border-purple-600 bg-purple-50"
-                : "border-gray-300 hover:border-purple-400"
-            }`}
-          >
-            <FaUserGraduate size={32} className="mb-2 text-purple-600" />
-            <span className="font-semibold">Student</span>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-white">
+      <div className="flex-1 flex items-center justify-center px-4 py-8">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex max-w-4xl w-full">
+          {/* Left hero gradient section */}
+          <div className="hidden md:flex md:w-1/2 bg-gradient-to-tr from-[#8B5CF6] to-[#D946EF] text-white flex-col justify-center items-center p-8">
+            <h2 className="text-4xl font-bold mb-3">Select Your Role 🎓</h2>
+            <p className="text-center text-sm max-w-xs mb-2">
+              Choose to continue as Student or Recruiter.
+            </p>
+            <p className="text-center text-xs text-purple-100 max-w-xs">
+              This helps us tailor your experience.
+            </p>
           </div>
-          <div
-            onClick={() => setSelectedRole("recruiter")}
-            className={`cursor-pointer border rounded-xl p-4 flex flex-col items-center transition ${
-              selectedRole === "recruiter"
-                ? "border-green-600 bg-green-50"
-                : "border-gray-300 hover:border-green-400"
-            }`}
-          >
-            <FaBuilding size={32} className="mb-2 text-green-600" />
-            <span className="font-semibold">Recruiter</span>
+
+          {/* Right form section */}
+          <div className="flex-1 p-8 sm:p-10">
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white p-4 rounded-full shadow-md">
+                <FaUserGraduate className="h-6 w-6" />
+              </div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
+              Complete Your Profile
+            </h1>
+            <p className="text-gray-500 text-center text-sm mb-6 max-w-xs mx-auto">
+              Select your role and create a password to get started.
+            </p>
+
+            <div className="grid grid-cols-2 gap-5 mb-6">
+              <div
+                onClick={() => setSelectedRole("student")}
+                className={`cursor-pointer border-2 rounded-2xl p-5 flex flex-col items-center transition-all ${
+                  selectedRole === "student"
+                    ? "border-purple-600 bg-purple-50 shadow-md"
+                    : "border-gray-200 hover:border-purple-400 hover:bg-purple-50"
+                }`}
+              >
+                <FaUserGraduate size={36} className="mb-2 text-purple-600" />
+                <span className="font-semibold text-gray-700">Student</span>
+              </div>
+              <div
+                onClick={() => setSelectedRole("recruiter")}
+                className={`cursor-pointer border-2 rounded-2xl p-5 flex flex-col items-center transition-all ${
+                  selectedRole === "recruiter"
+                    ? "border-green-600 bg-green-50 shadow-md"
+                    : "border-gray-200 hover:border-green-400 hover:bg-green-50"
+                }`}
+              >
+                <FaBuilding size={36} className="mb-2 text-green-600" />
+                <span className="font-semibold text-gray-700">Recruiter</span>
+              </div>
+            </div>
+
+            <input
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-full mb-6 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400"
+            />
+
+            <button
+              onClick={handleCreateAccount}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Processing..." : "Save & Continue"}
+            </button>
           </div>
         </div>
-
-        <input
-          type="password"
-          placeholder="Create Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border rounded-full mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-        
-        <button
-          onClick={handleCreateAccount}
-          disabled={loading}
-          className="bg-purple-600 text-white py-2 rounded-full hover:bg-purple-700 transition w-full disabled:opacity-50"
-        >
-          {loading ? "Processing..." : "Save & Continue"}
-        </button>
       </div>
     </div>
   );
