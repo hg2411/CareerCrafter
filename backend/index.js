@@ -11,6 +11,7 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import notificationRoutes from "./routes/notification.route.js";
+import statsRoutes from "./routes/statsRoutes.js";  
 
 dotenv.config();
 
@@ -63,7 +64,7 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/notifications", notificationRoutes);
-
+app.use("/api/v1/stats", statsRoutes);
 // ✅ 6. Connect DB & start server
 const PORT = process.env.PORT || 8000;
 connectDB();
