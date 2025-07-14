@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setSearchedQuery } from "@/redux/jobSlice";
 import { useNavigate } from "react-router-dom";
-import CareerIllustration from "../assets/career-illustration.svg"; // Use your image path
+import CareerIllustration from "../assets/career-illustration.svg"; // Update with actual path
 
 const HeroSection = () => {
   const [query, setQuery] = useState("");
@@ -19,13 +19,26 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="bg-[#f4f3ff] py-16">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+    <section className="relative py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-white overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute top-[-80px] left-[-80px] w-[250px] h-[250px] bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-[-100px] right-[-100px] w-[300px] h-[300px] bg-pink-100 rounded-full blur-3xl opacity-40"></div>
+
+      <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-12 relative z-10">
         {/* Left Content */}
         <div className="flex-1 text-center md:text-left space-y-6">
+          {/* Heading */}
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+            Craft Your <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">Career</span> with Us
+          </h1>
 
-          {/* Search Bar - On Top */}
-          <div className="flex items-center w-full max-w-xl mx-auto md:mx-0 rounded-full shadow-md border border-gray-300 bg-white overflow-hidden mb-8">
+          {/* Description */}
+          <p className="text-gray-600 text-lg max-w-xl mx-auto md:mx-0">
+            Find your dream job or the perfect candidate effortlessly. Connect, apply, and succeed with CareerCrafter.
+          </p>
+
+          {/* Search Bar */}
+          <div className="flex items-center w-full max-w-xl mx-auto md:mx-0 rounded-full shadow-lg border border-gray-200 bg-white overflow-hidden">
             <input
               type="text"
               placeholder="Search your next big opportunity"
@@ -39,26 +52,15 @@ const HeroSection = () => {
               className="h-full px-4 rounded-none bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white"
               style={{ borderRadius: "0 9999px 9999px 0" }}
             >
-              <Search className="h-6 w-6" />
+              <Search className="h-5 w-5" />
             </Button>
           </div>
 
-          {/* Heading */}
-          <h1 className="text-5xl font-extrabold leading-tight">
-            Craft Your <span className="text-blue-600">Career</span> with Us
-          </h1>
-
-          {/* Description */}
-          <p className="text-gray-600 text-lg max-w-xl mx-auto md:mx-0">
-            Find your dream job or the perfect candidate effortlessly.
-            Connect, apply, and succeed with CareerCrafter.
-          </p>
-
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row gap-4 mt-6">
+          <div className="flex flex-col md:flex-row gap-4 mt-6 justify-center md:justify-start">
             <Button
               onClick={() => navigate("/jobs")}
-              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-lg transition-all"
+              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full text-lg shadow-md transition-transform duration-300 hover:scale-105"
             >
               Find Jobs
             </Button>
@@ -74,7 +76,11 @@ const HeroSection = () => {
 
         {/* Right Content - Illustration */}
         <div className="flex-1 flex justify-center">
-          <img src={CareerIllustration} alt="Career Illustration" className="w-96 h-auto" />
+          <img
+            src={CareerIllustration}
+            alt="Career Illustration"
+            className="w-[80%] max-w-md drop-shadow-xl"
+          />
         </div>
       </div>
     </section>
