@@ -17,11 +17,14 @@ import AdminJobs from "./components/admin/AdminJobs.jsx";
 import PostJob from "./components/admin/PostJob.jsx";
 import Applicants from "./components/admin/Applicants.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
-import SelectRole from "./pages/SelectRole.jsx";
+import SelectRole from "./pages/SelectRole.jsx"; // ✅ make sure your file is named SelectRole.jsx
 import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
 import Notification from "./components/Notification.jsx";
 import SetPassword from "./components/SetPassword.jsx";
+import VerifyOTP from "./pages/VerifyOTP.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -39,7 +42,12 @@ const appRouter = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "select-role", element: <SelectRole /> },
+      { path: "first-time-setup", element: <SelectRole /> },
+
+      // ✅ Forgot password flow (public, no login required)
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "verify-otp", element: <VerifyOTP /> },
+      { path: "reset-password", element: <ResetPassword /> },
 
       {
         element: (
@@ -59,15 +67,14 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs", element: <AdminJobs /> },
           { path: "admin/jobs/create", element: <PostJob /> },
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
-          { path: "resume/upload", element: <ResumeUpload/> },
+          { path: "resume/upload", element: <ResumeUpload /> },
           { path: "notifications", element: <Notification /> },
-          { path: "/set-password", element: <SetPassword />},
+          { path: "set-password", element: <SetPassword /> },
         ],
       },
     ],
   },
 ]);
-
 
 function App() {
   return <RouterProvider router={appRouter} />;

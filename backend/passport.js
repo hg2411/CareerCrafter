@@ -31,7 +31,7 @@ passport.use(
             fullname: profile.displayName,
             email: profile.emails?.[0]?.value,
             googleId: profile.id,
-            role: "student",
+            // role: "student",
             profile: {
               profilePhoto: profile.photos?.[0]?.value,
             },

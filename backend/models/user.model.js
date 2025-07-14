@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     phoneNumber: { type: Number }, // Make phone optional for Google auth
     password: { type: String }, // Make password optional for Google auth
     googleId: { type: String, unique: true, sparse: true }, // For Google login
-    role: { type: String, enum: ["student", "recruiter"], required: true },
+    role: { type: String, enum: ["student", "recruiter"] }, // no required
     profile: {
       bio: { type: String },
       skills: [{ type: String }],
@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema(
       company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
       profilePhoto: { type: String, default: "" },
     },
+      resetOTP: { type: String },            
+    resetOTPExpires: { type: Date }, 
   },
   { timestamps: true }
 );

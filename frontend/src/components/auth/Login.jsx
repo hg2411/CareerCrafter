@@ -75,11 +75,11 @@ const Login = () => {
     }
   };
 
- useEffect(() => {
-  if (user && window.location.pathname === "/login") {
-    navigate("/", { replace: true });
-  }
-}, []);
+  useEffect(() => {
+    if (user && window.location.pathname === "/login") {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   const googleLoginHandler = () => {
     console.log("Redirecting to Google...");
@@ -123,11 +123,13 @@ const Login = () => {
               className="mt-2 shadow-sm rounded-md"
             />
           </div>
-
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-6">
               {roles.map((roleOption) => (
-                <label key={roleOption} className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+                <label
+                  key={roleOption}
+                  className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer"
+                >
                   <Input
                     type="radio"
                     name="role"
@@ -140,6 +142,13 @@ const Login = () => {
                 </label>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-sm text-[#6A38C2] hover:underline"
+            >
+              Forgot Password?
+            </button>
           </div>
 
           {loading ? (
