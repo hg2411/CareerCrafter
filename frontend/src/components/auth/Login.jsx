@@ -82,114 +82,124 @@ const Login = () => {
   }, []);
 
   const googleLoginHandler = () => {
-    console.log("Redirecting to Google...");
     window.location.href = "http://localhost:8000/api/v1/user/auth/google";
   };
 
   const roles = ["student", "recruiter"];
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-white">
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-        <form
-          onSubmit={submitHandler}
-          className="w-full max-w-md bg-white border border-gray-200 shadow-lg rounded-2xl p-8 mt-10"
-        >
-          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Welcome Back 👋
-          </h1>
-
-          <div className="mb-5">
-            <Label className="text-gray-700 font-medium">Email</Label>
-            <Input
-              type="email"
-              value={input.email}
-              name="email"
-              onChange={changeEventHandler}
-              placeholder="abc123@gmail.com"
-              className="mt-2 shadow-sm rounded-md"
-            />
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex max-w-4xl w-full">
+          {/* Left hero section */}
+          <div className="hidden md:flex md:w-1/2 bg-gradient-to-tr from-[#8B5CF6] to-[#D946EF] text-white flex-col justify-center items-center p-8">
+            <h2 className="text-4xl font-bold mb-3">Welcome Back! 👋</h2>
+            <p className="text-center text-sm max-w-xs mb-2">
+              We’re glad to see you again!
+            </p>
+            <p className="text-center text-xs text-purple-100 max-w-xs">
+              Sign in to stay connected, discover new opportunities, and keep building your journey with us.
+            </p>
           </div>
 
-          <div className="mb-5">
-            <Label className="text-gray-700 font-medium">Password</Label>
-            <Input
-              type="password"
-              value={input.password}
-              name="password"
-              onChange={changeEventHandler}
-              placeholder="********"
-              className="mt-2 shadow-sm rounded-md"
-            />
-          </div>
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-6">
-              {roles.map((roleOption) => (
-                <label
-                  key={roleOption}
-                  className="flex items-center gap-2 text-gray-600 text-sm cursor-pointer"
+          {/* Right form section */}
+          <div className="flex-1 p-8 sm:p-10">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+              Login to Your Account
+            </h1>
+
+            <form onSubmit={submitHandler} className="space-y-5">
+              <div>
+                <Label className="text-gray-700 font-medium">Email</Label>
+                <Input
+                  type="email"
+                  value={input.email}
+                  name="email"
+                  onChange={changeEventHandler}
+                  placeholder="abc123@gmail.com"
+                  className="mt-2 shadow-sm rounded-lg focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <Label className="text-gray-700 font-medium">Password</Label>
+                <Input
+                  type="password"
+                  value={input.password}
+                  name="password"
+                  onChange={changeEventHandler}
+                  placeholder="********"
+                  className="mt-2 shadow-sm rounded-lg focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex gap-3">
+                  {roles.map((roleOption) => (
+                    <button
+                      type="button"
+                      key={roleOption}
+                      onClick={() =>
+                        setInput({ ...input, role: roleOption })
+                      }
+                      className={`px-3 py-1 rounded-full text-sm border ${
+                        input.role === roleOption
+                          ? "bg-purple-600 text-white border-purple-600"
+                          : "text-gray-600 border-gray-300"
+                      } hover:shadow-md transition-all`}
+                    >
+                      {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-sm text-purple-600 hover:underline"
                 >
-                  <Input
-                    type="radio"
-                    name="role"
-                    value={roleOption}
-                    checked={input.role === roleOption}
-                    onChange={changeEventHandler}
-                    className="cursor-pointer"
-                  />
-                  {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
-                </label>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="text-sm text-[#6A38C2] hover:underline"
-            >
-              Forgot Password?
-            </button>
+                  Forgot Password?
+                </button>
+              </div>
+
+              {loading ? (
+                <Button className="w-full bg-purple-600 text-white" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please Wait
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full shadow-lg transition-all"
+                >
+                  Login
+                </Button>
+              )}
+
+              <div className="my-3 flex items-center">
+                <hr className="flex-grow border-gray-300" />
+                <span className="px-3 text-gray-500 text-sm">OR</span>
+                <hr className="flex-grow border-gray-300" />
+              </div>
+
+              <Button
+                type="button"
+                onClick={googleLoginHandler}
+                className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full flex items-center justify-center gap-2 shadow-md transition-all"
+              >
+                <SiGoogle className="w-4 h-4" />
+                Login with Google
+              </Button>
+            </form>
+
+            <p className="text-center text-sm mt-6 text-gray-600">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-purple-600 font-semibold">
+                Sign Up
+              </Link>
+            </p>
           </div>
-
-          {loading ? (
-            <Button className="w-full bg-[#6A38C2] text-white" disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please Wait
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-all"
-              disabled={loading}
-            >
-              Login
-            </Button>
-          )}
-
-          {/* Divider */}
-          <div className="my-4 flex items-center">
-            <hr className="flex-grow border-gray-300" />
-            <span className="px-3 text-gray-500 text-sm">OR</span>
-            <hr className="flex-grow border-gray-300" />
-          </div>
-
-          {/* Google Login Button */}
-          <Button
-            type="button"
-            onClick={googleLoginHandler}
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 rounded-full transition-all flex items-center justify-center gap-2"
-          >
-            <SiGoogle className="w-4 h-4" />
-            Login with Google
-          </Button>
-
-          <p className="text-center text-sm mt-5 text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-[#6A38C2] font-medium">
-              Sign Up
-            </Link>
-          </p>
-        </form>
+        </div>
       </div>
     </div>
   );

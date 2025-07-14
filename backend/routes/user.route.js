@@ -69,8 +69,8 @@ router.get(
 // 3️⃣ Set role and password (first time after Google login)
 router.post("/auth/set-role-and-password", isAuthenticated, setRoleAndPassword);
 
-// Optional: allow normal users to set password later
-router.post("/set-password", isAuthenticated, setPassword);
+
+// router.post("/set-password", isAuthenticated, setPassword);
 // ✅ Forgot password flow
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-forgot-password-otp",verifyForgotPasswordOTP);
