@@ -167,25 +167,37 @@ const Home = () => {
         ))}
       </section>
 
-      {/* ❤️ Testimonials */}
-      <section className="py-20 px-6 md:px-24 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">What Our Users Say</h2>
-        <div className="grid gap-8 md:grid-cols-3">
-          {[
-            { name: "Alex", text: "CareerCrafter helped me land my dream role quickly and easily!" },
-            { name: "Priya", text: "As a recruiter, it’s the simplest and most powerful tool I’ve used." },
-            { name: "John", text: "Clean design, smooth experience, and plenty of opportunities!" },
-          ].map((t, idx) => (
-            <div
-              key={idx}
-              className="bg-gray-50 rounded-xl shadow p-6 text-gray-700 hover:shadow-lg transition"
-            >
-              <p>“{t.text}”</p>
-              <h4 className="mt-4 font-semibold text-[#6A38C2]">— {t.name}</h4>
-            </div>
-          ))}
+{/* ❤️ Testimonials */}
+<section className="py-20 px-6 md:px-24 bg-gradient-to-b from-[#f3e8ff] to-white">
+  <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-14 text-gray-800">
+    What Our Users Say
+  </h2>
+  <div className="grid gap-10 md:grid-cols-3">
+    {[
+      { name: "Alex", text: "CareerCrafter helped me land my dream role quickly and easily!", img: "https://i.pravatar.cc/100?img=32" },
+      { name: "Priya", text: "As a recruiter, it’s the simplest and most powerful tool I’ve used.", img: "https://i.pravatar.cc/100?img=47" },
+      { name: "John", text: "Clean design, smooth experience, and plenty of opportunities!", img: "https://i.pravatar.cc/100?img=12" },
+    ].map((t, idx) => (
+      <div
+        key={idx}
+        className="relative bg-white/30 backdrop-blur-md rounded-3xl p-8 shadow-xl hover:scale-105 hover:shadow-2xl transition transform text-center border border-white/40"
+      >
+        <div className="flex justify-center mb-4">
+          <img
+            src={t.img}
+            alt={t.name}
+            className="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
+          />
         </div>
-      </section>
+        <p className="text-gray-700 italic mb-4">“{t.text}”</p>
+        <h4 className="font-semibold text-[#6A38C2]">— {t.name}</h4>
+        <div className="absolute top-4 right-4 text-purple-300 opacity-30 text-4xl">❝</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+
 
       {/* 🚀 CTA */}
       {!user && (
