@@ -96,70 +96,73 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Update Profile</DialogTitle>
-          <DialogDescription>
-            Fill in the form below to update your profile details.
-          </DialogDescription>
-        </DialogHeader>
-        <Form onSubmit={submitHandler}>
-          <div className="grid gap-4 py-4">
-            {["fullname", "email", "phoneNumber", "bio", "skills"].map((field) => (
-              <div key={field} className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor={field} className="text-right capitalize">
-                  {field.replace(/([A-Z])/g, " $1")}
-                </Label>
-                <Input
-                  id={field}
-                  name={field}
-                  type={field === "email" ? "email" : "text"}
-                  value={input[field]}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-            ))}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="file" className="text-right">Resume</Label>
-              <Input
-                id="file"
-                name="file"
-                type="file"
-                accept="application/pdf"
-                onChange={fileChangeHandler}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="profilePhoto" className="text-right">Profile Photo</Label>
-              <Input
-                id="profilePhoto"
-                name="profilePhoto"
-                type="file"
-                accept="image/*"
-                onChange={profilePhotoChangeHandler}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition-all"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please Wait
-                </>
-              ) : "Update"}
-            </Button>
-          </DialogFooter>
-        </Form>
-      </DialogContent>
-    </Dialog>
+  <Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent className="bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-xl sm:max-w-[450px] p-6">
+    <DialogHeader>
+      <DialogTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+        ✏️ <span className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-transparent bg-clip-text">Update Profile</span>
+      </DialogTitle>
+      <DialogDescription className="text-xs text-gray-500">
+        Fill in the details below to refresh your profile.
+      </DialogDescription>
+    </DialogHeader>
+    <Form onSubmit={submitHandler} className="space-y-4 mt-4">
+      {["fullname", "email", "phoneNumber", "bio", "skills"].map((field) => (
+        <div key={field}>
+          <Label htmlFor={field} className="block mb-1 text-xs text-gray-600 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </Label>
+          <Input
+            id={field}
+            name={field}
+            type={field === "email" ? "email" : "text"}
+            value={input[field]}
+            onChange={changeEventHandler}
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-[#9D50BB] focus:ring-2 focus:ring-[#9D50BB]/20 transition"
+          />
+        </div>
+      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="file" className="block mb-1 text-xs text-gray-600">Resume (PDF)</Label>
+          <Input
+            id="file"
+            name="file"
+            type="file"
+            accept="application/pdf"
+            onChange={fileChangeHandler}
+            className="w-full px-2 py-1 rounded-lg border border-gray-300 focus:border-[#9D50BB] focus:ring-2 focus:ring-[#9D50BB]/20 transition"
+          />
+        </div>
+        <div>
+          <Label htmlFor="profilePhoto" className="block mb-1 text-xs text-gray-600">Profile Photo</Label>
+          <Input
+            id="profilePhoto"
+            name="profilePhoto"
+            type="file"
+            accept="image/*"
+            onChange={profilePhotoChangeHandler}
+            className="w-full px-2 py-1 rounded-lg border border-gray-300 focus:border-[#9D50BB] focus:ring-2 focus:ring-[#9D50BB]/20 transition"
+          />
+        </div>
+      </div>
+      <DialogFooter>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-medium py-2 rounded-full transition"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
+            </>
+          ) : "Update"}
+        </Button>
+      </DialogFooter>
+    </Form>
+  </DialogContent>
+</Dialog>
+
   );
 };
 
