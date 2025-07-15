@@ -6,6 +6,8 @@ export const getStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
     // Count total recruiters
     const recruiters = await User.countDocuments({ role: "recruiter" });
+       
+
 
     res.json({
       activeUsers: totalUsers,  // rename to total users if you prefer

@@ -10,8 +10,8 @@ const useGetStats = () => {
 
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get("/api/v1/stats");
-        console.log("Fetched stats:", data);  // debug
+        const { data } = await axios.get("http://localhost:8000/api/v1/stats");
+        console.log("Fetched stats:", data); // debug
         setStats(data);
       } catch (error) {
         console.error("Error fetching stats", error);

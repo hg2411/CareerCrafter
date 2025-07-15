@@ -81,26 +81,35 @@ return (
         </Button>
       </div>
     </section>
-
-    {/* 📊 Stats */}
-    <section className="py-16 px-6 md:px-24 grid md:grid-cols-3 gap-6 text-center">
+  {/* 📊 Stats */}
+    <section className="py-16 px-6 md:px-24 grid md:grid-cols-3 gap-8 text-center">
       {[
-        { count: `${allJobs?.length || 0}+`, label: "Jobs Posted" },
-        {
-          count: statsLoading ? "..." : `${stats.recruiters ?? 0}+`,
-          label: "Recruiters",
+        { 
+          count: `${allJobs?.length || 0}+`, 
+          label: "Jobs Posted", 
+          icon: "💼", 
+          gradient: "from-yellow-200 via-yellow-300 to-yellow-400"
         },
-        {
-          count: statsLoading ? "..." : `${stats.activeUsers ?? 0}+`,
-          label: "Active Users",
+        { 
+          count: statsLoading ? "..." : `${stats.recruiters ?? 0}+`, 
+          label: "Recruiters", 
+          icon: "🧑‍💼", 
+          gradient: "from-purple-200 via-purple-300 to-purple-400"
+        },
+        { 
+          count: statsLoading ? "..." : `${stats.activeUsers ?? 0}+`, 
+          label: "Active Users", 
+          icon: "👥", 
+          gradient: "from-pink-200 via-pink-300 to-pink-400"
         },
       ].map((stat, idx) => (
         <div
           key={idx}
-          className="bg-white rounded-2xl shadow p-8 hover:scale-105 transition-transform"
+          className={`bg-gradient-to-br ${stat.gradient} rounded-2xl shadow-lg p-8 flex flex-col items-center justify-center transform hover:-translate-y-1 transition duration-300`}
         >
-          <h3 className="text-4xl font-bold text-[#6A38C2]">{stat.count}</h3>
-          <p className="mt-2 text-gray-700">{stat.label}</p>
+          <div className="text-5xl mb-4">{stat.icon}</div>
+          <h3 className="text-4xl md:text-5xl font-extrabold text-gray-800">{stat.count}</h3>
+          <p className="mt-2 text-gray-700 font-medium">{stat.label}</p>
         </div>
       ))}
     </section>
