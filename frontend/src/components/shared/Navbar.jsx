@@ -136,67 +136,90 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            {/* Notifications */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="relative cursor-pointer">
-                  <Bell className="text-gray-600 hover:text-blue-600" />
-                  {unreadNotifications.length > 0 && (
-                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
-                      {unreadNotifications.length > 9 ? "9+" : unreadNotifications.length}
-                    </span>
-                  )}
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="font-semibold text-gray-800 mb-2">Notifications</div>
-                {notifications?.length ? (
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {notifications.map((n) => (
-                      <div key={n._id} className="p-2 rounded-md text-sm border bg-gray-50">
-                        <p className="font-medium text-gray-800">{n.message}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(n.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
-                    <Button onClick={markAllReadHandler} className="mt-3 w-full" size="sm">
-                      Mark all as read
-                    </Button>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">No notifications.</p>
-                )}
-              </PopoverContent>
-            </Popover>
+          {/* Notifications */}
+<Popover>
+  <PopoverTrigger asChild>
+    <div className="relative cursor-pointer">
+      <Bell className="text-gray-600 hover:text-blue-600 transition-colors" size={22} />
+      {unreadNotifications.length > 0 && (
+        <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full shadow">
+          {unreadNotifications.length > 9 ? "9+" : unreadNotifications.length}
+        </span>
+      )}
+    </div>
+  </PopoverTrigger>
+  <PopoverContent className="w-80 bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-xl p-3">
+    <div className="flex items-center justify-between mb-2">
+      <span className="font-semibold text-gray-800 text-base flex items-center gap-1">
+        <span className="text-yellow-500">🔔</span> Notifications
+      </span>
+      {notifications?.length > 0 && (
+        <Button 
+          onClick={markAllReadHandler} 
+          size="sm" 
+          variant="secondary"
+          className="text-xs px-2 py-1"
+        >
+          Mark all as read
+        </Button>
+      )}
+    </div>
+    {notifications?.length ? (
+      <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 pr-1">
+        {notifications.map((n) => (
+          <div 
+            key={n._id} 
+            className="p-2 bg-gradient-to-r from-white via-gray-50 to-white rounded-md border border-gray-100 shadow hover:shadow-md transition-all"
+          >
+            <p className="font-medium text-gray-700 text-sm">{n.message}</p>
+            <p className="text-[11px] text-gray-500 mt-0.5">
+              {new Date(n.createdAt).toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-sm text-gray-500 text-center py-4">No notifications 🎉</p>
+    )}
+  </PopoverContent>
+</Popover>
 
             {/* Profile */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} />
-                </Avatar>
-              </PopoverTrigger>
-              <PopoverContent className="w-64">
-                <div className="flex gap-4 items-center">
-                  <Avatar><AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} /></Avatar>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{user?.fullname}</h4>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
-                  </div>
-                </div>
-                <div className="mt-4 space-y-2 text-sm text-gray-700">
-                  {user?.role === "student" && (
-                    <Link to="/profile" className="flex items-center gap-2 hover:text-blue-600">
-                      <User2 size={18} /> View Profile
-                    </Link>
-                  )}
-                  <div onClick={logoutHandler} className="flex items-center gap-2 hover:text-blue-600 cursor-pointer">
-                    <LogOut size={18} /> Logout
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+<Popover>
+  <PopoverTrigger asChild>
+    <Avatar className="cursor-pointer border-2 border-blue-500 shadow hover:shadow-md transition">
+      <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} />
+    </Avatar>
+  </PopoverTrigger>
+  <PopoverContent className="w-64 bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-xl p-4">
+    <div className="flex items-center gap-3">
+      <Avatar className="h-12 w-12 border border-gray-200 shadow">
+        <AvatarImage src={user?.profile?.profilePhoto || "/default-avatar.png"} />
+      </Avatar>
+      <div className="flex-1">
+        <h4 className="font-semibold text-gray-800 text-base truncate">{user?.fullname}</h4>
+        <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+      </div>
+    </div>
+    <div className="mt-4 space-y-2 text-sm">
+      {user?.role === "student" && (
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 text-gray-700 hover:text-blue-600 transition"
+        >
+          <User2 size={16} /> View Profile
+        </Link>
+      )}
+      <div
+        onClick={logoutHandler}
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-red-50 text-gray-700 hover:text-red-600 cursor-pointer transition"
+      >
+        <LogOut size={16} /> Logout
+      </div>
+    </div>
+  </PopoverContent>
+</Popover>
+
           </div>
         )}
 
