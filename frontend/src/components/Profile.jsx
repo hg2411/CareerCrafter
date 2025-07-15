@@ -14,15 +14,16 @@ import { calculateProfileCompletion } from "@/utils/calculateProfileCompletion";
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
+  const [showMissing, setShowMissing] = useState(false);
   const { user } = useSelector((store) => store.auth);
-  const { percentage: completion } = calculateProfileCompletion(user);
+  const { percentage: completion, missingFields } =
+    calculateProfileCompletion(user);
 
   return (
     <div className="bg-gradient-to-br from-[#eef2f7] via-[#f6f9fc] to-[#eef2f7] min-h-screen">
       <Navbar />
 
       <div className="max-w-6xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* Left Sidebar */}
         <div className="md:col-span-1 bg-white rounded-2xl shadow-md p-6 space-y-6">
           <div className="flex flex-col items-center text-center">
@@ -32,8 +33,12 @@ const Profile = () => {
                 className="rounded-full object-cover"
               />
             </Avatar>
-            <h1 className="font-bold text-xl mt-4 text-gray-800">{user?.fullname}</h1>
-            <p className="text-gray-500 text-sm mt-1">{user?.profile?.bio || "No bio available."}</p>
+            <h1 className="font-bold text-xl mt-4 text-gray-800">
+              {user?.fullname}
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">
+              {user?.profile?.bio || "No bio available."}
+            </p>
           </div>
 
           <div>
@@ -43,7 +48,10 @@ const Profile = () => {
             {user?.profile?.skills?.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {user.profile.skills.map((skill, idx) => (
-                  <Badge key={idx} className="px-3 py-1 text-xs bg-purple-50 text-purple-700">
+                  <Badge
+                    key={idx}
+                    className="px-3 py-1 text-xs bg-purple-50 text-purple-700"
+                  >
                     {skill}
                   </Badge>
                 ))}
@@ -55,14 +63,39 @@ const Profile = () => {
 
           {/* Profile Completion */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-700 mb-1">Profile Completion</h2>
+            <h2 className="text-sm font-semibold text-gray-700 mb-1">
+              Profile Completion
+            </h2>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full"
+                className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${completion}%` }}
               ></div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{completion}% completed</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {completion}% completed
+            </p>
+
+            {missingFields.length > 0 && (
+              <>
+                <button
+                  onClick={() => setShowMissing(!showMissing)}
+                  className="text-xs text-blue-600 mt-1 hover:underline"
+                >
+                  {showMissing
+                    ? "Hide what's missing"
+                    : "Click here to see what's missing"}
+                </button>
+
+                {showMissing && (
+                  <ul className="text-xs text-red-500 mt-2 list-disc pl-4">
+                    {missingFields.map((field, index) => (
+                      <li key={index}>Add {field}</li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
           </div>
 
           <Button
@@ -77,10 +110,11 @@ const Profile = () => {
 
         {/* Right Content */}
         <div className="md:col-span-2 flex flex-col gap-6">
-
           {/* Basic Information */}
           <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Basic Information</h2>
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Basic Information
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 text-sm">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-purple-600" />
@@ -108,7 +142,9 @@ const Profile = () => {
 
           {/* Applied Jobs */}
           <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Applied Jobs</h2>
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+              Applied Jobs
+            </h2>
             <AppliedJobTable />
           </div>
         </div>
