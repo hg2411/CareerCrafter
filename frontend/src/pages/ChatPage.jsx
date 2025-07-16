@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
+import axios from "axios";
 import { Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const SOCKET_SERVER_URL = "http://localhost:8000"; // replace with your backend URL
+const SOCKET_SERVER_URL = "http://localhost:8000"; // replace if needed
 
 const ChatPage = () => {
   const { receiverId } = useParams(); // recruiter id
@@ -15,10 +16,30 @@ const ChatPage = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
+  // ✅ scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // ✅ fetch previous chat messages
+  useEffect(() => {
+    const fetchOldMessages = async () => {
+      try {
+        const res = await axios.get(`/api/v1/chat/${receiverId}`, {
+          withCredentials: true,
+        });
+        if (res.data.success) {
+          setMessages(res.data.messages);
+        }
+      } catch (error) {
+        console.error("Failed to load old messages:", error);
+      }
+    };
+
+    fetchOldMessages();
+  }, [receiverId]);
+
+  // ✅ init socket.io
   useEffect(() => {
     socketRef.current = io(SOCKET_SERVER_URL, { withCredentials: true });
     socketRef.current.emit('join', { senderId: user._id, receiverId });
@@ -36,6 +57,7 @@ const ChatPage = () => {
     scrollToBottom();
   }, [messages]);
 
+  // ✅ send message
   const handleSend = () => {
     if (!text.trim()) return;
 
@@ -68,8 +90,7 @@ const ChatPage = () => {
             className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm shadow 
               ${msg.senderId === user._id 
                 ? "ml-auto bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white" 
-                : "mr-auto bg-white text-gray-800 border border-gray-200"}`
-            }
+                : "mr-auto bg-white text-gray-800 border border-gray-200"}`}
           >
             <p>{msg.text}</p>
             <span className="block text-xs mt-1 text-gray-300">

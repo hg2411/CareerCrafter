@@ -126,7 +126,7 @@ const text = `👋 Hi ${student.name},
 
 Subject: Congratulations on Your Selection for ${job.title}
 
-Dear ${user.name},
+Dear ${student.name},
 
 We are pleased to inform you that you have been selected for the position of "${job.title}" at ${job.company.name || "our company"}.
 

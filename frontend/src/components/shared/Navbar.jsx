@@ -40,7 +40,6 @@ const Navbar = () => {
       }
     };
 
-    // 🩹 Avoid refetching user on /login and /signup pages
     if (!user && currentPath !== "/login" && currentPath !== "/signup") {
       fetchUser();
     }
@@ -91,6 +90,7 @@ const Navbar = () => {
               {[
                 { name: "Companies", path: "/admin/companies" },
                 { name: "Jobs", path: "/admin/jobs" },
+                { name: "Chat", path: "/recruiter/chat-list" }, // ✅ NEW recruiter chat page
               ].map(({ name, path }) => (
                 <li key={name}>
                   <Link
@@ -109,13 +109,12 @@ const Navbar = () => {
           ) : (
             ["Home", "Jobs", "Browse", "Saved"].map((item) => {
               const path = item === "Home" ? "/" : `/${item.toLowerCase()}`;
-              const isActive = currentPath === path;
               return (
                 <li key={item}>
                   <Link
                     to={path}
                     className={`relative transition-colors duration-300 ${
-                      isActive
+                      currentPath === path
                         ? "text-blue-600 font-semibold after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500"
                         : "text-gray-700 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-purple-500 after:via-blue-500 after:to-pink-500 after:rounded-full after:transition-all after:duration-500 hover:after:w-full hover:text-blue-600"
                     }`}
@@ -178,11 +177,11 @@ const Navbar = () => {
                   )}
                 </div>
                 {notifications?.length ? (
-                  <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 pr-1">
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
                     {notifications.map((n) => (
                       <div
                         key={n._id}
-                        className="p-2 bg-gradient-to-r from-white via-gray-50 to-white rounded-md border border-gray-100 shadow hover:shadow-md transition-all"
+                        className="p-2 bg-white rounded-md border shadow hover:shadow-md transition"
                       >
                         <p className="font-medium text-gray-700 text-sm">
                           {n.message}
@@ -212,7 +211,7 @@ const Navbar = () => {
               </PopoverTrigger>
               <PopoverContent className="w-64 bg-white/90 backdrop-blur-lg border border-gray-200 shadow-xl rounded-xl p-4">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border border-gray-200 shadow">
+                  <Avatar className="h-12 w-12 border shadow">
                     <AvatarImage
                       src={user?.profile?.profilePhoto || "/default-avatar.png"}
                     />
@@ -243,7 +242,6 @@ const Navbar = () => {
                       <User2 size={16} /> View Profile
                     </Link>
                   )}
-
                   <div
                     onClick={logoutHandler}
                     className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-red-50 text-gray-700 hover:text-red-600 cursor-pointer transition"
@@ -271,6 +269,8 @@ const Navbar = () => {
             ? [
                 { name: "Companies", path: "/admin/companies" },
                 { name: "Jobs", path: "/admin/jobs" },
+                { name: "Chats", path: "/admin/chats" },
+
               ]
             : ["Home", "Jobs", "Browse", "Saved"].map((item) => ({
                 name: item,
@@ -312,7 +312,6 @@ const Navbar = () => {
                   <User2 size={16} /> View Profile
                 </Link>
               )}
-
               {user?.role === "recruiter" && (
                 <Link
                   to="/admin/profile"
@@ -321,7 +320,6 @@ const Navbar = () => {
                   <User2 size={16} /> View Profile
                 </Link>
               )}
-
               <button
                 onClick={() => {
                   logoutHandler();
