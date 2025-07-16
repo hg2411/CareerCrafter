@@ -24,6 +24,7 @@ import Notification from "./components/Notification.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import AdminProfile from "./components/admin/AdminProfile.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -68,6 +69,7 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
           { path: "resume/upload", element: <ResumeUpload /> },
           { path: "notifications", element: <Notification /> },
+          { path: "admin/profile", element: <AdminProfile /> },
         ],
       },
     ],
