@@ -78,7 +78,8 @@ export const getJobById = async (req, res) => {
         populate: {
           path: 'applicant', // make sure applicant is populated
         }
-      });
+      })
+      .populate("created_by", "name email");;
 
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
@@ -123,22 +124,21 @@ const subject = `🎉🎉 CONGRATULATIONS, ${student.name}! You've been selected
 
 const text = `👋 Hi ${student.name},
 
-✨ We’re thrilled to share some fantastic news — you have been **successfully selected** for the position of **"${job.title}"** at **"${job.company.name || "the company"}"!** 🎯🎊
+Subject: Congratulations on Your Selection for ${job.title}
 
-This is a **big milestone** and truly reflects your dedication, skills, and hard work! 🙌🚀
+Dear ${user.name},
 
-✅ **Next steps:**
-- 📞 Please contact your recruiter or the HR team at the company as soon as possible to discuss onboarding, paperwork, and further details.
-- 📝 Prepare your documents and keep an eye out for upcoming emails or calls.
+We are pleased to inform you that you have been selected for the position of "${job.title}" at ${job.company.name || "our company"}.
 
-We’re so happy to see your career taking this exciting step forward! 🌱💼
+Please contact your recruiter or our HR team at your earliest convenience to complete onboarding and documentation.
 
-If you have any questions or need support, don’t hesitate to reach out. 🤝
+We look forward to welcoming you aboard and wish you every success in your new role.
 
-🎉 **Once again, congratulations and best wishes for your new journey!** 🎉
+Best regards,
 
-Warm regards,  
-✨ **The CareerCrafter Team** ✨
+The CareerCrafter Team
+
+
 `;
 
     // send email

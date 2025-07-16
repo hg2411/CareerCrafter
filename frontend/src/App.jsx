@@ -17,13 +17,15 @@ import AdminJobs from "./components/admin/AdminJobs.jsx";
 import PostJob from "./components/admin/PostJob.jsx";
 import Applicants from "./components/admin/Applicants.jsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.jsx";
-import SelectRole from "./pages/SelectRole.jsx"; // ✅ make sure your file is named SelectRole.jsx
+import SelectRole from "./pages/SelectRole.jsx";
 import SavedJobs from "./components/SavedJobs.jsx";
 import ResumeUpload from "./components/ResumeUpload.jsx";
 import Notification from "./components/Notification.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import AdminProfile from "./components/admin/AdminProfile.jsx";
+import ChatPage from "./pages/ChatPage.jsx"; 
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -68,6 +70,8 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
           { path: "resume/upload", element: <ResumeUpload /> },
           { path: "notifications", element: <Notification /> },
+          { path: "admin/profile", element: <AdminProfile /> },
+          { path: "chat/:receiverId", element: <ChatPage /> },
         ],
       },
     ],

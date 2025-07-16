@@ -3,15 +3,17 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import session from "express-session";
-import passport from "./passport.js";  // ✅ import your configured passport
+import passport from "./passport.js";  // ✅ your configured passport
 import connectDB from "./utils/db.js";
+import http from "http";
+import { Server } from "socket.io";
 
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import notificationRoutes from "./routes/notification.route.js";
-import statsRoutes from "./routes/statsRoutes.js";  
+import statsRoutes from "./routes/statsRoutes.js";
 
 dotenv.config();
 
@@ -56,7 +58,7 @@ app.use(
 
 // ✅ 4. Passport init
 app.use(passport.initialize());
-app.use(passport.session());  // only needed if you mix sessions (fine to keep)
+app.use(passport.session());
 
 // ✅ 5. Routes
 app.use("/api/v1/user", userRoute);
@@ -65,10 +67,42 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/stats", statsRoutes);
-// ✅ 6. Connect DB & start server
-const PORT = process.env.PORT || 8000;
+
+// ✅ 6. Connect DB
 connectDB();
 
-app.listen(PORT, () => {
+// ✅ 7. Create HTTP server & attach socket.io
+const PORT = process.env.PORT || 8000;
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
+
+// ✅ 8. Socket.io logic
+io.on("connection", (socket) => {
+  console.log("✅ New client connected:", socket.id);
+
+  socket.on("join", ({ senderId, receiverId }) => {
+    const roomId = [senderId, receiverId].sort().join("_");
+    socket.join(roomId);
+    console.log(`✅ User ${senderId} joined room: ${roomId}`);
+  });
+
+  socket.on("sendMessage", (message) => {
+    const roomId = [message.senderId, message.receiverId].sort().join("_");
+    io.to(roomId).emit("receiveMessage", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ Client disconnected:", socket.id);
+  });
+});
+
+// ✅ 9. Start server
+server.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });
