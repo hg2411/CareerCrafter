@@ -2,11 +2,15 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import chatRoute from "./routes/chat.route.js";
 import session from "express-session";
-import passport from "./passport.js";  // ✅ your configured passport
+import passport from "./passport.js"; 
 import connectDB from "./utils/db.js";
 import http from "http";
 import { Server } from "socket.io";
+
+// ✅ import Chat model
+import { Chat } from "./models/chat.model.js";
 
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
@@ -67,7 +71,7 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/stats", statsRoutes);
-
+app.use("/api/v1/chat", chatRoute);
 // ✅ 6. Connect DB
 connectDB();
 
@@ -92,9 +96,24 @@ io.on("connection", (socket) => {
     console.log(`✅ User ${senderId} joined room: ${roomId}`);
   });
 
-  socket.on("sendMessage", (message) => {
+  socket.on("sendMessage", async (message) => {
     const roomId = [message.senderId, message.receiverId].sort().join("_");
+
+    // emit message to room
     io.to(roomId).emit("receiveMessage", message);
+
+    try {
+      // ✅ save to DB
+      let chat = await Chat.findOne({ roomId });
+      if (!chat) {
+        chat = await Chat.create({ roomId, messages: [message] });
+      } else {
+        chat.messages.push(message);
+        await chat.save();
+      }
+    } catch (err) {
+      console.error("❌ Failed to save message:", err);
+    }
   });
 
   socket.on("disconnect", () => {

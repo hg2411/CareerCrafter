@@ -26,6 +26,8 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import AdminProfile from "./components/admin/AdminProfile.jsx";
 import ChatPage from "./pages/ChatPage.jsx"; 
+import RecruiterChatPage from "./pages/RecruiterChatPage.jsx";
+import RecruiterChatList from "./pages/RecruiterChatList.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -68,10 +70,13 @@ const appRouter = createBrowserRouter([
           { path: "admin/jobs", element: <AdminJobs /> },
           { path: "admin/jobs/create", element: <PostJob /> },
           { path: "admin/jobs/:id/applicants", element: <Applicants /> },
+          { path: "admin/chats", element: <RecruiterChatList /> },
           { path: "resume/upload", element: <ResumeUpload /> },
           { path: "notifications", element: <Notification /> },
           { path: "admin/profile", element: <AdminProfile /> },
           { path: "chat/:receiverId", element: <ChatPage /> },
+          { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
+          { path :"recruiter/chat-list", element: <RecruiterChatList /> },
         ],
       },
     ],
