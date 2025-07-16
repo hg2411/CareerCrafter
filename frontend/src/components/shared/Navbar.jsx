@@ -90,7 +90,7 @@ const Navbar = () => {
               {[
                 { name: "Companies", path: "/admin/companies" },
                 { name: "Jobs", path: "/admin/jobs" },
-                { name: "Chat", path: "/recruiter/chat-list" }, // ✅ NEW recruiter chat page
+                { name: "Chats", path: "/recruiter/chats" }, // ✅ NEW recruiter chat page
               ].map(({ name, path }) => (
                 <li key={name}>
                   <Link
