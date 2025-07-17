@@ -1,14 +1,16 @@
 import mongoose from "mongoose";
 
-const chatSchema = new mongoose.Schema({
-  roomId: { type: String, required: true }, // e.g., sorted IDs: senderId_receiverId
+const ChatSchema = new mongoose.Schema({
+  roomId: String,
+  recruiterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   messages: [
     {
-      senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      senderId: String,
       text: String,
-      createdAt: { type: Date, default: Date.now },
+      createdAt: Date
     }
   ]
 }, { timestamps: true });
 
-export const Chat = mongoose.model("Chat", chatSchema);
+export const Chat = mongoose.model("Chat", ChatSchema);

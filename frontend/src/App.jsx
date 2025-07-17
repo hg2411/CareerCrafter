@@ -76,7 +76,7 @@ const appRouter = createBrowserRouter([
           { path: "admin/profile", element: <AdminProfile /> },
           { path: "chat/:receiverId", element: <ChatPage /> },
           { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
-          { path :"recruiter/chat-list", element: <RecruiterChatList /> },
+          { path: "recruiter/chats", element: <RecruiterChatList /> },
         ],
       },
     ],

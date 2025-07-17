@@ -69,7 +69,6 @@ const ChatPage = () => {
     };
 
     socketRef.current.emit('sendMessage', newMessage);
-    setMessages((prev) => [...prev, newMessage]);
     setText('');
   };
 
