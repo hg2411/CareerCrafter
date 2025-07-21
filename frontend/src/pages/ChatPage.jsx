@@ -88,7 +88,7 @@ const ChatPage = () => {
             key={idx}
             className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm shadow 
               ${msg.senderId === user._id 
-                ? "ml-auto bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white" 
+                ? "ml-auto bg-gradient-to-r from-[#090410] to-[#9D50BB] text-white" 
                 : "mr-auto bg-white text-gray-800 border border-gray-200"}`}
           >
             <p>{msg.text}</p>

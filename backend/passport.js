@@ -17,21 +17,21 @@ passport.use(
       let user = await User.findOne({ googleId: profile.id });
 
       if (!user) {
-        // 2️⃣ If not found, try to find user by email
+        // 2️⃣ If not found, try to find user by email....
         const existingUserByEmail = await User.findOne({ email: profile.emails?.[0]?.value });
 
         if (existingUserByEmail) {
-          // Link Google ID to the existing email account
+          // Link Google ID to the existing email account...
           existingUserByEmail.googleId = profile.id;
           existingUserByEmail.profile.profilePhoto = profile.photos?.[0]?.value;
           user = await existingUserByEmail.save();
         } else {
-          // 3️⃣ Create new user
+          // 3️⃣ Create new user////
           user = await User.create({
             fullname: profile.displayName,
             email: profile.emails?.[0]?.value,
             googleId: profile.id,
-            // role: "student",
+            // role: "student",///
             profile: {
               profilePhoto: profile.photos?.[0]?.value,
             },
@@ -48,7 +48,7 @@ passport.use(
   )
 );
 
-// ✅ Optional (good practice, even if you use JWT not session)
+// ✅ Optional (good practice, even if you use JWT not session)///
 passport.serializeUser((user, done) => done(null, user.id));
 
 passport.deserializeUser(async (id, done) => {
