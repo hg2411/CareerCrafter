@@ -3,28 +3,44 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { User2, Loader } from "lucide-react";
+import { io } from "socket.io-client";
+
+// Replace with your actual backend URL
+const socket = io("http://localhost:8000", { withCredentials: true });
 
 const RecruiterChatList = () => {
   const { user } = useSelector((state) => state.auth); // recruiter user
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8000/api/v1/chat/recruiter/${user._id}`,
-          { withCredentials: true }
-        );
-        setChats(res.data.chats || []);
-      } catch (err) {
-        console.error("Failed to load chat list:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchChats = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/chat/recruiter/${user._id}`,
+        { withCredentials: true }
+      );
+      setChats(res.data.chats || []);
+    } catch (err) {
+      console.error("Failed to load chat list:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (user?._id) fetchChats();
+  useEffect(() => {
+    if (user?._id) {
+      fetchChats();
+
+      socket.emit("joinRoom", user._id); // recruiter joins their own room to receive messages
+
+      socket.on("newMessage", () => {
+        fetchChats(); // re-fetch when new message comes in
+      });
+
+      return () => {
+        socket.off("newMessage");
+      };
+    }
   }, [user?._id]);
 
   return (
@@ -40,7 +56,6 @@ const RecruiterChatList = () => {
       ) : (
         <ul className="space-y-3">
           {chats.map((chat) => {
-            // pick student info
             const student = chat.participants.find(
               (p) => p._id !== user._id
             );

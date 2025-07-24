@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import io from "socket.io-client";
 import { Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,35 @@ const RecruiterChatPage = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  // scroll to bottom when messages change
+  // 🔁 Fetch existing chat on mount
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const fetchChat = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/chat/${receiverId}`,
+          { withCredentials: true }
+        );
+        setMessages(res.data.messages || []);
+      } catch (error) {
+        console.error("Error fetching chat:", error);
+      }
+    };
 
-  // connect to socket
+    if (user?._id) fetchChat();
+  }, [receiverId, user?._id]);
+
+  // ⚡ Connect to socket and listen
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL, { withCredentials: true });
+    socketRef.current = io(SOCKET_SERVER_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
 
-    socketRef.current.emit("join", { senderId: user._id, receiverId });
+    socketRef.current.emit("join", {
+      senderId: user._id,
+      receiverId,
+      roomId: [user._id, receiverId].sort().join("_"),
+    });
 
     socketRef.current.on("receiveMessage", (message) => {
       setMessages((prev) => [...prev, message]);
@@ -35,7 +55,12 @@ const RecruiterChatPage = () => {
     };
   }, [receiverId, user._id]);
 
-  const handleSend = () => {
+  // ⬇️ Scroll to bottom on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async () => {
     if (!text.trim()) return;
 
     const newMessage = {
@@ -45,9 +70,21 @@ const RecruiterChatPage = () => {
       createdAt: new Date().toISOString(),
     };
 
-    socketRef.current.emit("sendMessage", newMessage);
+    socketRef.current.emit("sendMessage", {
+      ...newMessage,
+      roomId: [user._id, receiverId].sort().join("_"),
+    });
+
     setMessages((prev) => [...prev, newMessage]);
     setText("");
+
+    try {
+      await axios.post("http://localhost:8000/api/v1/message", newMessage, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error("Failed to save message to DB", err);
+    }
   };
 
   return (
@@ -71,7 +108,10 @@ const RecruiterChatPage = () => {
             <p>{msg.text}</p>
             <div className="flex justify-between mt-1">
               <span className="text-xs text-gray-300">
-                {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {new Date(msg.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
               <span className="text-[10px] text-gray-400">
                 {msg.senderId === user._id ? "You" : "Student"}
