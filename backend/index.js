@@ -92,21 +92,27 @@ io.on("connection", (socket) => {
   console.log("✅ Socket connected:", socket.id);
 
   socket.on("joinRoom", ({ senderId, receiverId }) => {
+    if (!senderId || !receiverId) return;
     const roomId = [senderId, receiverId].sort().join("_");
     socket.join(roomId);
-    console.log(`✅ User ${senderId} joined room ${roomId}`);
+    socket.join(senderId);
+    console.log(`📥 ${senderId} joined room: ${roomId}`);
   });
 
   socket.on("sendMessage", (message) => {
-    const roomId = [message.senderId, message.receiverId].sort().join("_");
-    io.to(roomId).emit("receiveMessage", message); // Just emit; no DB saving
-    console.log(`💬 Sent message to room ${roomId}`);
+    const { senderId, receiverId } = message;
+    if (!senderId || !receiverId) return;
+    const roomId = [senderId, receiverId].sort().join("_");
+    io.to(roomId).emit("receiveMessage", message);
+    io.to(receiverId).emit("newMessage");
+    console.log(`📨 Message from ${senderId} to ${receiverId} in room ${roomId}`);
   });
 
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected:", socket.id);
   });
 });
+
 
 
 // ✅ 9. Start Server
