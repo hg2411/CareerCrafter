@@ -52,7 +52,7 @@ const Home = () => {
           <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
             <div className="inline-flex items-center bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-medium mb-8">
               <TrendingUp className="w-4 h-4 mr-2" />
-              #1 Job Platform in 2024
+              #1 Job Platform in 2025
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-tight">
@@ -172,7 +172,7 @@ const Home = () => {
               },
               {
                 count: statsLoading ? "..." : `${stats.activeUsers ?? 0}+`,
-                label: "Success Stories",
+                label: "Active Users",
                 icon: Star,
                 gradient: "from-purple-400 to-indigo-500",
                 bg: "bg-purple-50",
