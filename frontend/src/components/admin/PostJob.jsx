@@ -16,7 +16,7 @@ import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/constant";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 const PostJob = () => {
   const [input, setInput] = useState({
@@ -26,9 +26,10 @@ const PostJob = () => {
     salary: "",
     location: "",
     jobType: "",
-    experience:0,
+    experience: 0,
     position: 0,
     companyId: "",
+    lastDate: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -49,44 +50,43 @@ const PostJob = () => {
   };
 
   const submitHandler = async (e) => {
-  e.preventDefault();
-  try {
-    setLoading(true);
+    e.preventDefault();
+    try {
+      setLoading(true);
 
-    // Clean payload
-    const payload = {
-      title: input.title.trim(),
-      description: input.description.trim(),
-      requirements: input.requirements.trim(),
-      salary: Number(input.salary),
-      location: input.location.trim(),
-      jobType: input.jobType.trim(),
-      experience: Number(input.experience),
-      position: Number(input.position),
-      companyId: input.companyId,
-    };
+      // Clean payload
+      const payload = {
+        title: input.title.trim(),
+        description: input.description.trim(),
+        requirements: input.requirements.trim(),
+        salary: Number(input.salary),
+        location: input.location.trim(),
+        jobType: input.jobType.trim(),
+        experience: Number(input.experience),
+        position: Number(input.position),
+        companyId: input.companyId,
+        lastDate: input.lastDate,
+      };
 
-    console.log("Cleaned Job Payload:", payload); // Final payload
+      console.log("Cleaned Job Payload:", payload); // Final payload
 
-    const res = await axios.post(`${JOB_API_END_POINT}/post`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    });
+      const res = await axios.post(`${JOB_API_END_POINT}/post`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
-    if (res.data.success) {
-      toast.success(res.data.message);
-      navigate("/admin/jobs");
+      if (res.data.success) {
+        toast.success(res.data.message);
+        navigate("/admin/jobs");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    toast.error(error?.response?.data?.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+  };
   return (
     <>
       <Navbar />
@@ -130,7 +130,7 @@ const PostJob = () => {
             <Label className="text-gray-600">Requirements</Label>
             <Input
               type="text"
-              name="requirements" 
+              name="requirements"
               value={input.requirements}
               onChange={changeEventHandler}
               className="my-1"
@@ -197,7 +197,18 @@ const PostJob = () => {
               placeholder="e.g. 5"
             />
           </div>
-
+          <div>
+            <Label className="text-gray-600">Last Date to Apply</Label>
+            <Input
+              type="date"
+              name="lastDate"
+              value={input.lastDate}
+              onChange={changeEventHandler}
+              className="my-1"
+              min={new Date().toISOString().split("T")[0]} // 👈 today's date in YYYY-MM-DD
+              required
+            />
+          </div>
           {/* Select Company */}
           <div>
             <Label className="text-gray-600">Select Company</Label>

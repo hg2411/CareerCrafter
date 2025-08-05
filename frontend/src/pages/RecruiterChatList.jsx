@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { User2, Loader } from "lucide-react";
 import { io } from "socket.io-client";
 
-// Replace with your actual backend URL
+// Connect to socket server
 const socket = io("http://localhost:8000", { withCredentials: true });
 
 const RecruiterChatList = () => {
@@ -31,10 +31,11 @@ const RecruiterChatList = () => {
     if (user?._id) {
       fetchChats();
 
-      socket.emit("joinRoom", user._id); // recruiter joins their own room to receive messages
+      // Join own room to listen for updates
+      socket.emit("joinRoom", user._id);
 
       socket.on("newMessage", () => {
-        fetchChats(); // re-fetch when new message comes in
+        fetchChats();
       });
 
       return () => {
@@ -56,9 +57,9 @@ const RecruiterChatList = () => {
       ) : (
         <ul className="space-y-3">
           {chats.map((chat) => {
-            const student = chat.participants.find(
-              (p) => p._id !== user._id
-            );
+            const student = chat.student;
+
+            if (!student) return null;
 
             return (
               <li key={chat._id}>
@@ -69,10 +70,10 @@ const RecruiterChatList = () => {
                   <User2 className="text-purple-600" />
                   <div>
                     <p className="font-medium text-gray-800">
-                      {student?.fullname || "Unnamed Student"}
+                      {student.fullname || "Unnamed Student"}
                     </p>
                     <p className="text-xs text-gray-500 truncate">
-                      {student?.email}
+                      {student.email}
                     </p>
                   </div>
                 </Link>

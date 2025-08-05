@@ -189,23 +189,32 @@ const JobDescription = () => {
 
         {/* Title + Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
-              {singleJob?.title}
-            </h1>
-            <div className="flex flex-wrap gap-3">
-              <Badge className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white px-3 py-1">
-                {singleJob?.position} Position
-                {singleJob?.position > 1 ? "s" : ""}
-              </Badge>
-              <Badge className="bg-gradient-to-r from-[#F83002] to-[#FF5E3A] text-white px-3 py-1">
-                {singleJob?.jobType}
-              </Badge>
-              <Badge className="bg-gradient-to-r from-[#38A169] to-[#68D391] text-white px-3 py-1 flex items-center gap-1">
-                <IndianRupee className="w-4 h-4" /> {singleJob?.salary} LPA
-              </Badge>
-            </div>
-          </div>
+         <div>
+  <h1 className="text-3xl font-bold text-gray-900 mb-3">
+    {singleJob?.title}
+  </h1>
+  <div className="flex flex-wrap gap-3">
+    <Badge className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white px-3 py-1">
+      {singleJob?.position} Position
+      {singleJob?.position > 1 ? "s" : ""}
+    </Badge>
+    <Badge className="bg-gradient-to-r from-[#F83002] to-[#FF5E3A] text-white px-3 py-1">
+      {singleJob?.jobType}
+    </Badge>
+    <Badge className="bg-gradient-to-r from-[#38A169] to-[#68D391] text-white px-3 py-1 flex items-center gap-1">
+      <IndianRupee className="w-4 h-4" /> {singleJob?.salary} LPA
+    </Badge>
+    
+    {/* ✅ Last Date to Apply Badge */}
+    {singleJob?.lastDate && (
+      <Badge className="bg-gradient-to-r from-[#FBB034] to-[#FFDD00] text-white px-3 py-1 flex items-center gap-1">
+        <CalendarDays className="w-4 h-4" />
+        Last Date: {new Date(singleJob.lastDate).toLocaleDateString()}
+      </Badge>
+    )}
+  </div>
+</div>
+
 
           <div className="flex flex-col gap-2 items-end">
             {isApplied ? (
