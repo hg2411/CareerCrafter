@@ -6,22 +6,16 @@ import axios from "axios";
 import { Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const SOCKET_SERVER_URL = "http://localhost:8000"; // replace if needed
+const SOCKET_SERVER_URL = "http://localhost:8000";
 
 const ChatPage = () => {
-  const { receiverId } = useParams(); // recruiter id
+  const { receiverId } = useParams();
   const { user } = useSelector((store) => store.auth);
-  const [messages, setMessages] = useState([]);  // [{senderId, text, createdAt}]
+  const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  // ✅ scroll to bottom
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // ✅ fetch previous chat messages
   useEffect(() => {
     const fetchOldMessages = async () => {
       try {
@@ -39,12 +33,16 @@ const ChatPage = () => {
     fetchOldMessages();
   }, [receiverId]);
 
-  // ✅ init socket.io
   useEffect(() => {
-    socketRef.current = io(SOCKET_SERVER_URL, { withCredentials: true });
-    socketRef.current.emit('join', { senderId: user._id, receiverId });
+    socketRef.current = io(SOCKET_SERVER_URL, {
+      withCredentials: true,
+    });
 
-    socketRef.current.on('receiveMessage', (message) => {
+    // Join unique room based on sorted user IDs
+    const roomId = [user._id, receiverId].sort().join("_");
+    socketRef.current.emit("joinRoom", roomId);
+
+    socketRef.current.on("receiveMessage", (message) => {
       setMessages((prev) => [...prev, message]);
     });
 
@@ -54,11 +52,10 @@ const ChatPage = () => {
   }, [receiverId, user._id]);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ send message
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!text.trim()) return;
 
     const newMessage = {
@@ -68,20 +65,27 @@ const ChatPage = () => {
       createdAt: new Date().toISOString(),
     };
 
-    socketRef.current.emit('sendMessage', newMessage);
+socketRef.current.emit("sendMessage", newMessage);
+setMessages((prev) => [...prev, newMessage]);
+
     setText('');
+
+    try {
+      await axios.post("/api/v1/message", newMessage, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error("Failed to save message to DB", err);
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto my-6 flex flex-col h-[80vh] rounded-xl shadow-lg overflow-hidden bg-white">
-      
-      {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-white shadow">
         <h2 className="text-lg font-semibold">Chat with Recruiter</h2>
         <Smile className="w-5 h-5" />
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
         {messages.map((msg, idx) => (
           <div
@@ -100,7 +104,6 @@ const ChatPage = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
       <div className="p-4 bg-white border-t flex gap-2 items-center">
         <input
           type="text"

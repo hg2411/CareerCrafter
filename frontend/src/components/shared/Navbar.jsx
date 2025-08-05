@@ -76,7 +76,6 @@ const Navbar = () => {
   return (
     <div className="bg-white sticky top-0 z-50 border-b border-gray-200">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-20 px-6">
-        {/* Logo */}
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-wide cursor-pointer">
           <Link to="/">
             Career<span className="text-blue-600">Crafter</span>
@@ -89,8 +88,10 @@ const Navbar = () => {
             <>
               {[
                 { name: "Companies", path: "/admin/companies" },
-                { name: "Jobs", path: "/admin/jobs" },
-                { name: "Chats", path: "/recruiter/chats" }, // ✅ NEW recruiter chat page
+{ name: "Jobs", path: "/admin/jobs" },
+{ name: "Chat", path: "/recruiter/chat-list" },
+{ name: "Chats", path: "/recruiter/chats" }, // ✅ NEW recruiter chat page
+
               ].map(({ name, path }) => (
                 <li key={name}>
                   <Link
@@ -107,7 +108,7 @@ const Navbar = () => {
               ))}
             </>
           ) : (
-            ["Home", "Jobs", "Browse", "Saved"].map((item) => {
+            ["Home", "Jobs", "Saved"].map((item) => {
               const path = item === "Home" ? "/" : `/${item.toLowerCase()}`;
               return (
                 <li key={item}>
@@ -270,9 +271,8 @@ const Navbar = () => {
                 { name: "Companies", path: "/admin/companies" },
                 { name: "Jobs", path: "/admin/jobs" },
                 { name: "Chats", path: "/admin/chats" },
-
               ]
-            : ["Home", "Jobs", "Browse", "Saved"].map((item) => ({
+            : ["Home", "Jobs", "Saved"].map((item) => ({
                 name: item,
                 path: item === "Home" ? "/" : `/${item.toLowerCase()}`,
               }))

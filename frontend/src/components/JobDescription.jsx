@@ -162,6 +162,32 @@ const JobDescription = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto px-6 py-12 mt-10 bg-white rounded-2xl shadow-xl">
+       {/* 🔙 Back Button */}
+{/* 🔙 Back Button */}
+<Button
+  onClick={() => navigate(-1)}
+  className="mb-6 flex items-center gap-2 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white font-semibold px-5 py-2.5 rounded-full shadow-md transition-all duration-200 group w-fit"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5 text-white transition-transform duration-200 group-hover:-translate-x-1"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+  <span>Back</span>
+</Button>
+
+
+
+        {/* Title + Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-3">

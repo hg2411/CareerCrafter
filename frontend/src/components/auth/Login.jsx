@@ -18,6 +18,8 @@ const Login = () => {
     role: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false); // 👁️ Password visibility toggle
+
   const { loading, user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -124,14 +126,23 @@ const Login = () => {
 
               <div>
                 <Label className="text-gray-700 font-medium">Password</Label>
-                <Input
-                  type="password"
-                  value={input.password}
-                  name="password"
-                  onChange={changeEventHandler}
-                  placeholder="********"
-                  className="mt-2 shadow-sm rounded-lg focus:ring-2 focus:ring-purple-500"
-                />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={input.password}
+                    name="password"
+                    onChange={changeEventHandler}
+                    placeholder="********"
+                    className="mt-2 pr-16 shadow-sm rounded-lg focus:ring-2 focus:ring-purple-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-sm text-purple-600 hover:underline focus:outline-none"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -140,9 +151,7 @@ const Login = () => {
                     <button
                       type="button"
                       key={roleOption}
-                      onClick={() =>
-                        setInput({ ...input, role: roleOption })
-                      }
+                      onClick={() => setInput({ ...input, role: roleOption })}
                       className={`px-3 py-1 rounded-full text-sm border ${
                         input.role === roleOption
                           ? "bg-purple-600 text-white border-purple-600"
