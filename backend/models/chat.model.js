@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const ChatSchema = new mongoose.Schema({
   roomId: String,
-  recruiterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  recruiter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   messages: [
     {
-      senderId: String,
+      senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // optional improvement
       text: String,
       createdAt: Date
     }

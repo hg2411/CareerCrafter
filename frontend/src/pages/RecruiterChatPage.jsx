@@ -16,7 +16,6 @@ const RecruiterChatPage = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
-  // 🔁 Fetch existing chat on mount
   useEffect(() => {
     const fetchChat = async () => {
       try {
@@ -33,7 +32,6 @@ const RecruiterChatPage = () => {
     if (user?._id) fetchChat();
   }, [receiverId, user?._id]);
 
-  // ⚡ Connect to socket and listen
   useEffect(() => {
     socketRef.current = io(SOCKET_SERVER_URL, {
       transports: ["websocket"],
@@ -55,7 +53,6 @@ const RecruiterChatPage = () => {
     };
   }, [receiverId, user._id]);
 
-  // ⬇️ Scroll to bottom on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -68,6 +65,8 @@ const RecruiterChatPage = () => {
       receiverId,
       text,
       createdAt: new Date().toISOString(),
+      recruiter: user._id, 
+      student: receiverId,      
     };
 
     socketRef.current.emit("sendMessage", {
