@@ -40,6 +40,16 @@ const Job = ({ job, onRemove }) => {
             ? "Today"
             : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
+         {/* ✅ Last Date Badge */}
+  {job?.lastDate && !isNaN(new Date(job.lastDate)) && (
+    <Badge className="text-red-600 font-bold" variant="ghost">
+      Last Date: {new Date(job.lastDate).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      })}
+    </Badge>
+  )}
         {/* Show remove trash only if isSaved is true */}
         {isSaved && (
           <Button
@@ -74,7 +84,7 @@ const Job = ({ job, onRemove }) => {
 
       {/* Job Title & Description */}
       <div>
-        <h1 className="font-bold text-lg sm:text-xl mb-2 text-gray-900">{job?.tittle}</h1>
+        <h1 className="font-bold text-lg sm:text-xl mb-2 text-gray-900">{job?.title}</h1>
         <p className="text-sm sm:text-base text-gray-600">{job?.description}</p>
       </div>
 
@@ -83,12 +93,13 @@ const Job = ({ job, onRemove }) => {
         <Badge className="text-blue-700 font-bold" variant="ghost">
           {job?.position} Positions
         </Badge>
-        <Badge className="text-[#F83002] font-bold" variant="ghost">
+        <Badge className="text-yellow-700 font-bold" variant="ghost">
           {job?.jobType}
         </Badge>
         <Badge className="text-[#7209b7] font-bold" variant="ghost">
           {job?.salary} LPA
         </Badge>
+        
       </div>
 
       {/* Action Buttons */}

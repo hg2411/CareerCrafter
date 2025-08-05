@@ -91,36 +91,23 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("✅ Socket connected:", socket.id);
 
-  socket.on("join", ({ senderId, receiverId }) => {
+  socket.on("joinRoom", ({ senderId, receiverId }) => {
     const roomId = [senderId, receiverId].sort().join("_");
     socket.join(roomId);
     console.log(`✅ User ${senderId} joined room ${roomId}`);
   });
 
-  socket.on("sendMessage", async (message) => {
+  socket.on("sendMessage", (message) => {
     const roomId = [message.senderId, message.receiverId].sort().join("_");
-
-    // Broadcast to the same room
-    io.to(roomId).emit("receiveMessage", message);
-
-    // Save message in DB
-    try {
-      let chat = await Chat.findOne({ roomId });
-      if (!chat) {
-        chat = new Chat({ roomId, messages: [message] });
-      } else {
-        chat.messages.push(message);
-      }
-      await chat.save();
-    } catch (err) {
-      console.error("❌ Error saving message:", err);
-    }
+    io.to(roomId).emit("receiveMessage", message); // Just emit; no DB saving
+    console.log(`💬 Sent message to room ${roomId}`);
   });
 
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected:", socket.id);
   });
 });
+
 
 // ✅ 9. Start Server
 server.listen(PORT, () => {

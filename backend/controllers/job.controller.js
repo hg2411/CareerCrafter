@@ -6,40 +6,76 @@ import sendMail from "../utils/sendMail.js"; // ✅ import sendMail utility
 // admin post job
 export const postJob = async (req, res) => {
   try {
-    const { title, description, location, requirements, salary, jobType, experience, position, companyId } = req.body;
+    const {
+      title,
+      description,
+      location,
+      requirements,
+      salary,
+      jobType,
+      experience,
+      position,
+      companyId,
+      lastDate, // ✅ new field
+    } = req.body;
+
     const userId = req.id;
 
-    if (!title || !description || !location || !requirements || !salary || !jobType || !experience || !position || !companyId) {
+    // ✅ Validate required fields
+    if (
+      !title ||
+      !description ||
+      !location ||
+      !requirements ||
+      !salary ||
+      !jobType ||
+      !experience ||
+      !position ||
+      !companyId ||
+      !lastDate
+    ) {
       return res.status(400).json({
         message: "Something is missing",
         success: false,
       });
     }
 
+    // ✅ Validate lastDate is not in the past
+    const today = new Date();
+    const submittedLastDate = new Date(lastDate);
+    if (submittedLastDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
+      return res.status(400).json({
+        message: "Last date to apply cannot be in the past.",
+        success: false,
+      });
+    }
+
+    // ✅ Create the job
     const job = await Job.create({
       title,
       description,
-      requirements: requirements.split(","),
+      requirements: requirements.split(",").map((r) => r.trim()),
       salary: Number(salary),
       location,
       jobType,
-      experienceLevel: experience,
-      position,
+      experienceLevel: Number(experience),
+      position: Number(position),
+      lastDate: submittedLastDate,
       company: companyId,
-      created_by: userId
+      created_by: userId,
     });
 
-    // ✅ notify recruiter themself
+    // ✅ Notify recruiter
     await Notification.create({
       user: userId,
-      message: `✅ You successfully posted a new job: ${job.title}`
+      message: `✅ You successfully posted a new job: ${job.title}`,
     });
 
-    // ✅ notify all students
+    // ✅ Notify all students
     const students = await User.find({ role: "student" }).select("_id");
-    const notifications = students.map(student => ({
+    const notifications = students.map((student) => ({
       user: student._id,
-      message: `📢 New job posted: ${job.title}`
+      message: `📢 New job posted: ${job.title}`,
     }));
     await Notification.insertMany(notifications);
 
@@ -49,13 +85,14 @@ export const postJob = async (req, res) => {
       job,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Job post error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
     });
   }
 };
+
 
 // get all jobs
 export const getAllJobs = async (req, res) => {

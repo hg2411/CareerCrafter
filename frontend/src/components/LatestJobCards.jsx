@@ -5,7 +5,7 @@ import { Building2, MapPin, Briefcase, DollarSign } from 'lucide-react';
 
 const LatestJobCards = ({ job }) => {
   const navigate = useNavigate();
-
+console.log("Job data:", job);
   if (!job) return null;
 
   return (
@@ -36,6 +36,12 @@ const LatestJobCards = ({ job }) => {
         <Badge className="bg-gradient-to-r from-[#38A169] to-[#68D391] text-white px-3 py-1 text-xs cursor-pointer flex items-center gap-1">
           <DollarSign className="w-4 h-4" /> {job?.salary} LPA
         </Badge>
+        {job?.lastDate && (
+          <Badge className="bg-gradient-to-r from-[#FBB034] to-[#FFDD00] text-white px-3 py-1 text-xs cursor-pointer flex items-center gap-1">
+            Last Date: {new Date(job.lastDate).toLocaleDateString()}
+          </Badge>
+        )}
+
       </div>
 
       {/* Location */}
