@@ -36,11 +36,10 @@ const Companies = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 shadow-lg border border-gray-200">
+          {/* <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 shadow-lg border border-gray-200">
             <Building className="w-5 h-5 mr-2 text-orange-500" />
             <span className="text-gray-700 font-semibold">Company Management</span>
-          </div>
-
+          </div> */}
           <h1 className="text-5xl font-black text-gray-900 mb-4 leading-tight">
             <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
               Manage Your

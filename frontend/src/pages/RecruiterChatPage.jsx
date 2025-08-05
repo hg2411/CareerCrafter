@@ -86,55 +86,78 @@ const RecruiterChatPage = () => {
     }
   };
 
+  const getInitials = (name = "S") => name.charAt(0).toUpperCase();
+
   return (
-    <div className="max-w-4xl mx-auto my-6 flex flex-col h-[80vh] rounded-xl shadow-lg overflow-hidden bg-white">
-      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#38A169] to-[#68D391] text-white shadow">
-        <h2 className="text-lg font-semibold">Chat with Student</h2>
-        <Smile className="w-5 h-5" />
+    <div className="max-w-5xl mx-auto my-8 flex flex-col h-[90vh] rounded-3xl shadow-2xl border border-gray-200 bg-white overflow-hidden">
+      
+      {/* Header — only student shown */}
+      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#38A169] to-[#68D391] text-white shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">
+            {getInitials("Student")}
+          </div>
+          <div>
+            <p className="text-lg font-semibold">Student</p>
+            <p className="text-xs text-white/80"></p>
+          </div>
+        </div>
+        <Smile className="w-5 h-5 opacity-80" />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm shadow 
-              ${
-                msg.senderId === user._id || msg.senderId?._id === user._id
-                  ? "ml-auto bg-gradient-to-r from-[#38A169] to-[#68D391] text-white"
-                  : "mr-auto bg-white text-gray-800 border border-gray-200"
-              }`}
-          >
-            <p>{msg.text}</p>
-            <div className="flex justify-between mt-1">
-              <span className="text-xs text-gray-300">
-                {new Date(msg.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-              <span className="text-[10px] text-gray-400">
-                {msg.senderId === user._id || msg.senderId?._id === user._id
-                  ? "You"
-                  : "Student"}
-              </span>
+      {/* Messages */}
+      <div
+        id="chatScrollBox"
+        className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-gray-100 via-white to-gray-200 space-y-4 relative"
+      >
+        {messages.map((msg, idx) => {
+          const isYou = msg.senderId === user._id || msg.senderId?._id === user._id;
+
+          return (
+            <div key={idx} className={`flex ${isYou ? "justify-end" : "justify-start"}`}>
+              <div className="flex gap-2 max-w-[75%] items-end">
+                {!isYou && (
+                  <div className="w-8 h-8 bg-[#38A169] text-white rounded-full flex items-center justify-center font-semibold text-sm">
+                    {getInitials("Student")}
+                  </div>
+                )}
+
+                <div
+                  className={`px-4 py-3 rounded-2xl shadow-md text-sm 
+                    ${isYou
+                      ? "bg-gradient-to-br from-[#38A169] to-[#68D391] text-white rounded-br-none"
+                      : "bg-white text-gray-800 border border-gray-200 rounded-bl-none"
+                    }`}
+                >
+                  <p>{msg.text}</p>
+                  <div className="text-[10px] text-gray-400 mt-1 text-right">
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                    <span className="ml-1">{isYou ? "You" : "Student"}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-white border-t flex gap-2 items-center">
+      {/* Input */}
+      <div className="p-4 border-t bg-white flex items-center gap-3 shadow-inner">
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type your message..."
-          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-[#38A169] outline-none"
+          className="flex-1 px-4 py-2 rounded-full border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#38A169] outline-none transition"
         />
         <Button
           onClick={handleSend}
-          className="flex items-center justify-center bg-gradient-to-r from-[#38A169] to-[#68D391] text-white px-4 py-2 rounded-full hover:opacity-90 transition"
+          className="rounded-full p-3 bg-gradient-to-br from-[#38A169] to-[#68D391] text-white hover:scale-105 hover:shadow-lg transition"
         >
           <Send className="w-5 h-5" />
         </Button>

@@ -48,10 +48,10 @@ const AdminJobs = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 shadow-lg border border-gray-200">
+          {/* <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 shadow-lg border border-gray-200">
             <Briefcase className="w-5 h-5 mr-2 text-orange-500" />
             <span className="text-gray-700 font-semibold">Job Management</span>
-          </div>
+          </div> */}
 
           <h1 className="text-5xl font-black text-gray-900 mb-4 leading-tight">
             <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
@@ -67,7 +67,7 @@ const AdminJobs = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -111,7 +111,7 @@ const AdminJobs = () => {
             <div className="text-3xl font-black text-gray-900 mb-1">4.9</div>
             <div className="text-gray-600 font-semibold">Job Rating</div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Content Card */}
         <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
@@ -180,7 +180,7 @@ const AdminJobs = () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="flex flex-wrap gap-6 mt-6">
+            {/* <div className="flex flex-wrap gap-6 mt-6">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <span className="font-medium">32 Active Jobs</span>
@@ -197,7 +197,7 @@ const AdminJobs = () => {
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                 <span className="font-medium">42 Total Jobs</span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Table Section */}
@@ -258,8 +258,7 @@ const AdminJobs = () => {
         </div>
 
         {/* Performance Insights */}
-        <div className="mt-8 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
-          {/* Decorative elements */}
+        {/* <div className="mt-8 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 rounded-3xl p-12 text-center text-white relative overflow-hidden">
           <div className="absolute top-4 right-4 w-16 h-16 bg-white/10 rounded-full"></div>
           <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full"></div>
           <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-white/20 rotate-45"></div>
@@ -289,7 +288,7 @@ const AdminJobs = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )
