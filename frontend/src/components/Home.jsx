@@ -9,6 +9,7 @@ import LatestJobs from "./LatestJobs.jsx"
 import { Button } from "@/components/ui/button"
 import { Search, TrendingUp, Users, Briefcase, Star, ArrowRight, CheckCircle2, Zap, Target } from "lucide-react"
 import useGetStats from "@/hooks/useGetStats.jsx"
+import Footer from "./Footer.jsx"
 
 const Home = () => {
   const [query, setQuery] = useState("")
@@ -276,7 +277,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      {/* <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 mb-4">Success Stories 🎉</h2>
@@ -339,7 +340,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       {!user && (
@@ -377,6 +378,7 @@ const Home = () => {
           animation: float 3s ease-in-out infinite;
         }
       `}</style>
+      <Footer/>
     </div>
   )
 }
