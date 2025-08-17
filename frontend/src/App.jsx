@@ -27,6 +27,8 @@ import AdminProfile from "./components/admin/AdminProfile.jsx";
 import ChatPage from "./pages/ChatPage.jsx"; 
 import RecruiterChatPage from "./pages/RecruiterChatPage.jsx";
 import RecruiterChatList from "./pages/RecruiterChatList.jsx";
+import About from "./components/About.jsx";
+import Contact from "./components/Contact.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
@@ -75,6 +77,8 @@ const appRouter = createBrowserRouter([
           { path: "chat/:receiverId", element: <ChatPage /> },
           { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
           { path: "recruiter/chats", element: <RecruiterChatList /> },
+          { path: "/about", element: <About/> } ,
+          { path: "/contact", element: <Contact/> } ,
         ],
       },
     ],
