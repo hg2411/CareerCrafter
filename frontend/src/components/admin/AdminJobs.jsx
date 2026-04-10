@@ -161,7 +161,7 @@ const AdminJobs = () => {
               </div>
 
               {/* Filter Options */}
-              <div className="flex gap-3">
+              {/* <div className="flex gap-3">
                 <Button
                   variant="outline"
                   className="border-2 border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-2xl font-semibold bg-white"
@@ -176,7 +176,7 @@ const AdminJobs = () => {
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Analytics
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             {/* Quick Stats */}

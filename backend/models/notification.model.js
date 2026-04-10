@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true, // ✅ this is expected in your controller
+      required: true,
     },
     message: {
       type: String,
@@ -16,7 +16,7 @@ import mongoose from 'mongoose';
     },
     createdAt: {
       type: Date,
-      default: Date.now, // ✅ FIX: ensure default is Date.now, NOT false
+      default: Date.now, 
     },
   });
 

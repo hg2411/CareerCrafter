@@ -53,7 +53,7 @@ const Home = () => {
           <div className="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
             <div className="inline-flex items-center bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-medium mb-8">
               <TrendingUp className="w-4 h-4 mr-2" />
-              #1 Job Platform in 2025
+              #1 Job Platform in 2026
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-black mb-6 leading-tight">
@@ -71,7 +71,7 @@ const Home = () => {
             </p>
 
             {/* Search Bar */}
-            <div className="relative mb-8">
+            {/* <div className="relative mb-8">
               <div className="flex items-center bg-white rounded-2xl shadow-2xl border-2 border-gray-100 overflow-hidden max-w-lg">
                 <input
                   type="text"
@@ -88,7 +88,7 @@ const Home = () => {
                   <Search className="h-5 w-5" />
                 </Button>
               </div>
-            </div>
+            </div> */}
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -99,13 +99,13 @@ const Home = () => {
                 Explore Jobs
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button
+              {/* <Button
                 onClick={() => navigate("/browse")}
                 variant="outline"
                 className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300"
               >
                 Browse Categories
-              </Button>
+              </Button> */}
             </div>
           </div>
 
