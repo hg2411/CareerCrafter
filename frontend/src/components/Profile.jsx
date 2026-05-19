@@ -85,15 +85,15 @@ const Profile = () => {
                 <Edit3 className="w-4 h-4 mr-2" />
                 Edit Profile
               </Button>
-              <Button variant="outline" className="px-6 py-2 rounded-lg font-medium bg-transparent">
+              {/* <Button variant="outline" className="px-6 py-2 rounded-lg font-medium bg-transparent">
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
@@ -153,7 +153,7 @@ const Profile = () => {
             </div>
             <p className="text-xs text-green-600 mt-2">+12% this week</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
@@ -162,9 +162,9 @@ const Profile = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">Contact Information</h2>
-                <Button variant="ghost" size="sm">
+                {/* <Button variant="ghost" size="sm">
                   <Edit3 className="w-4 h-4" />
-                </Button>
+                </Button> */}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-center gap-3">
@@ -192,10 +192,10 @@ const Profile = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-900">Skills & Expertise</h2>
-                <Button variant="ghost" size="sm">
+                {/* <Button variant="ghost" size="sm">
                   <Plus className="w-4 h-4 mr-1" />
                   Add Skill
-                </Button>
+                </Button> */}
               </div>
               {user?.profile?.skills?.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -304,7 +304,7 @@ const Profile = () => {
             )}
 
             {/* Activity Feed */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {/* <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -335,7 +335,7 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
