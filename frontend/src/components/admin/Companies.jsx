@@ -100,7 +100,7 @@ const Companies = () => {
               </div>
 
               {/* Filter Options */}
-              <div className="flex gap-3">
+              {/* <div className="flex gap-3">
                 <Button
                   variant="outline"
                   className="border-2 border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-2xl font-semibold bg-white"
@@ -115,11 +115,11 @@ const Companies = () => {
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Analytics
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             {/* Quick Stats */}
-            <div className="flex flex-wrap gap-6 mt-6">
+            {/* <div className="flex flex-wrap gap-6 mt-6">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <span className="font-medium">18 Active Companies</span>
@@ -132,7 +132,7 @@ const Companies = () => {
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                 <span className="font-medium">24 Total Companies</span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Table Section */}
