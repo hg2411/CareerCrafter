@@ -19,6 +19,7 @@ import applicationRoute from "./routes/application.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import chatRoute from "./routes/chat.route.js";
+import { cleanupExpiredJobs } from "./controllers/job.controller.js";
 
 // ✅ Config
 dotenv.config();
@@ -76,7 +77,18 @@ app.use("/api/v1/stats", statsRoutes);
 app.use("/api/v1/chat", chatRoute);
 
 // ✅ 6. Connect to MongoDB
-connectDB();
+connectDB().then(async () => {
+  const deletedCount = await cleanupExpiredJobs();
+  if (deletedCount) {
+    console.log(`🧹 Cleaned up ${deletedCount} expired job${deletedCount === 1 ? "" : "s"}`);
+  }
+  setInterval(async () => {
+    const count = await cleanupExpiredJobs();
+    if (count) {
+      console.log(`🧹 Cleaned up ${count} expired job${count === 1 ? "" : "s"}`);
+    }
+  }, 24 * 60 * 60 * 1000); // every 24 hours
+});
 
 // ✅ 7. Setup Socket Server
 const server = http.createServer(app);
@@ -103,7 +115,7 @@ io.on("connection", (socket) => {
     const { senderId, receiverId } = message;
     if (!senderId || !receiverId) return;
     const roomId = [senderId, receiverId].sort().join("_");
-    io.to(roomId).emit("receiveMessage", message);
+    socket.broadcast.to(roomId).emit("receiveMessage", message);
     io.to(receiverId).emit("newMessage");
     console.log(`📨 Message from ${senderId} to ${receiverId} in room ${roomId}`);
   });

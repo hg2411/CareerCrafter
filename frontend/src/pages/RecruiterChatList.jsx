@@ -92,7 +92,7 @@ const RecruiterChatList = () => {
                 return (
                   <Link 
                     key={chat._id} 
-                    to={`/chat/${student._id}`}
+                    to={`/recruiter/chat/${student._id}`}
                     className="block hover:bg-slate-50 transition-colors"
                   >
                     <div className="px-6 py-4 flex items-center gap-4 group">

@@ -154,6 +154,7 @@ const Navbar = () => {
                       </div>
                       <span className="font-black text-gray-900 text-lg">Notifications</span>
                     </div>
+                    <div className="flex items-center gap-2">
                     {notifications?.length > 0 && (
                       <Button
                         onClick={markAllReadHandler}
@@ -163,6 +164,13 @@ const Navbar = () => {
                         Mark all read
                       </Button>
                     )}
+                    <Link
+                      to="/notifications"
+                      className="text-xs font-semibold text-orange-600 hover:text-orange-700"
+                    >
+                      View all
+                    </Link>
+                  </div>
                   </div>
                   {notifications?.length ? (
                     <div className="space-y-3 max-h-64 overflow-y-auto">
