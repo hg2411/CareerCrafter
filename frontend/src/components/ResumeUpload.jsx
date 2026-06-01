@@ -18,12 +18,12 @@ const ResumeUpload = () => {
     }
 
     const formData = new FormData();
-    formData.append("resume", file);
+    formData.append("file", file);
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/resume/upload",
+      const response = await axios.put(
+        "http://localhost:8000/api/v1/user/profile/update",
         formData,
         {
           headers: {

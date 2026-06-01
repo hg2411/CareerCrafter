@@ -1,4 +1,5 @@
 "use client"
+import { Link } from "react-router-dom"
 import { Linkedin, Github, Heart, Sparkles, Mail, Phone, MapPin } from "lucide-react"
 
 const Footer = () => {
@@ -59,36 +60,36 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="text-gray-300 hover:text-orange-400 transition-colors duration-300 text-sm hover:translate-x-1 transform inline-block"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/jobs"
+                <Link
+                  to="/jobs"
                   className="text-gray-300 hover:text-pink-400 transition-colors duration-300 text-sm hover:translate-x-1 transform inline-block"
                 >
                   Jobs
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/about"
+                <Link
+                  to="/about"
                   className="text-gray-300 hover:text-purple-400 transition-colors duration-300 text-sm hover:translate-x-1 transform inline-block"
                 >
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="text-gray-300 hover:text-indigo-400 transition-colors duration-300 text-sm hover:translate-x-1 transform inline-block"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -143,12 +144,12 @@ const Footer = () => {
               <p className="text-gray-400 text-sm">Made with love by the CareerCrafter team</p>
             </div>
             <div className="flex items-center gap-6">
-              <a href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Privacy Policy
-              </a>
-              <a href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
+              </Link>
+              <Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Terms of Service
-              </a>
+              </Link>
               <p className="text-gray-400 text-sm">© {new Date().getFullYear()} CareerCrafter. All rights reserved.</p>
             </div>
           </div>

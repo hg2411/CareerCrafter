@@ -1,7 +1,22 @@
 import { Job } from "../models/job.model.js";
+import { Application } from "../models/application.model.js";
 import { Notification } from "../models/notification.model.js";
 import { User } from "../models/user.model.js"; // ✅ import User
 import sendMail from "../utils/sendMail.js"; // ✅ import sendMail utility
+
+export const cleanupExpiredJobs = async () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expiredJobs = await Job.find({ lastDate: { $lt: today } }, { _id: 1 });
+  if (!expiredJobs.length) return 0;
+
+  const expiredJobIds = expiredJobs.map((job) => job._id);
+  const deletedApplications = await Application.deleteMany({ job: { $in: expiredJobIds } });
+  const deletedJobs = await Job.deleteMany({ _id: { $in: expiredJobIds } });
+
+  return deletedJobs.deletedCount || 0;
+};
 
 // admin post job
 export const postJob = async (req, res) => {
@@ -97,7 +112,11 @@ export const postJob = async (req, res) => {
 // get all jobs
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find().populate("company");
+    await cleanupExpiredJobs();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const jobs = await Job.find({ lastDate: { $gte: today } })
+      .populate("company");
     return res.status(200).json({ success: true, jobs });
   } catch (error) {
     console.log(error);
@@ -109,17 +128,24 @@ export const getAllJobs = async (req, res) => {
 // job.controller.js
 export const getJobById = async (req, res) => {
   try {
-    const job = await Job.findById(req.params.id)
+    await cleanupExpiredJobs();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const job = await Job.findOne({
+      _id: req.params.id,
+      lastDate: { $gte: today },
+    })
       .populate({
         path: 'applications',
         populate: {
           path: 'applicant', // make sure applicant is populated
         }
       })
-      .populate("created_by", "name email");;
+      .populate("created_by", "fullname email");
 
     if (!job) {
-      return res.status(404).json({ success: false, message: "Job not found" });
+      return res.status(404).json({ success: false, message: "Job not found or expired" });
     }
 
     res.status(200).json({ success: true, job });
@@ -133,8 +159,22 @@ export const getJobById = async (req, res) => {
 // get jobs posted by the admin (current user)
 export const getAdminJobs = async (req, res) => {
   try {
+    await cleanupExpiredJobs();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const userId = req.id;
-    const jobs = await Job.find({ created_by: userId }).populate("company");
+    const jobs = await Job.find({
+      created_by: userId,
+      lastDate: { $gte: today },
+    })
+      .populate("company")
+      .populate({
+        path: "applications",
+        populate: {
+          path: "applicant",
+          select: "fullname email profile.profilePhoto",
+        },
+      });
     return res.status(200).json({ success: true, jobs });
   } catch (error) {
     console.log(error);
@@ -157,13 +197,14 @@ export const selectStudentForJob = async (req, res) => {
     }
 // email content
 // email content
-const subject = `🎉🎉 CONGRATULATIONS, ${student.name}! You've been selected for the role of ${job.title} 🌟`;
+const studentName = student.fullname || student.email || "Student";
+    const subject = `🎉🎉 CONGRATULATIONS, ${studentName}! You've been selected for the role of ${job.title} 🌟`;
 
-const text = `👋 Hi ${student.name},
+    const text = `👋 Hi ${studentName},
 
 Subject: Congratulations on Your Selection for ${job.title}
 
-Dear ${student.name},
+Dear ${studentName},
 
 We are pleased to inform you that you have been selected for the position of "${job.title}" at ${job.company.name || "our company"}.
 

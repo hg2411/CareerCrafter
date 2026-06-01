@@ -124,6 +124,8 @@ export const login = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
 
     return res
@@ -186,7 +188,7 @@ export const getMe = async (req, res) => {
 // ====================== Update Profile ======================
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills } = req.body;
+    const { fullname, email, phoneNumber, bio, skills, location } = req.body;
     const file = req.files?.file?.[0]; // resume
     const profilePhoto = req.files?.profilePhoto?.[0]; // profile picture
 
@@ -206,6 +208,7 @@ export const updateProfile = async (req, res) => {
 
     if (!user.profile) user.profile = {};
     if (bio) user.profile.bio = bio;
+    if (location !== undefined) user.profile.location = location;
     if (skills !== undefined) user.profile.skills = skillsArray;
 
     if (profilePhoto) {
@@ -258,8 +261,10 @@ export const getLoggedInUser = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       hasPassword: !!user.password,
-      needsRole: !user.role
+      needsRole: !user.role,
     };
 
     res.status(200).json({ success: true, user: safeUser });

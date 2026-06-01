@@ -5,9 +5,51 @@ import { Button } from "@/components/ui/button";
 import { Edit2 } from "lucide-react";
 import Navbar from "../shared/Navbar";
 import { Briefcase, Mail, Calendar, Building2 } from "lucide-react";
+import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
+import moment from "moment";
 
 const AdminProfile = () => {
   const { user } = useSelector((store) => store.auth);
+  const { allAdminJobs } = useSelector((store) => store.job);
+  useGetAllAdminJobs();
+
+  const totalJobsPosted = allAdminJobs?.length || 0;
+  const totalApplications = allAdminJobs?.reduce(
+    (sum, job) => sum + (job?.applications?.length || 0),
+    0
+  );
+  const interviewsScheduled = allAdminJobs?.reduce(
+    (sum, job) =>
+      sum +
+      (job?.applications?.filter((app) => app?.status === "accepted").length || 0),
+    0
+  );
+
+  const recentJobs = [...allAdminJobs]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
+
+  const recentApplications = allAdminJobs
+    .flatMap((job) =>
+      (job.applications || []).map((app) => ({
+        label: `${app.applicant?.fullname || "Candidate"} applied for ${job.title}`,
+        detail: `Status: ${app.status}`,
+        createdAt: app.createdAt,
+      }))
+    )
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const recentActivity = [...recentJobs.map((job) => ({
+        label: `Posted a new role: ${job.title}`,
+        detail: `${job.company?.name || "Company"} · ${job.applications?.length || 0} applicant${
+          (job.applications?.length || 0) === 1 ? "" : "s"
+        }`,
+        createdAt: job.createdAt,
+      })),
+      ...recentApplications,
+    ]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
 
   return (
     <>
@@ -53,9 +95,9 @@ const AdminProfile = () => {
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <StatCard title="Total Jobs Posted" count={12} />
-            <StatCard title="Active Applications" count={58} />
-            <StatCard title="Interviews Scheduled" count={8} />
+            <StatCard title="Total Jobs Posted" count={totalJobsPosted} />
+            <StatCard title="Total Applications" count={totalApplications} />
+            <StatCard title="Interviews Scheduled" count={interviewsScheduled} />
           </div>
 
           {/* Company Overview */}
@@ -70,12 +112,21 @@ const AdminProfile = () => {
           <div className="bg-white shadow-md rounded-xl p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Job Posts</h2>
             <ul className="space-y-4">
-              {["Frontend Developer", "Backend Engineer", "UI/UX Designer"].map((job, index) => (
-                <li key={index} className="border-b pb-2 last:border-none flex justify-between">
-                  <span className="text-gray-700">{job}</span>
-                  <span className="text-sm text-gray-500">Posted 3 days ago</span>
-                </li>
-              ))}
+              {recentJobs.length > 0 ? (
+                recentJobs.map((job) => (
+                  <li key={job._id} className="border-b pb-2 last:border-none flex flex-col sm:flex-row sm:justify-between gap-2">
+                    <div>
+                      <p className="text-gray-700 font-semibold">{job.title}</p>
+                      <p className="text-sm text-gray-500">{job.company?.name || "Company"}</p>
+                    </div>
+                    <div className="text-sm text-gray-500 text-right">
+                      {moment(job.createdAt).fromNow()} • {job.applications?.length || 0} applicant{job.applications?.length === 1 ? "" : "s"}
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="text-gray-500 text-center py-6">You haven't posted any jobs yet.</li>
+              )}
             </ul>
           </div>
 
@@ -83,18 +134,19 @@ const AdminProfile = () => {
           <div className="bg-white shadow-md rounded-xl p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Recruiter Activity</h2>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-blue-500 mt-1" />
-                <p className="text-gray-600">
-                  Scheduled interview with <strong>Jane Doe</strong> for Backend Role.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-blue-500 mt-1" />
-                <p className="text-gray-600">
-                  Posted new job: <strong>React Developer</strong>
-                </p>
-              </li>
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-blue-500 mt-1" />
+                    <div>
+                      <p className="text-gray-700">{activity.label}</p>
+                      <p className="text-sm text-gray-500">{activity.detail}</p>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="text-gray-500">Recent activity will appear here once you post a job or receive applications.</li>
+              )}
             </ul>
           </div>
         </div>

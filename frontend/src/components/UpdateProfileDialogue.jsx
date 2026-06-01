@@ -18,6 +18,7 @@ import {
   User,
   Mail,
   Phone,
+  MapPin,
   FileText,
   ImageIcon,
   Sparkles,
@@ -38,6 +39,7 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
+    location: user?.profile?.location || "",
     skills: user?.profile?.skills?.join(", ") || "",
     file: null,
     profilePhoto: null,
@@ -70,6 +72,7 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
     const sanitizedPhone = input.phoneNumber.toString().replace(/\D/g, "")
     formData.append("phoneNumber", sanitizedPhone)
     formData.append("bio", input.bio)
+    formData.append("location", input.location)
     formData.append("skills", input.skills)
     if (input.file) formData.append("file", input.file)
     if (input.profilePhoto) formData.append("profilePhoto", input.profilePhoto)
@@ -178,6 +181,24 @@ const UpdateProfileDialogue = ({ open, setOpen }) => {
                       onChange={changeEventHandler}
                       className="pl-10 py-3 rounded-xl border-2 border-gray-200"
                       placeholder="Your phone number"
+                    />
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <Label htmlFor="location">Location</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <MapPin className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <Input
+                      id="location"
+                      name="location"
+                      type="text"
+                      value={input.location}
+                      onChange={changeEventHandler}
+                      className="pl-10 py-3 rounded-xl border-2 border-gray-200"
+                      placeholder="City, State or Country"
                     />
                   </div>
                 </div>

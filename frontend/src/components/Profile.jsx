@@ -35,7 +35,12 @@ const Profile = () => {
   const [open, setOpen] = useState(false)
   const [showMissing, setShowMissing] = useState(false)
   const { user } = useSelector((store) => store.auth)
+  const allAppliedJobs = useSelector((store) => store.job.allAppliedJobs) || []
   const { percentage: completion, missingFields } = calculateProfileCompletion(user)
+
+  const memberSince = user?.createdAt ? new Date(user.createdAt).getFullYear() : "Not available"
+  const resumeUpdatedAt = user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : "Recently"
+  const profileLocation = user?.profile?.location || user?.profile?.city || "Location not provided"
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,16 +66,16 @@ const Profile = () => {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{user?.fullname}</h1>
                 <p className="text-gray-600 text-lg mb-3 max-w-md">
-                  {user?.profile?.bio || "Professional seeking new opportunities"}
+                  {user?.profile?.bio || "Add a short bio to tell recruiters what you're looking for."}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <div className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
-                    <span>India</span>
+                    <span>{profileLocation}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    <span>Member since {user?.createdAt ? new Date(user.createdAt).getFullYear() : "2024"}</span>
+                    <span>Member since {memberSince}</span>
                   </div>
                 </div>
               </div>
@@ -132,26 +137,32 @@ const Profile = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Applications</p>
-                <p className="text-2xl font-bold text-gray-900">12</p>
+                <p className="text-2xl font-bold text-gray-900">{allAppliedJobs.length}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <Briefcase className="w-6 h-6 text-purple-600" />
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Jobs applied to</p>
+            <p className="text-xs text-gray-500 mt-2">
+              {allAppliedJobs.length === 1 ? "job applied" : "jobs applied"}
+            </p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Profile Views</p>
-                <p className="text-2xl font-bold text-gray-900">48</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {user?.profile?.profileViews ?? "—"}
+                </p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                 <Eye className="w-6 h-6 text-orange-600" />
               </div>
             </div>
-            <p className="text-xs text-green-600 mt-2">+12% this week</p>
+            <p className="text-xs text-gray-500 mt-2">
+              {user?.profile?.profileViews ? "+12% this week" : "Profile views not tracked yet"}
+            </p>
           </div>
         </div> */}
 
@@ -225,7 +236,9 @@ const Profile = () => {
             {/* Applied Jobs */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Recent Applications</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Recent Applications <span className="text-sm text-gray-500">({allAppliedJobs.length})</span>
+                </h2>
                 <Button variant="ghost" size="sm">
                   View All
                 </Button>
@@ -282,8 +295,10 @@ const Profile = () => {
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Resume.pdf</p>
-                    <p className="text-xs text-gray-500">Last updated today</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {user.profile.resumeOriginalName || "Resume.pdf"}
+                    </p>
+                    <p className="text-xs text-gray-500">Last updated {resumeUpdatedAt}</p>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">

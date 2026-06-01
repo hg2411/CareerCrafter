@@ -29,11 +29,16 @@ import RecruiterChatPage from "./pages/RecruiterChatPage.jsx";
 import RecruiterChatList from "./pages/RecruiterChatList.jsx";
 import About from "./components/About.jsx";
 import Contact from "./components/Contact.jsx";
+import Browse from "./pages/Browse.jsx";
+import Privacy from "./pages/Privacy.jsx";
+import Terms from "./pages/Terms.jsx";
+import BackButton from "./components/shared/BackButton.jsx";
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
   <>
     <ToastContainer position="top-center" autoClose={3000} />
+    <BackButton />
     <Outlet />
   </>
 );
@@ -52,7 +57,11 @@ const appRouter = createBrowserRouter([
       { path: "forgot-password", element: <ForgotPassword /> },
       { path: "verify-otp", element: <VerifyOTP /> },
       { path: "reset-password", element: <ResetPassword /> },
-
+      { path: "browse", element: <Browse /> },
+      { path: "privacy", element: <Privacy /> },
+      { path: "terms", element: <Terms /> },
+      { path: "about", element: <About /> },
+      { path: "contact", element: <Contact /> },
       {
         element: (
           <ProtectedRoute>
@@ -77,8 +86,6 @@ const appRouter = createBrowserRouter([
           { path: "chat/:receiverId", element: <ChatPage /> },
           { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
           { path: "recruiter/chats", element: <RecruiterChatList /> },
-          { path: "/about", element: <About/> } ,
-          { path: "/contact", element: <Contact/> } ,
         ],
       },
     ],

@@ -43,7 +43,7 @@ const ChatPage = () => {
       withCredentials: true,
     })
 
-    socketRef.current.emit("join", {
+    socketRef.current.emit("joinRoom", {
       senderId: user._id,
       receiverId,
       roomId,
@@ -57,7 +57,7 @@ const ChatPage = () => {
       socketRef.current.disconnect()
       socketRef.current = null
     }
-  }, [receiverId, user._id])
+  }, [receiverId, user._id, roomId])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })

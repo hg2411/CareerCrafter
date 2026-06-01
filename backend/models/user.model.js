@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["student", "recruiter"] }, // no required
     profile: {
       bio: { type: String },
+      location: { type: String },
       skills: [{ type: String }],
       resume: { type: String },
       resumeOriginalName: { type: String },

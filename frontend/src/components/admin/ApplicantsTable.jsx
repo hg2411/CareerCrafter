@@ -20,8 +20,9 @@ const shortlistingStatus = [
   },
 ]
 
-const ApplicantsTable = ({ jobId }) => {
+const ApplicantsTable = ({ jobId, job }) => {
   const { applicants } = useSelector((store) => store.application)
+  const [filterText, setFilterText] = useState("")
   const [selectingId, setSelectingId] = useState(null)
 
   const statusHandler = async (status, id) => {
@@ -59,8 +60,20 @@ const ApplicantsTable = ({ jobId }) => {
     }
   }
 
+  const filteredApplicants = applicants?.applications?.filter((item) => {
+    const search = filterText.trim().toLowerCase()
+    if (!search) return true
+    const name = item?.applicant?.fullname?.toLowerCase() || ""
+    const email = item?.applicant?.email?.toLowerCase() || ""
+    return name.includes(search) || email.includes(search)
+  }) || []
+
+  const selectedCount = applicants?.applications?.filter((item) => item?.status === "accepted").length || 0
+  const rejectedCount = applicants?.applications?.filter((item) => item?.status === "rejected").length || 0
+  const pendingCount = applicants?.applications?.filter((item) => !item?.status || item?.status === "applied").length || 0
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 relative overflow-hidden">
       {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-orange-200 rounded-full opacity-30"></div>
       <div className="absolute top-40 right-20 w-32 h-32 bg-pink-200 rounded-full opacity-20"></div>
@@ -74,21 +87,54 @@ const ApplicantsTable = ({ jobId }) => {
 
       <div className="relative z-10 max-w-6xl mx-auto py-8 px-4">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          {/* <div className="inline-flex items-center bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Recruitment Dashboard
-          </div> */}
-          <h1 className="text-5xl lg:text-6xl font-black mb-6 leading-tight">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center gap-2 bg-white/80 text-slate-700 px-4 py-2 rounded-full shadow-sm mb-6">
+            <Users className="w-5 h-5 text-slate-900" />
+            <span className="text-sm font-semibold">{job?.title || 'Job opening'}</span>
+          </div>
+          <h1 className="text-5xl lg:text-6xl font-black mb-4 leading-tight">
             <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
               Applicants
             </span>
-            <br />
-            {/* <span className="text-gray-900">Overview</span> */}
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Review and manage all candidates who applied for this position
+          <p className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto">
+            {job?.company?.name
+              ? `${job.company.name} · ${job.location || 'Remote / mixed location'}`
+              : 'Review candidate applications and move them through your hiring pipeline.'}
           </p>
+
+          <div className="grid gap-4 md:grid-cols-3 mt-6">
+            <div className="rounded-3xl bg-white/90 p-5 shadow border border-gray-100">
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Total Applicants</p>
+              <p className="text-3xl font-bold text-slate-900">{applicants?.applications?.length || 0}</p>
+            </div>
+            <div className="rounded-3xl bg-white/90 p-5 shadow border border-gray-100">
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Accepted</p>
+              <p className="text-3xl font-bold text-emerald-600">{selectedCount}</p>
+            </div>
+            <div className="rounded-3xl bg-white/90 p-5 shadow border border-gray-100">
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-400">Rejected</p>
+              <p className="text-3xl font-bold text-rose-600">{rejectedCount}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex-1">
+            <input
+              type="search"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              placeholder="Search by name or email"
+              className="w-full rounded-3xl border border-slate-300 bg-white px-5 py-4 shadow-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+            />
+          </div>
+          <div className="flex items-center gap-3 text-sm text-slate-600">
+            <span className="font-semibold">Showing</span>
+            <span className="px-3 py-2 rounded-full bg-white/90 border border-gray-200">{filteredApplicants.length}</span>
+            <span>of</span>
+            <span className="px-3 py-2 rounded-full bg-white/90 border border-gray-200">{applicants?.applications?.length || 0}</span>
+          </div>
         </div>
 
         {/* Main Container */}
