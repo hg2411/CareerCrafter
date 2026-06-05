@@ -125,6 +125,41 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Latest Jobs Section */}
+      <section className="py-16 w-full relative z-10">
+        {/* Fluid screen-sync layout container matching global padding layouts */}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+
+          {/* Clean standalone card container matrix matched to project design tokens */}
+          <div className="w-full bg-white/90 backdrop-blur-sm rounded-[24px] p-6 sm:p-8 lg:p-10 border border-gray-100 shadow-xl shadow-pink-500/[0.02] transition-all duration-300">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <div className="w-9 h-9 border-3 border-transparent border-t-orange-500 border-r-pink-500 rounded-full animate-spin"></div>
+                <p className="text-gray-400 font-bold text-xs tracking-wide uppercase">
+                  Loading positions...
+                </p>
+              </div>
+            ) : (
+              <LatestJobs jobs={allJobs?.slice(0, 6)} />
+            )}
+          </div>
+
+          {/* Center-aligned action layout button matching search form dynamics */}
+          <div className="mt-10">
+            <Button
+              onClick={() => navigate("/jobs")}
+              className="bg-gray-900 hover:bg-gradient-to-r hover:from-orange-500 hover:to-pink-500 text-white px-8 h-11 rounded-xl font-bold text-xs tracking-wide shadow-md shadow-gray-950/10 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 border border-transparent"
+            >
+              View All Jobs
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+        </div>
+      </section>
+
+
+
       {/* Stats Section */}
       <section className="py-20 w-full bg-white/60 backdrop-blur-md border-t border-gray-100 relative z-10">
         {/* Expanded maximum outer bounds container to allow full-width screen tracking matching layout headers */}
@@ -189,7 +224,6 @@ const Home = () => {
 
         </div>
       </section>
-
 
       {/* Features Section */}
       <section className="py-20 w-full bg-white relative z-10">
@@ -257,72 +291,39 @@ const Home = () => {
         </div>
       </section>
 
-{/* Latest Jobs Section */}
-<section className="py-16 w-full relative z-10">
-  {/* Fluid screen-sync layout container matching global padding layouts */}
-  <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-    
-    {/* Clean standalone card container matrix matched to project design tokens */}
-    <div className="w-full bg-white/90 backdrop-blur-sm rounded-[24px] p-6 sm:p-8 lg:p-10 border border-gray-100 shadow-xl shadow-pink-500/[0.02] transition-all duration-300">
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-4">
-          <div className="w-9 h-9 border-3 border-transparent border-t-orange-500 border-r-pink-500 rounded-full animate-spin"></div>
-          <p className="text-gray-400 font-bold text-xs tracking-wide uppercase">
-            Loading positions...
-          </p>
-        </div>
-      ) : (
-        <LatestJobs jobs={allJobs?.slice(0, 6)} />
-      )}
-    </div>
-
-    {/* Center-aligned action layout button matching search form dynamics */}
-    <div className="mt-10">
-      <Button
-        onClick={() => navigate("/jobs")}
-        className="bg-gray-900 hover:bg-gradient-to-r hover:from-orange-500 hover:to-pink-500 text-white px-8 h-11 rounded-xl font-bold text-xs tracking-wide shadow-md shadow-gray-950/10 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5 active:scale-95 border border-transparent"
-      >
-        View All Jobs
-        <ArrowRight className="h-4 w-4" />
-      </Button>
-    </div>
-
-  </div>
-</section>
-
-      {/* Guest/Non-User Call-To-Action Banner */}
+     {/* Guest/Non-User Call-To-Action Banner */}
       {!user && (
-        <section className="py-14 bg-white relative z-10">
-          <div className="max-w-5xl mx-auto px-6">
-            <div className="rounded-[24px] border border-gray-100 bg-gradient-to-br from-orange-50/40 via-white to-pink-50/40 p-8 sm:p-10 shadow-md">
-              <div className="text-center mb-8 max-w-xl mx-auto">
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-tight">
+        <section className="py-20 bg-white relative z-10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="rounded-[32px] border-2 border-gray-100 bg-gradient-to-br from-orange-50/60 via-white to-pink-50/60 p-10 sm:p-14 shadow-2xl">
+              <div className="text-center mb-10 max-w-2xl mx-auto">
+                <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight">
                   Everything You Need To Build Your Career
                 </h2>
-                <p className="text-gray-400 text-xs font-medium mt-1.5">
+                <p className="text-gray-500 text-sm font-semibold mt-3 max-w-xl mx-auto">
                   CareerCrafter brings jobs, recruiters, networking, and career growth together in one place.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {[
                   { emoji: "💼", title: "Find Jobs", text: "Explore opportunities from top brands." },
                   { emoji: "🤝", title: "Connect", text: "Communicate directly via safe chat." },
                   { emoji: "📄", title: "Resumes", text: "Keep your workspace recruiter-ready." },
                   { emoji: "🎯", title: "Get Hired", text: "Apply smarter and track analytics." },
                 ].map((item, key) => (
-                  <div key={key} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 flex flex-col items-center text-center justify-center transition-all duration-300 hover:shadow-md">
-                    <div className="text-2xl mb-2">{item.emoji}</div>
-                    <h4 className="font-bold text-gray-800 text-xs mb-0.5">{item.title}</h4>
-                    <p className="text-gray-400 text-[10px] leading-relaxed font-medium">{item.text}</p>
+                  <div key={key} className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex flex-col items-center text-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <div className="text-4xl mb-3">{item.emoji}</div>
+                    <h4 className="font-bold text-gray-800 text-sm mb-1">{item.title}</h4>
+                    <p className="text-gray-400 text-xs leading-relaxed font-medium">{item.text}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-3 max-w-sm mx-auto">
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-md mx-auto">
                 <Button
                   onClick={() => navigate("/jobs")}
-                  className="w-full sm:w-auto flex-1 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white h-10 rounded-xl font-bold text-xs shadow-md shadow-pink-500/10 transition-all active:scale-95"
+                  className="w-full sm:w-auto flex-1 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white h-12 rounded-xl font-bold text-sm shadow-lg shadow-pink-500/20 transition-all active:scale-95"
                 >
                   Explore Jobs
                 </Button>
@@ -330,7 +331,7 @@ const Home = () => {
                 <Button
                   onClick={() => navigate("/signup")}
                   variant="outline"
-                  className="w-full sm:w-auto flex-1 h-10 rounded-xl font-bold text-xs border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-all active:scale-95"
+                  className="w-full sm:w-auto flex-1 h-12 rounded-xl font-bold text-sm border-2 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-all active:scale-95"
                 >
                   Create Free Account
                 </Button>
