@@ -32,13 +32,12 @@ import Contact from "./components/Contact.jsx";
 import Browse from "./pages/Browse.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
-import BackButton from "./components/shared/BackButton.jsx";
+
 
 // ✅ Layout with ToastContainer
 const Layout = () => (
   <>
     <ToastContainer position="top-center" autoClose={3000} />
-    <BackButton />
     <Outlet />
   </>
 );

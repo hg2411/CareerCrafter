@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Avatar, AvatarImage } from "../ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Button } from "../ui/button"
-import { LogOut, User2, Menu, X, Bell, Sparkles, Crown, Briefcase, Home, Heart } from "lucide-react"
+import { LogOut, User2, Menu, X, Bell, Sparkles, Crown, Briefcase, Home, Heart, ArrowLeft } from "lucide-react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
@@ -85,28 +85,36 @@ const Navbar = () => {
   return (
     <nav className="bg-white/95 backdrop-blur-lg sticky top-0 z-50 border-b border-gray-200/50 shadow-sm">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-20 px-6">
-        {/* Logo */}
-        <Link to="/" className="group">
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight cursor-pointer group-hover:scale-105 transition-transform duration-300">
-            Career
-            <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-              Crafter
-            </span>
-            <Sparkles className="inline-block w-6 h-6 ml-1 text-yellow-400 group-hover:rotate-12 transition-transform duration-300" />
-          </h1>
-        </Link>
+        {/* Back Button + Logo */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:scale-110 transition-all duration-300 shadow-sm"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
 
+          <Link to="/" className="group">
+            <h1 className="text-3xl font-black text-gray-900 tracking-tight cursor-pointer group-hover:scale-105 transition-transform duration-300">
+              Career
+              <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                Crafter
+              </span>
+              <Sparkles className="inline-block w-6 h-6 ml-1 text-yellow-400 group-hover:rotate-12 transition-transform duration-300" />
+            </h1>
+          </Link>
+        </div>
+        
         {/* Desktop Navigation */}
         <ul className="hidden md:flex items-center gap-8">
           {getNavItems().map(({ name, path, icon: Icon }) => (
             <li key={name}>
               <Link
                 to={path}
-                className={`group flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                  currentPath === path
+                className={`group flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${currentPath === path
                     ? "bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg transform scale-105"
                     : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:text-orange-600 hover:scale-105"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {name}
@@ -155,33 +163,32 @@ const Navbar = () => {
                       <span className="font-black text-gray-900 text-lg">Notifications</span>
                     </div>
                     <div className="flex items-center gap-2">
-                    {notifications?.length > 0 && (
-                      <Button
-                        onClick={markAllReadHandler}
-                        size="sm"
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold"
+                      {notifications?.length > 0 && (
+                        <Button
+                          onClick={markAllReadHandler}
+                          size="sm"
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold"
+                        >
+                          Mark all read
+                        </Button>
+                      )}
+                      <Link
+                        to="/notifications"
+                        className="text-xs font-semibold text-orange-600 hover:text-orange-700"
                       >
-                        Mark all read
-                      </Button>
-                    )}
-                    <Link
-                      to="/notifications"
-                      className="text-xs font-semibold text-orange-600 hover:text-orange-700"
-                    >
-                      View all
-                    </Link>
-                  </div>
+                        View all
+                      </Link>
+                    </div>
                   </div>
                   {notifications?.length ? (
                     <div className="space-y-3 max-h-64 overflow-y-auto">
                       {notifications.map((n) => (
                         <div
                           key={n._id}
-                          className={`p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
-                            n.isRead
+                          className={`p-3 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${n.isRead
                               ? "bg-gray-50 border-gray-200"
                               : "bg-gradient-to-r from-orange-50 to-pink-50 border-orange-200"
-                          }`}
+                            }`}
                         >
                           <p className="font-semibold text-gray-800 text-sm">{n.message}</p>
                           <p className="text-xs text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
@@ -233,9 +240,8 @@ const Navbar = () => {
                       <p className="text-sm text-gray-500 truncate">{user?.email}</p>
                       <div className="inline-flex items-center gap-1 mt-1">
                         <div
-                          className={`w-2 h-2 rounded-full ${
-                            user?.role === "recruiter" ? "bg-yellow-400" : "bg-blue-400"
-                          }`}
+                          className={`w-2 h-2 rounded-full ${user?.role === "recruiter" ? "bg-yellow-400" : "bg-blue-400"
+                            }`}
                         ></div>
                         <span className="text-xs font-semibold text-gray-600 capitalize">{user?.role}</span>
                       </div>
@@ -283,11 +289,10 @@ const Navbar = () => {
                 key={name}
                 to={path}
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  currentPath === path
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${currentPath === path
                     ? "bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg"
                     : "text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-pink-50 hover:text-orange-600"
-                }`}
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 {name}

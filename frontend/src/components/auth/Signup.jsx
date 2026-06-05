@@ -129,78 +129,72 @@ const Signup = () => {
   const roles = ["student", "recruiter"]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    // Hard lock layout height to eliminate scrolling
+    <div className="h-screen max-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col overflow-hidden">
       <Navbar />
 
-      {/* Background decorative elements */}
+      {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
         <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
-        <div className="absolute bottom-20 right-40 w-20 h-20 bg-yellow-200 rounded-full opacity-40 animate-pulse delay-700"></div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
-        <div className="w-full max-w-6xl">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-100">
+      {/* Main card viewport frame */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-start px-4 pt-4 md:pt-6 overflow-hidden">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100">
             <div className="flex flex-col lg:flex-row">
+              
               {/* Left Hero Section */}
-              <div className="lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-12 flex flex-col justify-center relative overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
-                <div className="absolute bottom-20 left-10 w-16 h-16 bg-white/10 rounded-full"></div>
-                <div className="absolute top-1/2 left-1/4 w-4 h-4 bg-white/20 rotate-45"></div>
+              <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-8 flex-col justify-center relative overflow-hidden rounded-l-[32px]">
+                <div className="absolute top-10 right-10 w-24 h-24 bg-white/10 rounded-full blur-sm"></div>
+                <div className="absolute bottom-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-sm"></div>
 
-                <div className="relative z-10">
-                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    <span className="text-sm font-medium">Join Our Community!</span>
+                <div className="relative z-10 max-w-md">
+                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 mb-4 border border-white/20">
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+                    <span className="text-xs font-medium">Join Our Community!</span>
                   </div>
 
-                  <h2 className="text-5xl font-black mb-6 leading-tight">
-                    Start Your
-                    <br />
-                    <span className="text-yellow-300">Career</span>
-                    <br />
+                  <h2 className="text-3xl font-black mb-4 leading-tight">
+                    Start Your<br />
+                    <span className="text-yellow-300">Career</span><br />
                     Journey Today!
                   </h2>
 
-                  <p className="text-xl text-white/90 mb-8 leading-relaxed">
+                  <p className="text-sm text-white/90 mb-6 leading-relaxed">
                     Create your free account and unlock access to thousands of job opportunities.
                   </p>
 
                   {/* Step Indicator */}
-                  <div className="flex items-center space-x-4 mb-8">
-                    <div className={`flex items-center space-x-2 ${step >= 1 ? "text-white" : "text-white/50"}`}>
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? "bg-white text-orange-500" : "bg-white/20"}`}
-                      >
-                        {step > 1 ? <CheckCircle className="w-5 h-5" /> : "1"}
+                  <div className="flex items-center space-x-3 mb-6 text-xs">
+                    <div className={`flex items-center space-x-1.5 ${step >= 1 ? "text-white" : "text-white/50"}`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 1 ? "bg-white text-orange-500 font-bold" : "bg-white/20"}`}>
+                        {step > 1 ? <CheckCircle className="w-4 h-4" /> : "1"}
                       </div>
                       <span className="font-medium">Details</span>
                     </div>
-                    <div className="w-8 h-0.5 bg-white/30"></div>
-                    <div className={`flex items-center space-x-2 ${step >= 2 ? "text-white" : "text-white/50"}`}>
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? "bg-white text-orange-500" : "bg-white/20"}`}
-                      >
+                    <div className="w-6 h-0.5 bg-white/30"></div>
+                    <div className={`flex items-center space-x-1.5 ${step >= 2 ? "text-white" : "text-white/50"}`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 2 ? "bg-white text-orange-500 font-bold" : "bg-white/20"}`}>
                         2
                       </div>
                       <span className="font-medium">Verify</span>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3 text-xs">
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Free forever • No hidden fees</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Connect with top companies</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Get hired faster</span>
                     </div>
                   </div>
@@ -208,100 +202,103 @@ const Signup = () => {
               </div>
 
               {/* Right Form Section */}
-              <div className="lg:w-1/2 p-12">
-                <div className="max-w-md mx-auto">
-                  <div className="text-center mb-10">
-                    <h1 className="text-4xl font-black text-gray-900 mb-4">
+              <div className="w-full lg:w-1/2 p-6 sm:p-7 flex flex-col justify-center">
+                <div className="w-full max-w-sm mx-auto">
+                  <div className="text-center mb-3">
+                    <h1 className="text-2xl font-black text-gray-900 mb-0.5">
                       {step === 1 ? "Create Account" : "Verify Email"}
                     </h1>
-                    <p className="text-gray-600 text-lg">
+                    <p className="text-gray-400 text-xs">
                       {step === 1 ? "Fill in your details to get started" : "Enter the OTP sent to your email"}
                     </p>
                   </div>
 
-                  <form onSubmit={step === 1 ? sendOtpHandler : verifyAndRegisterHandler} className="space-y-6">
+                  <form onSubmit={step === 1 ? sendOtpHandler : verifyAndRegisterHandler} className="space-y-2.5">
                     {step === 1 && (
                       <>
-                        {/* Full Name */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Full Name</Label>
-                          <div className="relative">
-                            <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <Input
-                              type="text"
-                              name="fullname"
-                              value={input.fullname}
-                              onChange={changeEventHandler}
-                              placeholder="Enter your full name"
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                            />
+                        {/* 2x2 Field Layout Grid to sharply collapse height */}
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                          {/* Full Name */}
+                          <div className="space-y-0.5">
+                            <Label className="text-gray-600 font-semibold text-[11px]">Full Name</Label>
+                            <div className="relative">
+                              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
+                              <Input
+                                type="text"
+                                name="fullname"
+                                value={input.fullname}
+                                onChange={changeEventHandler}
+                                placeholder="Full name"
+                                className="pl-9 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400"
+                              />
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Email */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Email Address</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <Input
-                              type="email"
-                              name="email"
-                              value={input.email}
-                              onChange={changeEventHandler}
-                              placeholder="Enter your email"
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                            />
+                          {/* Email */}
+                          <div className="space-y-0.5">
+                            <Label className="text-gray-600 font-semibold text-[11px]">Email Address</Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
+                              <Input
+                                type="email"
+                                name="email"
+                                value={input.email}
+                                onChange={changeEventHandler}
+                                placeholder="Email address"
+                                className="pl-9 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400"
+                              />
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Phone Number */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Phone Number</Label>
-                          <div className="relative">
-                            <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <Input
-                              type="text"
-                              name="phoneNumber"
-                              value={input.phoneNumber}
-                              onChange={changeEventHandler}
-                              placeholder="Enter 10-digit phone number"
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                            />
+                          {/* Phone Number */}
+                          <div className="space-y-0.5">
+                            <Label className="text-gray-600 font-semibold text-[11px]">Phone Number</Label>
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
+                              <Input
+                                type="text"
+                                name="phoneNumber"
+                                value={input.phoneNumber}
+                                onChange={changeEventHandler}
+                                placeholder="10-digit phone"
+                                className="pl-9 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400"
+                              />
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Password */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Password</Label>
-                          <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <Input
-                              type="password"
-                              name="password"
-                              value={input.password}
-                              onChange={changeEventHandler}
-                              placeholder="Create a strong password"
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                            />
+                          {/* Password */}
+                          <div className="space-y-0.5">
+                            <Label className="text-gray-600 font-semibold text-[11px]">Password</Label>
+                            <div className="relative">
+                              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
+                              <Input
+                                type="password"
+                                name="password"
+                                value={input.password}
+                                onChange={changeEventHandler}
+                                placeholder="Password"
+                                className="pl-9 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400"
+                              />
+                            </div>
                           </div>
                         </div>
 
                         {/* Role Selection */}
-                        <div className="space-y-3">
-                          <Label className="text-gray-700 font-semibold text-sm">I am a</Label>
-                          <div className="flex gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-gray-600 font-semibold text-[11px]">I am a</Label>
+                          <div className="flex gap-2">
                             {roles.map((roleOption) => (
                               <button
                                 type="button"
                                 key={roleOption}
                                 onClick={() => setInput({ ...input, role: roleOption })}
-                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold transition-all duration-300 ${
+                                className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg border font-semibold text-[11px] transition-all duration-200 ${
                                   input.role === roleOption
-                                    ? "bg-gradient-to-r from-orange-500 to-pink-500 text-white border-transparent shadow-lg transform scale-105"
-                                    : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+                                    ? "bg-gradient-to-r from-orange-500 to-pink-500 text-white border-transparent shadow-sm"
+                                    : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-orange-50"
                                 }`}
                               >
-                                <User className="w-4 h-4" />
+                                <User className="w-3 h-3" />
                                 {roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}
                               </button>
                             ))}
@@ -309,15 +306,15 @@ const Signup = () => {
                         </div>
 
                         {/* Profile Picture */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Profile Picture </Label>
+                        <div className="space-y-0.5">
+                          <Label className="text-gray-600 font-semibold text-[11px]">Profile Picture</Label>
                           <div className="relative">
-                            <Upload className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Upload className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                             <Input
                               accept="image/*"
                               type="file"
                               onChange={changeFileHandler}
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                              className="pl-10 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 file:mr-2 file:py-0.5 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             />
                           </div>
                         </div>
@@ -325,22 +322,22 @@ const Signup = () => {
                     )}
 
                     {step === 2 && (
-                      <div className="space-y-6">
+                      <div className="space-y-4">
                         {/* OTP Input */}
-                        <div className="space-y-2">
-                          <Label className="text-gray-700 font-semibold text-sm">Enter OTP</Label>
+                        <div className="space-y-1">
+                          <Label className="text-gray-600 font-semibold text-[11px]">Enter OTP</Label>
                           <div className="relative">
-                            <Shield className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Shield className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                             <Input
                               type="text"
                               value={otp}
                               onChange={(e) => setOtp(e.target.value)}
                               placeholder="Enter 6-digit OTP"
-                              className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400 text-center text-lg font-mono tracking-widest"
+                              className="pl-10 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400 text-center font-mono tracking-widest text-sm"
                               maxLength={6}
                             />
                           </div>
-                          <p className="text-sm text-gray-500 text-center">
+                          <p className="text-[10px] text-gray-400 text-center">
                             OTP sent to <span className="font-semibold text-orange-600">{input.email}</span>
                           </p>
                         </div>
@@ -350,9 +347,9 @@ const Signup = () => {
                           type="button"
                           onClick={() => setStep(1)}
                           variant="outline"
-                          className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-semibold rounded-xl"
+                          className="w-full h-9 border border-gray-200 text-gray-600 font-semibold rounded-lg text-xs"
                         >
-                          <ArrowLeft className="mr-2 h-5 w-5" />
+                          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                           Back to Details
                         </Button>
                       </div>
@@ -362,17 +359,17 @@ const Signup = () => {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-12 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      className="w-full h-9 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all duration-200"
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                           {step === 1 ? "Sending OTP..." : "Verifying..."}
                         </>
                       ) : (
                         <>
                           {step === 1 ? "Send OTP" : "Create Account"}
-                          <ArrowRight className="ml-2 h-5 w-5" />
+                          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                         </>
                       )}
                     </Button>
@@ -380,12 +377,12 @@ const Signup = () => {
                     {/* Divider - Only show on step 1 */}
                     {step === 1 && (
                       <>
-                        <div className="relative my-8">
+                        <div className="relative my-1.5">
                           <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-200"></div>
                           </div>
-                          <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
+                          <div className="relative flex justify-center text-[10px]">
+                            <span className="px-2 bg-white text-gray-400 font-medium">Or continue with</span>
                           </div>
                         </div>
 
@@ -393,9 +390,9 @@ const Signup = () => {
                         <Button
                           type="button"
                           onClick={googleSignupHandler}
-                          className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-semibold border-2 border-gray-200 hover:border-gray-300 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                          className="w-full h-9 bg-white hover:bg-gray-50 text-gray-600 font-semibold border border-gray-200 rounded-xl shadow-sm text-xs"
                         >
-                          <SiGoogle className="w-5 h-5 mr-3 text-red-500" />
+                          <SiGoogle className="w-3.5 h-3.5 mr-1.5 text-red-500" />
                           Continue with Google
                         </Button>
                       </>
@@ -403,16 +400,17 @@ const Signup = () => {
                   </form>
 
                   {/* Login Link */}
-                  <div className="text-center mt-8">
-                    <p className="text-gray-600">
+                  <div className="text-center mt-3">
+                    <p className="text-gray-400 text-[11px]">
                       Already have an account?{" "}
-                      <Link to="/login" className="text-orange-600 hover:text-orange-700 font-bold transition-colors">
+                      <Link to="/login" className="text-orange-600 hover:text-orange-700 font-bold">
                         Sign In
                       </Link>
                     </p>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

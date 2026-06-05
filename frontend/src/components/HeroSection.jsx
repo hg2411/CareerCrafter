@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setSearchedQuery } from "@/redux/jobSlice";
 import { useNavigate } from "react-router-dom";
-import CareerIllustration from "../assets/career-illustration.svg"; // Update with actual path
+import CareerIllustration from "../assets/career-illustration.png";
 
 const HeroSection = () => {
   const [query, setQuery] = useState("");
@@ -19,67 +19,66 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-white overflow-hidden">
-      {/* Decorative blobs */}
-      <div className="absolute top-[-80px] left-[-80px] w-[250px] h-[250px] bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-[-100px] right-[-100px] w-[300px] h-[300px] bg-pink-100 rounded-full blur-3xl opacity-40"></div>
+    <section className="relative py-24 bg-gradient-to-br from-white via-[#F4F1FB] to-white overflow-hidden">
+      {/* Refined decorative blobs matching the illustration colors */}
+      <div className="absolute top-[-50px] left-[-100px] w-[350px] h-[350px] bg-[#E3E8FF] rounded-full blur-3xl opacity-50 animate-pulse"></div>
+      <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] bg-[#E3E8FF] rounded-full blur-3xl opacity-60"></div>
 
-      <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center justify-between gap-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse lg:flex-row items-center justify-between gap-16 relative z-10">
         {/* Left Content */}
-        <div className="flex-1 text-center md:text-left space-y-6">
+        <div className="flex-1 text-center lg:text-left space-y-8">
           {/* Heading */}
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            Craft Your <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">Career</span> with Us
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-[#1A1A1A]">
+            Navigate Your <span className="bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] text-transparent bg-clip-text">Future</span> with Confidence
           </h1>
 
           {/* Description */}
-          <p className="text-gray-600 text-lg max-w-xl mx-auto md:mx-0">
-            Find your dream job or the perfect candidate effortlessly. Connect, apply, and succeed with CareerCrafter.
+          <p className="text-[#555555] text-xl max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            From discovering listings to finalizing offers, manage every step of your career journey. Connect, apply, and thrive with CareerCrafter.
           </p>
 
-          {/* Search Bar */}
-          <div className="flex items-center w-full max-w-xl mx-auto md:mx-0 rounded-full shadow-lg border border-gray-200 bg-white overflow-hidden">
+          {/* Enhanced Search Bar */}
+          <div className="flex items-center w-full max-w-xl mx-auto lg:mx-0 rounded-full shadow-xl border border-[#E0E0E0] bg-white overflow-hidden p-1">
             <input
               type="text"
-              placeholder="Search your next big opportunity"
+              placeholder="Job title, keywords, or company"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="flex-grow px-4 py-3 text-sm text-gray-700 outline-none bg-transparent"
+              className="flex-grow px-6 py-4 text-lg text-[#333] outline-none bg-transparent placeholder:text-[#A0A0A0]"
             />
             <Button
               onClick={searchJobHandler}
               type="submit"
-              className="h-full px-4 rounded-none bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white"
-              style={{ borderRadius: "0 9999px 9999px 0" }}
+              className="h-14 w-14 rounded-full bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:opacity-90 text-white flex items-center justify-center p-0 ml-2"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-6 w-6" />
             </Button>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row gap-4 mt-6 justify-center md:justify-start">
+          <div className="flex flex-col sm:flex-row gap-6 mt-10 justify-center lg:justify-start">
             <Button
               onClick={() => navigate("/jobs")}
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full text-lg shadow-md transition-transform duration-300 hover:scale-105"
+              className="px-10 py-4 bg-gradient-to-r from-[#6A38C2] to-[#9D50BB] hover:from-[#5A2FB0] hover:to-[#8E44AD] text-white rounded-full text-lg font-semibold shadow-lg transition-all duration-300 hover:scale-105"
             >
-              Find Jobs
+              Explore Opportunities
             </Button>
             <Button
               onClick={() => navigate("/browse")}
               variant="outline"
-              className="px-8 py-3 border-gray-300 text-gray-700 hover:bg-gray-100 rounded-full text-lg transition-all"
+              className="px-10 py-4 border-2 border-[#DCDCDC] text-[#444] hover:bg-[#F8F9FA] rounded-full text-lg font-semibold transition-all"
             >
               Browse Categories
             </Button>
           </div>
         </div>
 
-        {/* Right Content - Illustration */}
-        <div className="flex-1 flex justify-center">
+        {/* Right Content - The New Illustration */}
+        <div className="flex-1 flex justify-center lg:justify-end">
           <img
             src={CareerIllustration}
-            alt="Career Illustration"
-            className="w-[80%] max-w-md drop-shadow-xl"
+            alt="Career journey from job search to offer accepted"
+            className="w-full max-w-2xl lg:max-w-none drop-shadow-2xl"
           />
         </div>
       </div>
