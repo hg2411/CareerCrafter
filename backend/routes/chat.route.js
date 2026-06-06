@@ -11,7 +11,6 @@ const router = express.Router();
 // Existing: get chat with a single receiver (student)
 router.get("/student/:studentId", isAuthenticated, getStudentChats);
 
-
 router.get("/:receiverId", isAuthenticated, getChatWithReceiver);
 
 //New: get all chats where recruiter is the recruiterId

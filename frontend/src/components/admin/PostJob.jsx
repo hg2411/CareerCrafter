@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Navbar from "../shared/Navbar"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { useSelector } from "react-redux"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import axios from "axios"
 import { JOB_API_END_POINT } from "@/utils/constant"
 import { useNavigate } from "react-router-dom"
@@ -26,7 +25,7 @@ import {
   ArrowLeft,
   Star,
   TrendingUp,
-  Zap,
+  ShieldCheck
 } from "lucide-react"
 import { toast } from "react-toastify"
 
@@ -45,24 +44,25 @@ const PostJob = () => {
   })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const { companies = [] } = useSelector((store) => store.company)
+  const { singleCompany } = useSelector((store) => store.company)
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value })
   }
-
-  const selectChangeHandler = (value) => {
-    const selectCompany = companies.find((company) => company.name.toLowerCase() === value)
-    if (selectCompany) {
-      setInput({ ...input, companyId: selectCompany._id })
+  
+  useEffect(() => {
+    if (singleCompany) {
+      setInput((prev) => ({
+        ...prev,
+        companyId: singleCompany._id,
+      }));
     }
-  }
+  }, [singleCompany]);
 
   const submitHandler = async (e) => {
     e.preventDefault()
     try {
       setLoading(true)
-      // Clean payload
       const payload = {
         title: input.title.trim(),
         description: input.description.trim(),
@@ -75,11 +75,8 @@ const PostJob = () => {
         companyId: input.companyId,
         lastDate: input.lastDate,
       }
-      console.log("Cleaned Job Payload:", payload) // Final payload
       const res = await axios.post(`${JOB_API_END_POINT}/post`, payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         withCredentials: true,
       })
       if (res.data.success) {
@@ -93,437 +90,300 @@ const PostJob = () => {
     }
   }
 
-  // // Calculate completion percentage
-  // const getCompletionPercentage = () => {
-  //   const fields = [
-  //     input.title,
-  //     input.description,
-  //     input.requirements,
-  //     input.salary,
-  //     input.location,
-  //     input.jobType,
-  //     input.experience,
-  //     input.position,
-  //     input.companyId,
-  //     input.lastDate,
-  //   ]
-  //   const filledFields = fields.filter((field) => field && field.toString().trim()).length
-  //   return Math.round((filledFields / fields.length) * 100)
-  // }
-
-  // const completionPercentage = getCompletionPercentage()
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    // STRICT SCROLL-FREE CANVAS BOUNDARY
+    <div className="h-screen max-h-screen bg-[#FAFAFA] flex flex-col overflow-hidden">
       <Navbar />
 
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
-        <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
-        <div className="absolute bottom-20 right-40 w-20 h-20 bg-yellow-200 rounded-full opacity-40 animate-pulse delay-700"></div>
-      </div>
+      {/* SPLIT PANEL WRAPPER LAYOUT */}
+      <div className="flex-1 flex w-full overflow-hidden">
+       {/* LEFT COLUMN: Deep Gradient Visual Analytics Showcase Panel */}
+        <div className="hidden lg:flex lg:w-[35%] bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 p-10 flex-col justify-between text-white relative overflow-hidden rounded-3xl shadow-xl">
+          {/* Background Ambient Shapes */}
+          <div className="absolute top-[-10%] right-[-10%] w-72 h-72 bg-white/10 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-[-5%] left-[-5%] w-60 h-60 bg-black/10 rounded-full blur-xl"></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        {/* Header Section */}
-        <div className="mb-8">
-          <Button
-            type="button"
-            onClick={() => navigate("/admin/jobs")}
-            className="mb-6 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 group"
-          >
-            <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
-            Back to Jobs
-          </Button>
+          {/* Top Block */}
+          <div className="space-y-6 relative z-10">
+            <Button
+              type="button"
+              onClick={() => navigate("/admin/jobs")}
+              className="bg-white/10 backdrop-blur-md text-white hover:bg-white/20 border border-white/20 px-4 h-9 rounded-xl text-xs font-bold transition-all group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5 transition-transform group-hover:-translate-x-0.5" />
+              Back to Listings
+            </Button>
 
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 shadow-lg border border-gray-200">
-              <Briefcase className="w-5 h-5 mr-2 text-orange-500" />
-              <span className="text-gray-700 font-semibold">Job Posting</span>
+            <div className="space-y-2 pt-4">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-yellow-300 text-[10px] font-bold uppercase tracking-wider border border-white/10">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Publishing Console</span>
+              </div>
+              <h1 className="text-3xl font-black tracking-tight leading-tight">
+                Acquire Your Next <br />
+                Industry Specialist 🚀
+              </h1>
+              <p className="text-white/80 text-xs font-medium leading-relaxed pt-1">
+                Deploy granular skill requirements directly to our matching index pipelines to filter elite technical assets.
+              </p>
             </div>
+          </div>
 
-            <h1 className="text-5xl font-black text-gray-900 mb-4 leading-tight">
-              <span className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                Post Your Next
-              </span>
-              <br />
-              Job Opening 🚀
-            </h1>
-
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Create a compelling job posting to attract the best talent for your company.
-            </p>
+          {/* Bottom Summary Metric Widgets */}
+          <div className="space-y-3 relative z-10 border-t border-white/10 pt-6">
+            <span className="text-[10px] font-bold text-white/50 tracking-wider uppercase block">Deployment Security</span>
+            <div className="grid grid-cols-1 gap-2">
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+                <ShieldCheck className="w-4 h-4 text-emerald-300 shrink-0" />
+                <div>
+                  <h4 className="text-xs font-bold text-white">Pre-vetted Streams</h4>
+                  <p className="text-white/70 text-[10px]">Attract pre-screened technical profiles.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
+                <TrendingUp className="w-4 h-4 text-cyan-300 shrink-0" />
+                <div>
+                  <h4 className="text-xs font-bold text-white">Reduced Time-to-Hire</h4>
+                  <p className="text-white/70 text-[10px]">Slash selection wait times by 40%.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Progress Section */}
-        {/* <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Job Posting Progress</h3>
-            <span className="text-2xl font-black text-gray-900">{completionPercentage}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="bg-gradient-to-r from-orange-500 to-pink-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${completionPercentage}%` }}
-            ></div>
-          </div>
-          <p className="text-sm text-gray-600 mt-2">
-            {completionPercentage === 100
-              ? "Perfect! Your job posting is complete."
-              : "Fill in all fields to complete your job posting."}
-          </p>
-        </div> */}
-
-        {/* Stats Cards */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-white" />
+     {/* RIGHT COLUMN: Expansive Clean Input Administration Entry Grid */}
+     <div className="flex-1 bg-white p-6 md:p-8 flex flex-col justify-between overflow-hidden rounded-3xl border border-gray-100 shadow-xl">
+          <div className="w-full max-w-3xl mx-auto flex flex-col h-full justify-between overflow-hidden">
+            
+            {/* Top Workspace Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 shrink-0">
+              <div>
+                <h2 className="text-xl font-black text-gray-900 tracking-tight flex items-center gap-2">
+                  Job Listing Configuration
+                </h2>
+                <p className="text-gray-400 text-xs font-semibold mt-0.5">Fill out parameters to declare current company openings.</p>
               </div>
-              <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">REACH</div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">10K+</div>
-            <div className="text-gray-600 font-semibold">Active Job Seekers</div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">SUCCESS</div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">95%</div>
-            <div className="text-gray-600 font-semibold">Match Rate</div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">SPEED</div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">24h</div>
-            <div className="text-gray-600 font-semibold">Avg Response</div>
-          </div>
-        </div> */}
-
-        {/* Main Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
-          {/* Header Section */}
-          <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white p-8 relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full"></div>
-            <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full"></div>
-            <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-white/20 rotate-45"></div>
-
-            <div className="relative z-10">
-              <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4">
-                <Sparkles className="w-4 h-4 mr-2" />
-                <span className="text-sm font-medium">Job Details</span>
-              </div>
-              <h2 className="text-3xl font-black mb-2">Create Job Posting</h2>
-              <p className="text-white/90 text-lg">Fill in the details to attract the perfect candidates</p>
-            </div>
-          </div>
-
-          {/* Form Section */}
-          <div className="p-8">
-            <form onSubmit={submitHandler} className="space-y-8">
-              {/* Basic Information */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-black text-gray-900 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <Briefcase className="w-4 h-4 text-white" />
-                  </div>
-                  Job Information
-                </h3>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Job Title */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-gray-500" />
-                      Job Title
-                    </Label>
-                    <Input
-                      type="text"
-                      name="title"
-                      value={input.title}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. Senior Frontend Developer"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                      required
-                    />
-                  </div>
-
-                  {/* Location */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                      Location
-                    </Label>
-                    <Input
-                      type="text"
-                      name="location"
-                      value={input.location}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. Bangalore, Remote, Hybrid"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                    />
-                  </div>
-
-                  {/* Job Type */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
-                      Job Type
-                    </Label>
-                    <Input
-                      type="text"
-                      name="jobType"
-                      value={input.jobType}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. Full-Time, Part-Time, Contract"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                    />
-                  </div>
-
-                  {/* Salary */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
-                      Salary (LPA)
-                    </Label>
-                    <Input
-                      type="text"
-                      name="salary"
-                      value={input.salary}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. 10-15 LPA"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                    />
-                  </div>
-
-                  {/* Experience */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Star className="w-4 h-4 text-gray-500" />
-                      Experience (Years)
-                    </Label>
-                    <Input
-                      type="number"
-                      name="experience"
-                      value={input.experience}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. 3"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                    />
-                  </div>
-
-                  {/* Open Positions */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-500" />
-                      Open Positions
-                    </Label>
-                    <Input
-                      type="number"
-                      name="position"
-                      value={input.position}
-                      onChange={changeEventHandler}
-                      placeholder="e.g. 5"
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
-                    />
-                  </div>
-
-                  {/* Last Date */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-500" />
-                      Application Deadline
-                    </Label>
-                    <Input
-                      type="date"
-                      name="lastDate"
-                      value={input.lastDate}
-                      onChange={changeEventHandler}
-                      min={new Date().toISOString().split("T")[0]}
-                      className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900"
-                      required
-                    />
-                  </div>
-
-                  {/* Company Selection */}
-                  <div className="space-y-2">
-                    <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                      <Building className="w-4 h-4 text-gray-500" />
-                      Select Company
-                    </Label>
-                    <Select onValueChange={selectChangeHandler}>
-                      <SelectTrigger className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900">
-                        <SelectValue placeholder="Choose your company" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border border-gray-200 rounded-xl shadow-xl">
-                        <SelectGroup>
-                          {companies.map((company) => (
-                            <SelectItem
-                              key={company._id}
-                              value={company.name.toLowerCase()}
-                              className="cursor-pointer hover:bg-orange-50 rounded-lg"
-                            >
-                              {company.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {singleCompany && (
+                <div className="bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/20 text-orange-700 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                  <Building className="w-3.5 h-3.5 text-orange-600" />
+                  <span>Branch: {singleCompany.name}</span>
                 </div>
+              )}
+            </div>
 
-                {/* Description */}
-                <div className="space-y-2">
-                  <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-gray-500" />
-                    Job Description
+            {/* SCROLLABLE CENTRAL INPUT GROUPS CANVAS */}
+            <form onSubmit={submitHandler} id="splitPostJobForm" className="flex-1 overflow-y-auto py-5 pr-2 space-y-4 scrollbar-thin">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5">
+                
+                {/* Job Title */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 text-gray-400" />
+                    Job Title Designation
                   </Label>
                   <Input
                     type="text"
-                    name="description"
-                    value={input.description}
+                    name="title"
+                    value={input.title}
                     onChange={changeEventHandler}
-                    placeholder="Describe the role, responsibilities, and what makes this opportunity exciting..."
-                    className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
+                    placeholder="e.g. Senior Backend Engineer"
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full"
                     required
                   />
                 </div>
 
-                {/* Requirements */}
-                <div className="space-y-2">
-                  <Label className="text-gray-700 font-semibold text-sm flex items-center gap-2">
-                    <Target className="w-4 h-4 text-gray-500" />
-                    Requirements & Skills
+                {/* Location */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                    HQ Placement Node
                   </Label>
                   <Input
                     type="text"
-                    name="requirements"
-                    value={input.requirements}
+                    name="location"
+                    value={input.location}
                     onChange={changeEventHandler}
-                    placeholder="e.g. React, Node.js, TypeScript, 3+ years experience"
-                    className="h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
+                    placeholder="e.g. Bangalore, Remote"
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full"
+                  />
+                </div>
+
+                {/* Job Type */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-gray-400" />
+                    Employment Type
+                  </Label>
+                  <Input
+                    type="text"
+                    name="jobType"
+                    value={input.jobType}
+                    onChange={changeEventHandler}
+                    placeholder="e.g. Full-Time, Contract"
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full"
+                  />
+                </div>
+
+                {/* Salary */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5 text-gray-400" />
+                    Expected Salary Range (LPA)
+                  </Label>
+                  <Input
+                    type="text"
+                    name="salary"
+                    value={input.salary}
+                    onChange={changeEventHandler}
+                    placeholder="e.g. 15"
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full"
+                  />
+                </div>
+
+               {/* Experience */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 text-gray-400" />
+                    Required Experience (Years)
+                  </Label>
+                  <Input
+                    type="number"
+                    name="experience"
+                    value={input.experience === 0 ? "" : input.experience}
+                    onChange={changeEventHandler}
+                    placeholder="0 (Fresher) or e.g. 3"
+                    min={0}
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
+
+                {/* Open Positions */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400/60 focus-within:bg-white focus-within:shadow-md">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-gray-400" />
+                    Target Headcount Volume
+                  </Label>
+                  <Input
+                    type="number"
+                    name="position"
+                    value={input.position}
+                    onChange={changeEventHandler}
+                    placeholder="e.g. 2"
+                    className="h-9 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
+
+                {/* Application Deadline */}
+                <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all col-span-1 sm:col-span-2 duration-200 focus-within:border-orange-400 focus-within:bg-white focus-within:shadow-sm">
+                  <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                    Application Cutoff Deadline Date
+                  </Label>
+                  <Input
+                    type="date"
+                    name="lastDate"
+                    value={input.lastDate}
+                    onChange={changeEventHandler}
+                    min={new Date().toISOString().split("T")[0]}
+                    className="h-8 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 shadow-none focus-visible:ring-0 focus-visible:border-transparent cursor-pointer w-full mt-0.5 focus:outline-none"
+                    required
                   />
                 </div>
               </div>
 
-              {/* Company Warning */}
-              {companies.length === 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-white text-xs font-bold">!</span>
-                    </div>
-                    <div>
-                      <h4 className="text-red-800 font-semibold text-sm mb-1">Company Required</h4>
-                      <p className="text-red-600 text-sm leading-relaxed mb-3">
-                        You need to register a company before posting a job. Please create your company profile first.
-                      </p>
-                      <Button
-                        type="button"
-                        onClick={() => navigate("/admin/companies/create")}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold"
-                      >
-                        Create Company
-                      </Button>
-                    </div>
+              {/* Core Skill Requirements Inline Row */}
+              <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400 focus-within:bg-white focus-within:shadow-md">
+                <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-gray-400" />
+                  Prerequisite Stack & Skillsets
+                </Label>
+                <Input
+                  type="text"
+                  name="requirements"
+                  value={input.requirements}
+                  onChange={changeEventHandler}
+                  placeholder="e.g. React, Node.js, TypeScript, AWS Architecture"
+                  className="h-8 border-0 bg-transparent px-0 text-xs font-bold text-gray-900 placeholder-gray-400 shadow-none focus-visible:ring-0 focus-visible:border-transparent w-full"
+                />
+              </div>
+
+              {/* Detailed Role Bio Block */}
+              <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-3 rounded-2xl transition-all duration-200 focus-within:border-orange-400 focus-within:bg-white focus-within:shadow-md">
+                <Label className="text-gray-500 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-gray-400" />
+                  Comprehensive Job Description Summary
+                </Label>
+                <textarea
+                  name="description"
+                  value={input.description}
+                  onChange={changeEventHandler}
+                  placeholder="Elaborate on operational duties, pipeline metrics, daily standup routines, and workspace culture..."
+                  className="w-full h-16 max-h-16 min-h-16 bg-transparent text-xs font-bold text-gray-900 placeholder-gray-400 outline-none resize-none pt-1 scrollbar-none"
+                  required
+                />
+              </div>
+            </form>
+
+            {/* LOWER FORM SUBMISSION CONTROLS ACTION STRIP */}
+            <div className="pt-4 border-t border-gray-100 shrink-0 flex flex-col gap-3">
+              {/* Conditional Alert Alerts Box Panel */}
+              {!singleCompany ? (
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-3 flex items-center justify-between gap-4 animate-pulse">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shrink-0 text-white font-bold text-[10px]">!</div>
+                    <span className="text-red-700 text-xs font-bold">Registration mandatory: Register a company node before publishing.</span>
                   </div>
+                  <Button
+                    type="button"
+                    onClick={() => navigate("/admin/companies/create")}
+                    className="bg-red-600 hover:bg-red-700 text-white text-[10px] font-black px-3 h-10 rounded-xl shadow-sm shrink-0 transition-colors"
+                  >
+                    Setup Hub
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 px-1">
+                  <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                  <span>Deployment directory set to verified hub: <b className="text-green-800 font-black">{singleCompany.name}</b></span>
                 </div>
               )}
 
-              {/* Tips Section */}
-              {/* <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6">
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Sparkles className="w-3 h-3 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-blue-800 font-semibold text-sm mb-2">Job Posting Tips</h4>
-                    <ul className="text-blue-600 text-sm space-y-1">
-                      <li>• Write a clear and specific job title</li>
-                      <li>• Include salary range to attract qualified candidates</li>
-                      <li>• Be specific about required skills and experience</li>
-                      <li>• Set a reasonable application deadline</li>
-                    </ul>
-                  </div>
-                </div>
-              </div> */}
+              {/* Submit Execution Actions Row */}
+              <div className="flex items-center justify-end gap-3">
+                <Button
+                  type="button"
+                  onClick={() => navigate("/admin/jobs")}
+                  variant="outline"
+                  className="h-10 px-5 border border-gray-200 text-gray-600 font-bold text-xs rounded-xl hover:bg-gray-50 transition-colors shadow-sm"
+                >
+                  Discard Posting
+                </Button>
 
-              {/* Submit Button */}
-              <div className="pt-4">
                 {loading ? (
                   <Button
                     disabled
-                    className="w-full h-14 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-lg rounded-xl shadow-lg opacity-50 cursor-not-allowed"
+                    className="bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold text-xs h-10 px-6 rounded-xl shadow-md opacity-50 cursor-not-allowed min-w-[160px]"
                   >
-                    <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                    Publishing Job...
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Deploying...
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    disabled={companies.length === 0}
-                    className="w-full h-14 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    form="splitPostJobForm"
+                    disabled={!singleCompany}
+                    className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white font-bold text-xs h-10 px-6 rounded-xl shadow-lg shadow-pink-500/10 transition-all active:scale-[0.98] flex items-center gap-1.5 min-w-[160px]"
                   >
-                    <CheckCircle className="mr-2 h-6 w-6" />
-                    Post Job Opening
+                    <CheckCircle className="w-4 h-4" />
+                    Deploy Opening
                   </Button>
                 )}
               </div>
-            </form>
+            </div>
+
           </div>
         </div>
 
-        {/* Benefits Section */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200 hover:shadow-lg transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900 text-lg">Quality Candidates</h4>
-                <p className="text-gray-600">Attract pre-screened talent</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200 hover:shadow-lg transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900 text-lg">Fast Hiring</h4>
-                <p className="text-gray-600">Reduce time-to-hire significantly</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200 hover:shadow-lg transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Star className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900 text-lg">Brand Visibility</h4>
-                <p className="text-gray-600">Showcase your company culture</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

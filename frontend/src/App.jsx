@@ -51,7 +51,6 @@ const appRouter = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "student/chats", element: <StudentChatsPage /> },
       { path: "first-time-setup", element: <SelectRole /> },
 
       // ✅ Forgot password flow (public, no login required)
@@ -88,6 +87,7 @@ const appRouter = createBrowserRouter([
           { path: "chat/:receiverId", element: <ChatPage /> },
           { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
           { path: "recruiter/chats", element: <RecruiterChatList /> },
+           { path: "student/chats", element: <StudentChatsPage /> },
         ],
       },
     ],
