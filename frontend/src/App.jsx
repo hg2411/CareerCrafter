@@ -32,6 +32,7 @@ import Contact from "./components/Contact.jsx";
 import Browse from "./pages/Browse.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
+import StudentChatsPage from "./pages/StudentChatsPage";
 
 
 // ✅ Layout with ToastContainer
@@ -50,6 +51,7 @@ const appRouter = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
+      { path: "student/chats", element: <StudentChatsPage /> },
       { path: "first-time-setup", element: <SelectRole /> },
 
       // ✅ Forgot password flow (public, no login required)
@@ -61,6 +63,7 @@ const appRouter = createBrowserRouter([
       { path: "terms", element: <Terms /> },
       { path: "about", element: <About /> },
       { path: "contact", element: <Contact /> },
+
       {
         element: (
           <ProtectedRoute>

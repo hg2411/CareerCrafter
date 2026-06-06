@@ -73,12 +73,15 @@ const Navbar = () => {
         { name: "Companies", path: "/admin/companies", icon: Briefcase },
         { name: "Jobs", path: "/admin/jobs", icon: Briefcase },
         { name: "Chats", path: "/recruiter/chats", icon: User2 },
+
       ]
     }
     return [
       { name: "Home", path: "/", icon: Home },
       { name: "Jobs", path: "/jobs", icon: Briefcase },
+       { name: "Chats", path: "/student/chats", icon: User2 },
       { name: "Saved", path: "/saved", icon: Heart },
+    
     ]
   }
 
