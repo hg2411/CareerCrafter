@@ -15,6 +15,7 @@ import { Chat } from "./models/chat.model.js";
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
+import aiRoute from "./routes/ai.route.js";
 import applicationRoute from "./routes/application.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 import statsRoutes from "./routes/statsRoutes.js";
@@ -75,6 +76,7 @@ app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/stats", statsRoutes);
 app.use("/api/v1/chat", chatRoute);
+app.use("/api/v1/ai", aiRoute);
 
 // ✅ 6. Connect to MongoDB
 connectDB().then(async () => {

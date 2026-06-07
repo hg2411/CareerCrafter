@@ -33,9 +33,8 @@ import Browse from "./pages/Browse.jsx";
 import Privacy from "./pages/Privacy.jsx";
 import Terms from "./pages/Terms.jsx";
 import StudentChatsPage from "./pages/StudentChatsPage";
+import AICoach from "./pages/AICoach.jsx";
 
-
-// ✅ Layout with ToastContainer
 const Layout = () => (
   <>
     <ToastContainer position="top-center" autoClose={3000} />
@@ -88,6 +87,7 @@ const appRouter = createBrowserRouter([
           { path: "recruiter/chat/:receiverId", element: <RecruiterChatPage /> },
           { path: "recruiter/chats", element: <RecruiterChatList /> },
            { path: "student/chats", element: <StudentChatsPage /> },
+           {path: "ai-coach", element: <AICoach /> },
         ],
       },
     ],

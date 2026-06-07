@@ -13,6 +13,7 @@ import { USER_API_END_POINT } from "@/utils/constant"
 import { setUser, logout } from "@/redux/authSlice"
 import { getAllNotifications, markAllNotificationsAsRead } from "@/redux/notificationSlice"
 
+
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth)
   const { notifications } = useSelector((store) => store.notification)
@@ -80,8 +81,8 @@ const Navbar = () => {
       { name: "Home", path: "/", icon: Home },
       { name: "Jobs", path: "/jobs", icon: Briefcase },
        { name: "Chats", path: "/student/chats", icon: User2 },
+        { name: "AI Coach", path: "/ai-coach", icon: Sparkles },
       { name: "Saved", path: "/saved", icon: Heart },
-    
     ]
   }
 
