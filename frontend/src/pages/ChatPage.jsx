@@ -17,6 +17,7 @@ const ChatPage = () => {
   const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [text, setText] = useState("")
+  const [receiver, setReceiver] = useState(null);
   const messagesEndRef = useRef(null)
   const socketRef = useRef(null)
   const roomId = [user._id, receiverId].sort().join("_")
@@ -63,6 +64,22 @@ const ChatPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  useEffect(() => {
+    const fetchReceiver = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/v1/user/${receiverId}`
+        );
+
+        setReceiver(res.data.user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchReceiver();
+  }, [receiverId]);
+
   const handleSend = async () => {
     if (!text.trim()) return
 
@@ -71,8 +88,16 @@ const ChatPage = () => {
       receiverId,
       text,
       createdAt: new Date().toISOString(),
-      student: user._id,
-      recruiter: receiverId,
+
+      recruiter:
+        user.role === "Recruiter"
+          ? user._id
+          : receiverId,
+
+      student:
+        user.role === "Student"
+          ? user._id
+          : receiverId,
     }
 
     socketRef.current.emit("sendMessage", {
@@ -103,22 +128,22 @@ const ChatPage = () => {
         <div className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button 
+              <button
                 onClick={() => navigate(-1)}
                 className="p-2 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-slate-600" />
               </button>
-              
+
               <div className="relative">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg shadow-md">
-                  {getInitials("Recruiter")}
+                  {getInitials(receiver?.fullname)}
                 </div>
                 <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
               </div>
-              
+
               <div>
-                <h2 className="text-lg font-semibold text-slate-800">Recruiter</h2>
+                <h2 className="text-lg font-semibold text-slate-800">{receiver?.fullname}</h2>
                 <p className="text-sm text-slate-500">Active now</p>
               </div>
             </div>
@@ -140,24 +165,23 @@ const ChatPage = () => {
           {messages.map((msg, idx) => {
             const isUser = msg.senderId === user._id || msg.senderId?._id === user._id
             const showAvatar = idx === 0 || messages[idx - 1]?.senderId !== msg.senderId
-            
+
             return (
               <div key={idx} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
                 <div className={`flex gap-2 items-end max-w-[70%] ${isUser ? "flex-row-reverse" : ""}`}>
                   {!isUser && (
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm flex items-center justify-center font-semibold shadow-sm ${showAvatar ? "visible" : "invisible"}`}>
-                      {getInitials("Recruiter")}
+                      {getInitials(receiver?.fullname)}
                     </div>
                   )}
-                  
+
                   <div className="flex flex-col gap-1">
                     <div
                       className={`
                         px-4 py-2.5 rounded-2xl shadow-sm
-                        ${
-                          isUser
-                            ? "bg-blue-600 text-white rounded-br-md"
-                            : "bg-white text-slate-800 border border-slate-200 rounded-bl-md"
+                        ${isUser
+                          ? "bg-blue-600 text-white rounded-br-md"
+                          : "bg-white text-slate-800 border border-slate-200 rounded-bl-md"
                         }
                       `}
                     >

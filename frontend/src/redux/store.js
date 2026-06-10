@@ -4,7 +4,8 @@ import authReducer from "./authSlice";
 import jobReducer from "./jobSlice";
 import companyReducer from "./companySlice";
 import applicationReducer from "./applicationSlice";
-import notificationReducer from "./notificationSlice"; // ✅ renamed to match convention
+import notificationReducer from "./notificationSlice"; 
+import aiReducer from "./aiSlice"; 
 
 import {
   persistReducer,
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   job: jobReducer,
   company: companyReducer,
   application: applicationReducer,
-  notification: notificationReducer, // ✅ notifications slice correctly included
+  notification: notificationReducer,
+  ai: aiReducer, 
 });
 
 // Persisted root reducer

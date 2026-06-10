@@ -47,195 +47,156 @@ const VerifyOTP = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    // Hard lock layout to viewport height and disable scrolling
+    <div className="h-screen max-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col overflow-hidden">
       <Navbar />
 
-      {/* Background decorative elements */}
+      {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
         <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
-        <div className="absolute bottom-20 right-40 w-20 h-20 bg-yellow-200 rounded-full opacity-40 animate-pulse delay-700"></div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
-        <div className="w-full max-w-6xl">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-100">
+      {/* MAIN CONTAINER: Shifted upwards with justify-start and proper step layout constraints */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-start px-4 pt-4 md:pt-8 overflow-hidden">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100">
             <div className="flex flex-col lg:flex-row">
+              
               {/* Left Hero Section */}
-              <div className="lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-12 flex flex-col justify-center relative overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
-                <div className="absolute bottom-20 left-10 w-16 h-16 bg-white/10 rounded-full"></div>
-                <div className="absolute top-1/2 left-1/4 w-4 h-4 bg-white/20 rotate-45"></div>
-                <div className="absolute top-1/3 right-1/3 w-6 h-6 bg-white/20 rounded-full"></div>
+              <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-8 flex flex-col justify-center relative overflow-hidden rounded-l-[32px]">
+                {/* Background Decorations */}
+                <div className="absolute top-10 right-10 w-24 h-24 bg-white/10 rounded-full blur-sm"></div>
+                <div className="absolute bottom-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-sm"></div>
 
-                <div className="relative z-10">
-                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8">
-                    <ShieldCheck className="w-4 h-4 mr-2" />
-                    <span className="text-sm font-medium">Secure Verification</span>
+                {/* Content */}
+                <div className="relative z-10 max-w-md">
+                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 mb-4 border border-white/20">
+                    <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                    <span className="text-xs font-medium">Secure Verification</span>
                   </div>
 
-                  <h2 className="text-5xl font-black mb-6 leading-tight">
-                    Almost
-                    <br />
-                    <span className="text-yellow-300">There!</span>
-                    <br />
+                  <h2 className="text-3xl font-black mb-4 leading-tight">
+                    Almost<br />
+                    <span className="text-yellow-300">There!</span><br />
                     Verify OTP 🔐
                   </h2>
 
-                  <p className="text-xl text-white/90 mb-8 leading-relaxed">
+                  <p className="text-sm text-white/90 mb-6 leading-relaxed">
                     We've sent a secure code to your email. Enter it below to verify your identity and proceed.
                   </p>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3 text-xs">
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>6-digit secure code</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Valid for 10 minutes</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Check spam folder if needed</span>
-                    </div>
-                  </div>
-
-                  {/* Illustration placeholder */}
-                  <div className="mt-12 relative">
-                    <div className="w-48 h-32 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-center">
-                      <Key className="w-16 h-16 text-white/60" />
-                    </div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-300 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-orange-600" />
-                    </div>
-                    <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center">
-                      <ShieldCheck className="w-3 h-3 text-white" />
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Form Section */}
-              <div className="lg:w-1/2 p-12">
-                <div className="max-w-md mx-auto">
-                  <div className="text-center mb-10">
-                    {/* Icon */}
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl shadow-lg mb-6">
-                      <ShieldCheck className="w-10 h-10 text-white" />
+              {/* Reset to max-w-md to match the wide style parameters of Signup page */}
+              <div className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
+                <div className="w-full max-w-md mx-auto">
+                  <div className="text-center mb-4">
+                    {/* Balanced Icon Block */}
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-orange-500 to-pink-500 rounded-xl shadow-md mb-3">
+                      <ShieldCheck className="w-7 h-7 text-white" />
                     </div>
 
-                    <h1 className="text-4xl font-black text-gray-900 mb-4">Verify OTP</h1>
-                    <p className="text-gray-600 text-lg leading-relaxed">
+                    <h1 className="text-2xl font-black text-gray-900 mb-0.5">Verify OTP</h1>
+                    <p className="text-gray-400 text-xs leading-relaxed">
                       Enter the 6-digit code we sent to your email address to continue.
                     </p>
                   </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Email Field */}
-                    <div className="space-y-2">
-                      <label className="text-gray-700 font-semibold text-sm">Email Address</label>
+                    <div className="space-y-0.5">
+                      <label className="text-gray-600 font-semibold text-[11px]">Email Address</label>
                       <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                         <Input
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="Enter your email"
-                          className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
+                          className="pl-10 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400 w-full"
                         />
                       </div>
                     </div>
 
                     {/* OTP Field */}
-                    <div className="space-y-2">
-                      <label className="text-gray-700 font-semibold text-sm">Verification Code</label>
+                    <div className="space-y-0.5">
+                      <label className="text-gray-600 font-semibold text-[11px]">Verification Code</label>
                       <div className="relative">
-                        <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <Key className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                         <Input
                           type="text"
                           value={otp}
                           onChange={(e) => setOtp(e.target.value)}
                           placeholder="Enter 6-digit OTP"
-                          className="pl-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400 text-center text-lg font-mono tracking-widest"
+                          className="pl-10 h-9 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400 text-center font-mono tracking-widest text-sm w-full"
                           maxLength={6}
                         />
                       </div>
-                      {email && (
-                        <p className="text-sm text-gray-500 text-center">
-                          Code sent to <span className="font-semibold text-orange-600">{email}</span>
-                        </p>
-                      )}
+                      
+                      {/* Integrated text block for inline notifications instead of tall alert boxes */}
+                      <div className="flex items-center justify-between pt-1.5 text-[11px] text-gray-400">
+                        <span>Sent to: <span className="font-semibold text-orange-600">{email || "your email"}</span></span>
+                        <button 
+                          type="button" 
+                          className="text-orange-600 hover:text-orange-700 font-bold transition-colors cursor-pointer bg-transparent border-0 p-0"
+                        >
+                          Resend Code
+                        </button>
+                      </div>
                     </div>
 
                     {/* Submit Button */}
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full h-12 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      className="w-full h-9 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all duration-200"
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                           Verifying...
                         </>
                       ) : (
                         <>
                           Verify & Continue
-                          <ArrowRight className="ml-2 h-5 w-5" />
+                          <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                         </>
                       )}
                     </Button>
-
-                    {/* Timer/Resend Section */}
-                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Clock className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-orange-800 font-semibold text-sm mb-1">Didn't receive the code?</h4>
-                          <p className="text-orange-600 text-sm leading-relaxed mb-3">
-                            Check your spam folder or wait a moment before requesting a new code.
-                          </p>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-100 font-semibold text-sm p-0 h-auto"
-                          >
-                            Resend OTP
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
 
                     {/* Back Button */}
                     <Button
                       type="button"
                       onClick={() => navigate("/forgot-password")}
                       variant="outline"
-                      className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 text-gray-700 font-semibold rounded-xl transition-all duration-300"
+                      className="w-full h-9 border border-gray-200 text-gray-600 font-semibold rounded-xl text-xs transition-all duration-200"
                     >
-                      <ArrowLeft className="mr-2 h-5 w-5" />
+                      <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                       Back to Forgot Password
                     </Button>
                   </form>
 
-                  {/* Security Note */}
-                  <div className="text-center mt-8 p-6 bg-gray-50 rounded-xl">
-                    <div className="flex items-center justify-center mb-3">
-                      <ShieldCheck className="w-5 h-5 text-green-600 mr-2" />
-                      <h4 className="font-semibold text-gray-800">Secure Verification</h4>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      This verification step ensures that only you can access your account. Your security is our top
-                      priority.
-                    </p>
-                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

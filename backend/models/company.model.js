@@ -18,17 +18,18 @@ const companySchema = new mongoose.Schema({
   logo: {
     public_id: {
       type: String,
-      required: false, // ✅ Changed
+      required: false, 
     },
     url: {
       type: String,
-      required: false, // ✅ Changed
+      required: false, 
     },
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+    unique: true,
   },
 }, { timestamps: true });
 

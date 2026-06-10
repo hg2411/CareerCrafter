@@ -1,7 +1,7 @@
 // controllers/chat.controller.js
 import { Chat } from "../models/chat.model.js";
 
-// ✅ GET /api/v1/chat/:receiverId
+//  GET /api/v1/chat/:receiverId
 export const getChatWithReceiver = async (req, res) => {
   try {
     const senderId = req.id;
@@ -23,7 +23,7 @@ export const getChatWithReceiver = async (req, res) => {
   }
 };
 
-// ✅ GET /api/v1/chat/recruiter/:recruiterId
+//  GET /api/v1/chat/recruiter/:recruiterId
 export const getRecruiterChats = async (req, res) => {
   const { recruiterId } = req.params;
 
@@ -36,6 +36,34 @@ export const getRecruiterChats = async (req, res) => {
   } catch (error) {
     console.error("❌ Failed to get recruiter chats:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+ //  GET /api/v1/chat/student/:studentId
+export const getStudentChats = async (req, res) => {
+  const { studentId } = req.params;
+
+  try {
+    const chats = await Chat.find({
+      student: studentId,
+    })
+      .populate(
+        "recruiter",
+        "fullname email profilePhoto"
+      )
+      .sort({ updatedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      chats,
+    });
+  } catch (error) {
+    console.error("❌ Failed to get student chats:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
 

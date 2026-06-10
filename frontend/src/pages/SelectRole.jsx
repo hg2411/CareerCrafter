@@ -10,9 +10,9 @@ import {
   Building,
   Lock,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
   Users,
-  Briefcase,
   CheckCircle,
   Eye,
   EyeOff,
@@ -81,12 +81,12 @@ const SelectRole = () => {
 
   if (checkingUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+      <div className="h-screen max-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center overflow-hidden">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full animate-spin mx-auto mb-4 flex items-center justify-center">
-            <Sparkles className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full animate-spin mx-auto mb-3 flex items-center justify-center">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <p className="text-xl font-semibold text-gray-700">Setting up your experience...</p>
+          <p className="text-lg font-semibold text-gray-700">Setting up your experience...</p>
         </div>
       </div>
     )
@@ -99,9 +99,8 @@ const SelectRole = () => {
       description: "Looking for amazing career opportunities",
       icon: GraduationCap,
       gradient: "from-blue-500 to-cyan-500",
-      bgGradient: "from-blue-50 to-cyan-50",
+      bgGradient: "from-blue-50/70 to-cyan-50/70",
       borderColor: "border-blue-400",
-      features: ["Browse thousands of jobs", "Apply with one click", "Track applications", "Get matched with roles"],
     },
     {
       id: "recruiter",
@@ -109,202 +108,180 @@ const SelectRole = () => {
       description: "Hiring top talent for your company",
       icon: Building,
       gradient: "from-emerald-500 to-teal-500",
-      bgGradient: "from-emerald-50 to-teal-50",
+      bgGradient: "from-emerald-50/70 to-teal-50/70",
       borderColor: "border-emerald-400",
-      features: ["Post job openings", "Find qualified candidates", "Manage applications", "Build your team"],
     },
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    // Strict layout lockdown to enforce viewport size safety limits
+    <div className="h-screen max-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex flex-col overflow-hidden">
+      
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
         <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
-        <div className="absolute bottom-20 right-40 w-20 h-20 bg-yellow-200 rounded-full opacity-40 animate-pulse delay-700"></div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
-        <div className="w-full max-w-6xl">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-100">
+      {/* MAIN CONTAINER: Shifted upwards using flex align layers */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-start px-4 pt-4 md:pt-8 overflow-hidden">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100">
             <div className="flex flex-col lg:flex-row">
+              
               {/* Left Hero Section */}
-              <div className="lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-12 flex flex-col justify-center relative overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full"></div>
-                <div className="absolute bottom-20 left-10 w-16 h-16 bg-white/10 rounded-full"></div>
-                <div className="absolute top-1/2 left-1/4 w-4 h-4 bg-white/20 rotate-45"></div>
-                <div className="absolute top-1/3 right-1/3 w-6 h-6 bg-white/20 rounded-full"></div>
+              <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white p-8 flex flex-col justify-center relative overflow-hidden rounded-l-[32px]">
+                <div className="absolute top-10 right-10 w-24 h-24 bg-white/10 rounded-full blur-sm"></div>
+                <div className="absolute bottom-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-sm"></div>
 
-                <div className="relative z-10">
-                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8">
-                    <Users className="w-4 h-4 mr-2" />
-                    <span className="text-sm font-medium">Choose Your Path</span>
+                <div className="relative z-10 max-w-md">
+                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 mb-4 border border-white/20">
+                    <Users className="w-3.5 h-3.5 mr-1.5" />
+                    <span className="text-xs font-medium">Choose Your Path</span>
                   </div>
 
-                  <h2 className="text-5xl font-black mb-6 leading-tight">
-                    What's Your
-                    <br />
-                    <span className="text-yellow-300">Career</span>
-                    <br />
+                  <h2 className="text-3xl font-black mb-4 leading-tight">
+                    What's Your<br />
+                    <span className="text-yellow-300">Career</span><br />
                     Goal? 🎯
                   </h2>
 
-                  <p className="text-xl text-white/90 mb-8 leading-relaxed">
+                  <p className="text-sm text-white/90 mb-6 leading-relaxed">
                     Tell us whether you're looking for your next opportunity or building your dream team.
                   </p>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3 text-xs">
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Personalized experience</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Tailored dashboard</span>
                     </div>
                     <div className="flex items-center text-white/80">
-                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full mr-2.5"></div>
                       <span>Relevant opportunities</span>
-                    </div>
-                  </div>
-
-                  {/* Illustration placeholder */}
-                  <div className="mt-12 relative">
-                    <div className="w-48 h-32 bg-white/10 rounded-2xl backdrop-blur-sm flex items-center justify-center">
-                      <Briefcase className="w-16 h-16 text-white/60" />
-                    </div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-300 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-orange-600" />
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Form Section */}
-              <div className="lg:w-1/2 p-12">
-                <div className="max-w-md mx-auto">
-                  <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl shadow-lg mb-6">
-                      <Users className="w-10 h-10 text-white" />
+              {/* Using max-w-md style parameters to elongate fields cleanly */}
+              <div className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
+                <div className="w-full max-w-md mx-auto">
+                  <div className="text-center mb-4">
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-orange-500 to-pink-500 rounded-xl shadow-md mb-3">
+                      <Users className="w-7 h-7 text-white" />
                     </div>
 
-                    <h1 className="text-4xl font-black text-gray-900 mb-4">Choose Your Role</h1>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                      Select your role and create a secure password to complete your profile.
+                    <h1 className="text-2xl font-black text-gray-900 mb-0.5">Choose Your Role</h1>
+                    <p className="text-gray-400 text-xs leading-relaxed">
+                      Select your layout path and set a password to complete your profile.
                     </p>
                   </div>
 
-                  <div className="space-y-6">
-                    {/* Role Selection */}
-                    <div className="space-y-4">
-                      <label className="text-gray-700 font-semibold text-sm">I am a</label>
-                      <div className="grid gap-4">
+                  <div className="space-y-4">
+                    {/* Role Selection Blocks - Made bigger with larger text and inner layout heights */}
+                    <div className="space-y-1">
+                      <label className="text-gray-600 font-semibold text-[11px]">I am a</label>
+                      <div className="grid gap-2.5">
                         {roles.map((role) => (
                           <div
                             key={role.id}
                             onClick={() => setSelectedRole(role.id)}
-                            className={`relative cursor-pointer p-6 rounded-2xl border-2 transition-all duration-300 group ${
+                            className={`relative cursor-pointer p-4 rounded-xl border-2 transition-all duration-200 group flex items-center justify-between ${
                               selectedRole === role.id
-                                ? `bg-gradient-to-r ${role.bgGradient} ${role.borderColor} shadow-lg transform scale-105`
-                                : "bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md"
+                                ? `bg-gradient-to-r ${role.bgGradient} ${role.borderColor} shadow-md transform scale-[1.01]`
+                                : "bg-gray-50 border-gray-200 hover:bg-gray-100/80"
                             }`}
                           >
-                            <div className="flex items-start space-x-4">
+                            <div className="flex items-center space-x-4 truncate">
                               <div
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                                   selectedRole === role.id
-                                    ? `bg-gradient-to-r ${role.gradient} shadow-lg`
-                                    : "bg-white border-2 border-gray-200 group-hover:border-gray-300"
+                                    ? `bg-gradient-to-r ${role.gradient} text-white shadow-md`
+                                    : "bg-white border-2 border-gray-200 text-gray-500"
                                 }`}
                               >
-                                <role.icon
-                                  className={`w-6 h-6 ${selectedRole === role.id ? "text-white" : "text-gray-600"}`}
-                                />
+                                <role.icon className="w-5 h-5" />
                               </div>
-                              <div className="flex-1">
-                                <h3 className="font-bold text-gray-900 text-lg mb-1">{role.title}</h3>
-                                <p className="text-gray-600 text-sm mb-3">{role.description}</p>
-                                <div className="space-y-1">
-                                  {role.features.slice(0, 2).map((feature, index) => (
-                                    <div key={index} className="flex items-center text-xs text-gray-500">
-                                      <CheckCircle className="w-3 h-3 mr-2 text-green-500" />
-                                      {feature}
-                                    </div>
-                                  ))}
-                                </div>
+                              <div className="truncate">
+                                <h3 className="font-bold text-gray-900 text-sm mb-0.5">{role.title}</h3>
+                                <p className="text-gray-500 text-xs truncate">{role.description}</p>
                               </div>
-                              {selectedRole === role.id && (
-                                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                                  <CheckCircle className="w-4 h-4 text-white" />
-                                </div>
-                              )}
                             </div>
+
+                            {selectedRole === role.id && (
+                              <CheckCircle className="w-5 h-5 text-green-500 shrink-0 ml-2 animate-bounce-short" />
+                            )}
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Password Field */}
-                    <div className="space-y-2">
-                      <label className="text-gray-700 font-semibold text-sm">Create Password</label>
+                    <div className="space-y-0.5">
+                      <label className="text-gray-600 font-semibold text-[11px]">Create Password</label>
                       <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <Input
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Create a secure password"
-                          className="pl-12 pr-12 h-12 rounded-xl border-2 border-gray-200 focus:border-orange-400 focus:ring-orange-400 text-gray-900 placeholder-gray-400"
+                          className="pl-11 pr-11 h-9.5 rounded-xl border border-gray-200 text-xs text-gray-900 placeholder-gray-400 w-full focus:ring-1 focus:ring-orange-400"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         >
-                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500">Password must be at least 6 characters long</p>
+                      <p className="text-[10px] text-gray-400 pt-0.5">Password must be at least 6 characters long</p>
                     </div>
 
-                    {/* Submit Button */}
-                    <Button
-                      onClick={handleCreateAccount}
-                      disabled={loading || !selectedRole || password.length < 6}
-                      className="w-full h-12 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                    >
-                      {loading ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Setting up your account...
-                        </>
-                      ) : (
-                        <>
-                          Complete Setup
-                          <ArrowRight className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </Button>
+                    {/* Action Block - Submit and Back Buttons Stacked Layer */}
+                    <div className="space-y-2 pt-1">
+                      {/* Submit Button */}
+                      <Button
+                        onClick={handleCreateAccount}
+                        disabled={loading || !selectedRole || password.length < 6}
+                        className="w-full h-9.5 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
+                            Setting up your account...
+                          </>
+                        ) : (
+                          <>
+                            Complete Setup
+                            <ArrowRight className="ml-1.5 h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
 
-                    {/* Security Note */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Lock className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <h4 className="text-blue-800 font-semibold text-sm mb-1">Secure & Private</h4>
-                          <p className="text-blue-600 text-sm leading-relaxed">
-                            Your password is encrypted and stored securely. We never share your personal information.
-                          </p>
-                        </div>
-                      </div>
+                      {/* Integrated Back Button */}
+                      <Button
+                        type="button"
+                        onClick={() => navigate("/login")}
+                        variant="outline"
+                        className="w-full h-9.5 border border-gray-200 text-gray-600 font-semibold rounded-xl text-xs transition-all duration-200"
+                      >
+                        <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                        Back to Login
+                      </Button>
                     </div>
+
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -312,5 +289,4 @@ const SelectRole = () => {
     </div>
   )
 }
-
 export default SelectRole

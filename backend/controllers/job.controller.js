@@ -31,12 +31,11 @@ export const postJob = async (req, res) => {
       experience,
       position,
       companyId,
-      lastDate, // ✅ new field
+      lastDate, 
     } = req.body;
 
     const userId = req.id;
 
-    // ✅ Validate required fields
     if (
       !title ||
       !description ||
@@ -44,7 +43,7 @@ export const postJob = async (req, res) => {
       !requirements ||
       !salary ||
       !jobType ||
-      !experience ||
+      experience=== undefined ||
       !position ||
       !companyId ||
       !lastDate

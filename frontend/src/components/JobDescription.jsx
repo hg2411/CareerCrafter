@@ -161,229 +161,166 @@ const JobDescription = () => {
     : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
-        <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 py-6">
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Top Control Bar */}
+        <div className="flex items-center justify-between mb-4">
+          <Button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2 text-sm rounded-xl shadow border border-gray-200 transition-all duration-300 group"
+          >
+            <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            Back
+          </Button>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
-        {/* Back Button */}
-        <Button
-          onClick={() => navigate(-1)}
-          className="mb-8 flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 group"
-        >
-          <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
-          Back to Jobs
-        </Button>
-
-        {/* Main Content Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-100">
-          {/* Header Section */}
-          <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white p-8 relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full"></div>
-            <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full"></div>
-            <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-white/20 rotate-45"></div>
-
-            <div className="relative z-10">
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                <div className="flex-1">
-                  <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4">
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    <span className="text-sm font-medium">Job Opportunity</span>
-                  </div>
-
-                  <h1 className="text-4xl font-black mb-4 leading-tight">{singleJob?.title}</h1>
-
-                  <div className="flex items-center text-white/90 mb-6">
-                    <Building className="w-5 h-5 mr-2" />
-                    <span className="text-lg font-semibold">{singleJob?.company?.name || "Company Name"}</span>
-                    <span className="mx-3">•</span>
-                    <MapPin className="w-4 h-4 mr-1" />
-                    <span>{singleJob?.location}</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
-                      <Users className="w-4 h-4 mr-2" />
-                      {singleJob?.position} Position{singleJob?.position > 1 ? "s" : ""}
-                    </Badge>
-                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
-                      <Briefcase className="w-4 h-4 mr-2" />
-                      {singleJob?.jobType}
-                    </Badge>
-                    <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm font-semibold">
-                      <IndianRupee className="w-4 h-4 mr-2" />
-                      {singleJob?.salary} LPA
-                    </Badge>
-                    {singleJob?.lastDate && (
-                      <Badge className="bg-yellow-400 text-yellow-900 px-4 py-2 text-sm font-semibold">
-                        <Clock className="w-4 h-4 mr-2" />
-                        Apply by {new Date(singleJob.lastDate).toLocaleDateString()}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* Action Section */}
-                <div className="flex flex-col items-end gap-4">
-                  {isApplied ? (
-                    <div className="text-center">
-                      <div
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl ${statusInfo.bgColor} border-2 border-white/20 mb-3`}
-                      >
-                        <statusInfo.icon className={`w-5 h-5 ${statusInfo.color.replace("bg-", "text-")}`} />
-                        <span className="font-bold text-gray-800">{statusInfo.text}</span>
-                      </div>
-                      <Button
-                        onClick={handleWithdraw}
-                        disabled={loading}
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                      >
-                        {loading ? "Withdrawing..." : "Withdraw Application"}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      onClick={applyJobHandler}
-                      disabled={loading}
-                      className="bg-white text-orange-600 hover:bg-gray-50 font-black px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-lg"
-                    >
-                      {loading ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-orange-600 border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Applying...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5 mr-2" />
-                          Apply Now
-                        </>
-                      )}
-                    </Button>
-                  )}
-
-                  <div className="flex items-center text-white/80 text-sm">
-                    <Eye className="w-4 h-4 mr-2" />
-                    <span>{singleJob?.applications?.length || 0} applicants</span>
-                    <span className="mx-2">•</span>
-                    <span>Posted {daysAgo === 0 ? "today" : `${daysAgo} days ago`}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Content Section */}
-          <div className="p-8">
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
-                <div className="flex items-center justify-between mb-3">
-                  <TrendingUp className="w-8 h-8 text-blue-600" />
-                  <Badge className="bg-blue-100 text-blue-700 text-xs">Growth</Badge>
-                </div>
-                <h3 className="font-bold text-gray-900 text-lg">Experience Level</h3>
-                <p className="text-gray-600">{singleJob?.experience || "Not specified"}</p>
-              </div>
-
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
-                <div className="flex items-center justify-between mb-3">
-                  <Target className="w-8 h-8 text-green-600" />
-                  <Badge className="bg-green-100 text-green-700 text-xs">Active</Badge>
-                </div>
-                <h3 className="font-bold text-gray-900 text-lg">Applications</h3>
-                <p className="text-gray-600">{singleJob?.applications?.length || 0} candidates applied</p>
-              </div>
-
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
-                <div className="flex items-center justify-between mb-3">
-                  <Star className="w-8 h-8 text-purple-600" />
-                  <Badge className="bg-purple-100 text-purple-700 text-xs">Premium</Badge>
-                </div>
-                <h3 className="font-bold text-gray-900 text-lg">Salary Range</h3>
-                <p className="text-gray-600">₹{singleJob?.salary} LPA</p>
-              </div>
-            </div>
-
-            {/* Job Details */}
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-white" />
-                  </div>
-                  Job Description
-                </h2>
-                <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                  <p className="text-gray-700 leading-relaxed text-lg">{singleJob?.description}</p>
-                </div>
-              </div>
-
-              {/* Detailed Information */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Job Information</h3>
-                  <DetailRow
-                    label="Position"
-                    value={singleJob?.title}
-                    icon={<Briefcase className="w-5 h-5 text-orange-500" />}
-                  />
-                  <DetailRow
-                    label="Location"
-                    value={singleJob?.location}
-                    icon={<MapPin className="w-5 h-5 text-pink-500" />}
-                  />
-                  <DetailRow
-                    label="Job Type"
-                    value={singleJob?.jobType}
-                    icon={<Clock className="w-5 h-5 text-purple-500" />}
-                  />
-                  <DetailRow
-                    label="Experience"
-                    value={singleJob?.experience || "Not specified"}
-                    icon={<TrendingUp className="w-5 h-5 text-blue-500" />}
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Additional Details</h3>
-                  <DetailRow
-                    label="Salary"
-                    value={`₹${singleJob?.salary} LPA`}
-                    icon={<IndianRupee className="w-5 h-5 text-green-500" />}
-                  />
-                  <DetailRow
-                    label="Openings"
-                    value={`${singleJob?.position} position${singleJob?.position > 1 ? "s" : ""}`}
-                    icon={<Users className="w-5 h-5 text-cyan-500" />}
-                  />
-                  <DetailRow
-                    label="Posted On"
-                    value={new Date(singleJob?.createdAt).toLocaleDateString()}
-                    icon={<CalendarDays className="w-5 h-5 text-indigo-500" />}
-                  />
-                  <DetailRow
-                    label="Applications"
-                    value={`${singleJob?.applications?.length || 0} received`}
-                    icon={<FileText className="w-5 h-5 text-rose-500" />}
-                  />
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-3 text-gray-600 text-xs bg-white/60 px-3 py-1.5 rounded-lg border border-gray-200/50">
+            <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {singleJob?.applications?.length || 0} applicants</span>
+            <span>•</span>
+            <span>Posted {daysAgo === 0 ? "today" : `${daysAgo} days ago`}</span>
           </div>
         </div>
 
-        {/* Floating Chat Button */}
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+          
+          {/* LEFT/TOP HERO SIDE: Main Job Header Card */}
+          <div className="lg:col-span-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white p-5 rounded-2xl shadow-xl relative overflow-hidden">
+            <div className="relative z-10 flex flex-col justify-between h-full min-h-[160px]">
+              <div>
+                <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5 mb-2">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  <span className="text-xs font-medium">Job Opportunity</span>
+                </div>
+
+                <h1 className="text-2xl md:text-3xl font-black mb-1 leading-tight tracking-tight">{singleJob?.title}</h1>
+                
+                <div className="flex items-center text-white/95 text-sm font-medium mb-4">
+                  <Building className="w-4 h-4 mr-1.5" />
+                  <span>{singleJob?.company?.name || "Company Name"}</span>
+                  <span className="mx-2">•</span>
+                  <MapPin className="w-3.5 h-3.5 mr-1" />
+                  <span>{singleJob?.location}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 items-center pt-2 border-t border-white/20">
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-none text-xs px-2.5 py-1">
+                  <Users className="w-3.5 h-3.5 mr-1" /> {singleJob?.position} Openings
+                </Badge>
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-none text-xs px-2.5 py-1">
+                  <Briefcase className="w-3.5 h-3.5 mr-1" /> {singleJob?.jobType}
+                </Badge>
+                <Badge className="bg-white/20 backdrop-blur-sm text-white border-none text-xs px-2.5 py-1">
+                  <IndianRupee className="w-3.5 h-3.5 mr-1" /> {singleJob?.salary} LPA
+                </Badge>
+                {singleJob?.lastDate && (
+                  <Badge className="bg-yellow-400 text-yellow-900 border-none text-xs px-2.5 py-1 font-semibold">
+                    <Clock className="w-3.5 h-3.5 mr-1" /> Ends: {new Date(singleJob.lastDate).toLocaleDateString()}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT/TOP ACTION SIDE: Application Controller */}
+          <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100 flex flex-col justify-between min-h-[185px]">
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Application Status</h3>
+              {isApplied ? (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 mb-4">
+                  <statusInfo.icon className={`w-4 h-4 ${statusInfo.color.replace("bg-", "text-")}`} />
+                  <span className="font-bold text-sm text-gray-700">{statusInfo.text}</span>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500 mb-4">You haven't submitted an application for this position yet.</p>
+              )}
+            </div>
+
+            <div>
+              {isApplied ? (
+                <Button
+                  onClick={handleWithdraw}
+                  disabled={loading}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md"
+                >
+                  {loading ? "Withdrawing..." : "Withdraw Application"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={applyJobHandler}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-black py-3 rounded-xl text-md shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Applying...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      Apply Now
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* BOTTOM MAIN DETAILS SIDE */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Job Description Card */}
+            <div className="bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+              <h2 className="text-lg font-black text-gray-900 mb-3 flex items-center gap-2">
+                <div className="w-6 h-6 bg-orange-500 rounded-md flex items-center justify-center">
+                  <FileText className="w-3..5 h-3.5 text-white" />
+                </div>
+                Job Description
+              </h2>
+              <div className="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
+                <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">{singleJob?.description}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* BOTTOM QUICK SPECIFICATIONS SIDE */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-100">
+              <h3 className="text-sm font-bold text-gray-900 mb-3">Specifications</h3>
+              <div className="grid grid-cols-1 gap-2">
+                <DetailRow
+                  label="Experience Level"
+                  value={singleJob?.experience || "Not specified"}
+                  icon={<TrendingUp className="w-4 h-4 text-blue-500" />}
+                />
+                <DetailRow
+                  label="Job Type"
+                  value={singleJob?.jobType}
+                  icon={<Clock className="w-4 h-4 text-purple-500" />}
+                />
+                <DetailRow
+                  label="Salary Scope"
+                  value={`₹${singleJob?.salary} LPA`}
+                  icon={<IndianRupee className="w-4 h-4 text-green-500" />}
+                />
+                <DetailRow
+                  label="Posted On"
+                  value={singleJob?.createdAt ? new Date(singleJob.createdAt).toLocaleDateString() : "N/A"}
+                  icon={<CalendarDays className="w-4 h-4 text-indigo-500" />}
+                />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Floating Chat Action */}
         <Button
           onClick={handleChatWithRecruiter}
-          className="fixed bottom-8 right-8 flex items-center gap-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold px-6 py-4 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 z-50"
+          className="fixed bottom-6 right-6 flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold px-4 py-3 rounded-xl shadow-xl transition-all duration-300 z-50 text-sm"
         >
-          <MessageCircle className="w-6 h-6" />
-          <span className="hidden sm:inline">Chat with Recruiter</span>
+          <MessageCircle className="w-5 h-5" />
+          <span>Chat with Recruiter</span>
         </Button>
       </div>
     </div>
@@ -391,11 +328,11 @@ const JobDescription = () => {
 }
 
 const DetailRow = ({ label, value, icon }) => (
-  <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:shadow-md transition-all duration-300">
-    <div className="flex-shrink-0">{icon}</div>
-    <div className="flex-1">
-      <div className="font-semibold text-gray-600 text-sm">{label}</div>
-      <div className="font-bold text-gray-900">{value}</div>
+  <div className="flex items-center gap-3 p-2.5 bg-gray-50/50 rounded-xl border border-gray-100 transition-all">
+    <div className="flex-shrink-0 p-1.5 bg-white rounded-lg shadow-sm border border-gray-100">{icon}</div>
+    <div className="flex-1 min-w-0">
+      <div className="text-gray-400 text-[11px] font-medium uppercase tracking-wider">{label}</div>
+      <div className="font-bold text-gray-800 text-xs truncate">{value}</div>
     </div>
   </div>
 )
