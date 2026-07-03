@@ -218,11 +218,11 @@ The CareerCrafter Team
 
 `;
 
-    // send email
-    const mailSent = await sendMail(student.email, subject, text);
-
-    if (!mailSent) {
-      return res.status(500).json({ success: false, message: "Failed to send email to student." });
+    // send email (non-blocking)
+    try {
+      await sendMail(student.email, subject, text);
+    } catch (mailError) {
+      console.error("Failed to send selection email to student:", mailError);
     }
 
     // optionally: add notification for student in DB
