@@ -1,24 +1,30 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
 
+// =========================== APPLY FOR A JOB ===========================
 export const applyJob = async (req, res) => {
     try {
         const userId = req.id;
         const jobId = req.params.id;
+
         if (!jobId) {
             return res.status(400).json({
                 message: "Job ID is required.",
                 success: false
             });
         }
+
         // Check if user has already applied
-        const existingApplication = await Application.findOne({ job:jobId, applicant:userId });
+        const existingApplication = await Application.findOne({ job: jobId, applicant: userId });
         if (existingApplication) {
             return res.status(409).json({
                 message: "You have already applied for this job.",
                 success: false
             });
         }
+
         // Check if job exists
         const job = await Job.findById(jobId);
         if (!job) {
@@ -27,21 +33,38 @@ export const applyJob = async (req, res) => {
                 success: false
             });
         }
+
         // Create new application
         const newApplication = await Application.create({
             job: jobId,
             applicant: userId,
         });
+
         // Add application reference to the job
         if (!job.applications.includes(newApplication._id)) {
             job.applications.push(newApplication._id);
             await job.save();
         }
+
+        const user = await User.findById(userId); // get full name/email
+        await Notification.create({
+            user: job.created_by, // company user
+            message: `New application for "${job.title}" by ${user?.fullname || "a user"}.`,
+        });
+
+        // Also send notification to the applicant (student)
+        await Notification.create({
+        user: userId,
+        message: `🎉 You have applied for the job successfully!`,
+        type: "success",
+        });
+
         return res.status(201).json({
             message: "Job applied successfully.",
             success: true,
             application: newApplication
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -50,10 +73,12 @@ export const applyJob = async (req, res) => {
         });
     }
 };
-// Get all jobs applied by a user
+
+// =========================== GET ALL APPLIED JOBS FOR CURRENT USER ===========================
 export const getAppliedJobs = async (req, res) => {
     try {
         const userId = req.id;
+
         const applications = await Application.find({ applicant: userId })
             .sort({ createdAt: -1 })
             .populate({
@@ -65,17 +90,12 @@ export const getAppliedJobs = async (req, res) => {
                 }
             });
 
-        if (applications.length === 0) {
-            return res.status(404).json({
-                message: "No applications found.",
-                success: false
-            });
-        }
-
+        // ✅ Always return success, even if applications are empty
         return res.status(200).json({
-            applications,
+            applications, // will be [] if none
             success: true
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -84,10 +104,12 @@ export const getAppliedJobs = async (req, res) => {
         });
     }
 };
-// Admin: Get all applicants for a job
+
+// =========================== ADMIN: GET ALL APPLICANTS FOR A JOB ===========================
 export const getApplicants = async (req, res) => {
     try {
         const jobId = req.params.id;
+
         const job = await Job.findById(jobId).populate({
             path: 'applications',
             options: { sort: { createdAt: -1 } },
@@ -95,16 +117,19 @@ export const getApplicants = async (req, res) => {
                 path: 'applicant'
             }
         });
+
         if (!job) {
             return res.status(404).json({
                 message: "Job not found.",
                 success: false
             });
         }
+
         return res.status(200).json({
             job,
             success: true
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -113,35 +138,98 @@ export const getApplicants = async (req, res) => {
         });
     }
 };
-// Admin: Update status of a job application
+
+// =========================== ADMIN: UPDATE STATUS OF A JOB APPLICATION ===========================
 export const updateStatus = async (req, res) => {
-    try {
-        const { status } = req.body;
-        const applicationId = req.params.id;
-        if (!status) {
-            return res.status(400).json({
-                message: "Status is required.",
-                success: false
-            });
-        }
-        const application = await Application.findById(applicationId);
-        if (!application) {
-            return res.status(404).json({
-                message: "Application not found.",
-                success: false
-            });
-        }
-        application.status = status.toLowerCase();
-        await application.save();
-        return res.status(200).json({
-            message: "Status updated successfully.",
-            success: true
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Internal server error.",
-            success: false
-        });
+  try {
+    const { status } = req.body;
+    const applicationId = req.params.id;
+
+    if (!status) {
+      return res.status(400).json({
+        message: "Status is required.",
+        success: false
+      });
     }
+
+    const application = await Application.findById(applicationId).populate('applicant').populate('job');
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found.",
+        success: false
+      });
+    }
+
+    application.status = status.toLowerCase();
+    await application.save();
+
+    // ✅ Send notification if status is 'accepted'
+    if (status.toLowerCase() === "accepted") {
+      await Notification.create({
+        user: application.applicant._id,
+        message: `🎉 Congratulations! You have been selected for the job: ${application.job.title}`
+      });
+    }
+
+    return res.status(200).json({
+      message: "Status updated successfully.",
+      success: true
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false
+    });
+  }
+};
+// =========================== WITHDRAW APPLICATION ===========================
+export const withdrawApplication = async (req, res) => {
+  try {
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    // Get the job (for notification message)
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found.",
+        success: false,
+      });
+    }
+
+    // Delete the application
+    const application = await Application.findOneAndDelete({ job: jobId, applicant: userId });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found.",
+        success: false,
+      });
+    }
+
+    // Remove application reference from the job
+    await Job.findByIdAndUpdate(jobId, {
+      $pull: { applications: application._id },
+    });
+
+    // Add notification
+    await Notification.create({
+      user: userId,
+      message: `❌ You have withdrawn your application for: ${job.title}`,
+    });
+
+    return res.status(200).json({
+      message: "Application withdrawn successfully.",
+      success: true,
+    });
+
+  } catch (error) {
+    console.error("Withdraw error:", error);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+    });
+  }
 };
