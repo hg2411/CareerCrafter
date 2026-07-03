@@ -27,6 +27,11 @@ export const sendOtpForRegistration = async (req, res) => {
 
     const mailSent = await sendMail(email, "Verify your email", `Your OTP is: ${otp}`);
     if (!mailSent) {
+      console.log(`⚠️ SMTP Send failed. [DEVELOPMENT FALLBACK] OTP for ${email} is: ${otp}`);
+      if (process.env.NODE_ENV !== "production") {
+        await OtpVerification.create({ email, otp });
+        return res.status(200).json({ message: `OTP sent to email (Fallback: Check backend console for OTP: ${otp})`, success: true });
+      }
       return res.status(400).json({ message: "Could not send email. Please enter a correct email.", success: false });
     }
 
@@ -347,6 +352,13 @@ export const forgotPassword = async (req, res) => {
     // (Optional: use sendMail) 
     const mailSent = await sendMail(email, "Reset Password OTP", `Your OTP is: ${otp}`);
     if (!mailSent) {
+      console.log(`⚠️ SMTP Send failed. [DEVELOPMENT FALLBACK] Reset OTP for ${email} is: ${otp}`);
+      if (process.env.NODE_ENV !== "production") {
+        user.resetOTP = otp;
+        user.resetOTPExpires = Date.now() + 10 * 60 * 1000; // valid for 10 mins
+        await user.save();
+        return res.status(200).json({ message: `OTP sent to email (Fallback: Check backend console for OTP: ${otp})`, success: true });
+      }
       return res.status(400).json({ message: "Could not send email. Please enter a correct email.", success: false });
     }
 
