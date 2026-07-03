@@ -424,3 +424,25 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    const safeUser = {
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+    };
+    return res.status(200).json({ success: true, user: safeUser });
+  } catch (error) {
+    console.error("GetUserById Error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+

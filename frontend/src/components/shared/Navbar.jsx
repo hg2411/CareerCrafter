@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Avatar, AvatarImage } from "../ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Button } from "../ui/button"
-import { LogOut, User2, Menu, X, Bell, Sparkles, Crown, Briefcase, Home, Heart, ArrowLeft } from "lucide-react"
+import { LogOut, User2, Menu, X, Bell, Sparkles, Crown, Briefcase, Home, Heart, ArrowLeft, Sun, Moon } from "lucide-react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
@@ -22,6 +22,29 @@ const Navbar = () => {
   const location = useLocation()
   const currentPath = location.pathname
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme")
+      if (savedTheme) return savedTheme
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    }
+    return "light"
+  })
+
+  useEffect(() => {
+    const root = window.document.documentElement
+    if (theme === "dark") {
+      root.classList.add("dark")
+      localStorage.setItem("theme", "dark")
+    } else {
+      root.classList.remove("dark")
+      localStorage.setItem("theme", "light")
+    }
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+  }
 
   const unreadNotifications = (notifications || []).filter((n) => !n.isRead)
 
@@ -129,6 +152,18 @@ const Navbar = () => {
 
         {/* Auth & Actions */}
         <div className="flex items-center gap-4">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-3 rounded-xl bg-gray-50 text-gray-600 hover:text-orange-600 transition-all duration-300 hover:scale-110 shadow-sm border border-gray-100 flex items-center justify-center shrink-0"
+            aria-label="Toggle Theme"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-5 h-5 text-yellow-500" />
+            ) : (
+              <Moon className="w-5 h-5 text-gray-600" />
+            )}
+          </button>
           {!user ? (
             <div className="hidden md:flex gap-3">
               <Link to="/login">
@@ -288,6 +323,20 @@ const Navbar = () => {
       {menuOpen && (
         <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-lg">
           <div className="px-6 py-4 space-y-3">
+            {/* Theme Toggle in Mobile */}
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50/50">
+              <span className="font-semibold text-gray-700">Dark Mode</span>
+              <button
+                onClick={toggleTheme}
+                className="p-2.5 rounded-xl bg-white text-gray-600 shadow-sm border border-gray-100 flex items-center justify-center"
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
+              </button>
+            </div>
             {getNavItems().map(({ name, path, icon: Icon }) => (
               <Link
                 key={name}

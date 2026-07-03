@@ -12,7 +12,8 @@ import {
   setRoleAndPassword,
   forgotPassword,
   verifyForgotPasswordOTP,
-  resetPassword
+  resetPassword,
+  getUserById
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { multipleUpload, singleUpload } from "../middlewares/multer.js";
@@ -75,5 +76,8 @@ router.post("/auth/set-role-and-password", isAuthenticated, setRoleAndPassword);
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-forgot-password-otp",verifyForgotPasswordOTP);
 router.post("/reset-password", resetPassword);
+
+// Get user profile by ID
+router.get("/:id", getUserById);
 
 export default router;

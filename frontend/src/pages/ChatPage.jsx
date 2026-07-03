@@ -89,8 +89,8 @@ const ChatPage = () => {
       receiverId,
       text,
       createdAt: new Date().toISOString(),
-      recruiter: user.role === "Recruiter" ? user._id : receiverId,
-      student: user.role === "Student" ? user._id : receiverId,
+      recruiter: receiverId,
+      student: user._id,
     }
 
     socketRef.current.emit("sendMessage", {
