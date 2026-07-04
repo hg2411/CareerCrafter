@@ -25,7 +25,27 @@ export const sendOtpForRegistration = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const mailSent = await sendMail(email, "Verify your email", `Your OTP is: ${otp}`);
+    const subject = "Verify your email - CareerCrafter";
+    const text = `Your email verification OTP is: ${otp}`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="color: #ea580c; margin: 0; font-size: 28px;">CareerCrafter</h1>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0;" />
+        <h2 style="color: #0f172a; margin-top: 20px;">Verify Your Email Address</h2>
+        <p>Thank you for signing up with CareerCrafter! Please use the verification code below to complete your registration:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; font-size: 14px; font-weight: bold; color: #475569;">Your Verification OTP</p>
+          <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #ea580c; letter-spacing: 4px;">${otp}</p>
+        </div>
+        <p>This code is valid for 10 minutes. If you did not request this verification, please ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 30px;" />
+        <p style="font-size: 11px; color: #64748b; text-align: center;">This is an automated notification from the CareerCrafter Platform.</p>
+      </div>
+    `;
+
+    const mailSent = await sendMail(email, subject, text, html);
     if (!mailSent) {
       console.log(`⚠️ SMTP Send failed. [DEVELOPMENT FALLBACK] OTP for ${email} is: ${otp}`);
       if (process.env.NODE_ENV !== "production") {
@@ -350,7 +370,27 @@ export const forgotPassword = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // (Optional: use sendMail) 
-    const mailSent = await sendMail(email, "Reset Password OTP", `Your OTP is: ${otp}`);
+    const subject = "Reset your password - CareerCrafter";
+    const text = `Your password reset OTP is: ${otp}`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="color: #ea580c; margin: 0; font-size: 28px;">CareerCrafter</h1>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0;" />
+        <h2 style="color: #0f172a; margin-top: 20px;">Password Reset Request</h2>
+        <p>We received a request to reset your password on CareerCrafter. Use the verification code below to reset your password:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; font-size: 14px; font-weight: bold; color: #475569;">Your Reset OTP</p>
+          <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: bold; color: #ea580c; letter-spacing: 4px;">${otp}</p>
+        </div>
+        <p>This code is valid for 10 minutes. If you did not request a password reset, please ignore this email or contact support if you have security concerns.</p>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 30px;" />
+        <p style="font-size: 11px; color: #64748b; text-align: center;">This is an automated notification from the CareerCrafter Platform.</p>
+      </div>
+    `;
+
+    const mailSent = await sendMail(email, subject, text, html);
     if (!mailSent) {
       console.log(`⚠️ SMTP Send failed. [DEVELOPMENT FALLBACK] Reset OTP for ${email} is: ${otp}`);
       if (process.env.NODE_ENV !== "production") {
@@ -421,6 +461,28 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("ResetPassword Error:", error);
     return res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    const safeUser = {
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+    };
+    return res.status(200).json({ success: true, user: safeUser });
+  } catch (error) {
+    console.error("GetUserById Error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
