@@ -109,14 +109,14 @@ const AccordionItem = ({ idx, accentClass, question, intention, answer }) => {
                 <div className="p-3 bg-amber-50/60 border border-amber-100 rounded-xl flex gap-2.5">
                   <Target className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-amber-800 text-[10px] font-black uppercase tracking-wider mb-0.5">Target Metrics</p>
+                    <p className="text-amber-800 text-[10px] font-black uppercase tracking-wider mb-0.5">What Interviewers Look For</p>
                     <p className="text-gray-600 text-xs leading-relaxed">{intention}</p>
                   </div>
                 </div>
                 <div className="p-3 bg-emerald-50/60 border border-emerald-100 rounded-xl flex gap-2.5">
                   <Lightbulb className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-emerald-800 text-[10px] font-black uppercase tracking-wider mb-0.5">Model Answer Response</p>
+                    <p className="text-emerald-800 text-[10px] font-black uppercase tracking-wider mb-0.5">Suggested Answer</p>
                     <p className="text-gray-600 text-xs leading-relaxed">{answer}</p>
                   </div>
                 </div>
@@ -190,7 +190,7 @@ const AICoach = () => {
         }
       }
     } catch (err) {
-      dispatch(setError(err.response?.data?.message || "Analysis configuration tracking failed."))
+      dispatch(setError(err.response?.data?.message || "Analysis failed. Please try again."))
     } finally {
       stopLoadingMessages()
       dispatch(setLoading(false))
@@ -204,7 +204,7 @@ const AICoach = () => {
       const res = await axios.get(`${AI_API_BASE}/reports`, { withCredentials: true })
       if (res.data.success) dispatch(setReports(res.data.reports))
     } catch (err) {
-      dispatch(setError(err.response?.data?.message || "Failed to sync historical records."))
+      dispatch(setError(err.response?.data?.message || "Failed to load history."))
     } finally {
       dispatch(setLoading(false))
     }
@@ -218,7 +218,7 @@ const AICoach = () => {
       const res = await axios.get(`${AI_API_BASE}/report/${id}`, { withCredentials: true })
       if (res.data.success) { dispatch(setReport(res.data.report)); setView(VIEW_REPORT) }
     } catch (err) {
-      dispatch(setError("Failed to fetch target telemetry analysis."))
+      dispatch(setError("Failed to load report."))
     } finally {
       dispatch(setLoading(false))
     }
@@ -243,44 +243,7 @@ const AICoach = () => {
         <div className="absolute bottom-40 right-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse"></div>
       </div>
 
-      {/* STICKY CONTROL SUBHEADER BRIDGE STRIP */}
-      <div className="bg-white border-b border-gray-100 py-3.5 shrink-0 shadow-sm relative z-20">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {view !== VIEW_FORM && (
-              <Button onClick={() => setView(VIEW_FORM)} variant="outline" className="h-9 border border-gray-200 px-3 rounded-xl text-gray-600 font-bold text-xs shadow-sm group">
-                <ArrowLeft className="w-3.5 h-3.5 mr-1 transition-transform group-hover:-translate-x-0.5" /> Back
-              </Button>
-            )}
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center shadow-md">
-                <Brain className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h1 className="text-gray-900 font-black text-sm leading-none tracking-tight">AI Coach Engine</h1>
-                <p className="text-gray-400 text-[10px] font-bold mt-0.5 uppercase tracking-wider">
-                  {view === VIEW_FORM && "Telemetry Pipeline Input"}
-                  {view === VIEW_REPORT && "Diagnostic Evaluation Dossier"}
-                  {view === VIEW_HISTORY && "Historical Telemetry Logs"}
-                </p>
-              </div>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            {view !== VIEW_FORM && (
-              <Button onClick={resetToForm} className="h-9 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500 shadow-sm flex items-center gap-1">
-                <Plus className="w-3.5 h-3.5" /> New Analysis
-              </Button>
-            )}
-            {view !== VIEW_HISTORY && (
-              <Button onClick={loadHistory} variant="outline" className="h-9 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 shadow-sm flex items-center gap-1.5 bg-white">
-                <History className="w-3.5 h-3.5 text-gray-400" /> View History
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* DYNAMIC SCROLLABLE CENTRAL CONTENT BOARD FRAME */}
       <div className="flex-1 max-w-7xl w-full mx-auto px-6 py-4 flex flex-col overflow-hidden relative z-10">
@@ -290,12 +253,17 @@ const AICoach = () => {
           {view === VIEW_FORM && (
             <motion.div key="form" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="flex-1 flex flex-col overflow-hidden space-y-4">
               
-              <div className="text-center mb-1 shrink-0">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/10 rounded-full text-orange-700 text-[10px] font-black uppercase tracking-wider shadow-sm">
-                  <Sparkles className="w-3.5 h-3.5 text-orange-500 animate-pulse" />
-                  <span>Powered via Gemini AI Core Layer</span>
+              <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 mb-1 shrink-0 w-full max-w-4xl mx-auto px-1">
+                <div className="text-center sm:text-left flex flex-col items-center sm:items-start">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/10 rounded-full text-orange-700 text-[10px] font-black uppercase tracking-wider shadow-sm">
+                    <Sparkles className="w-3.5 h-3.5 text-orange-500 animate-pulse" />
+                    <span>Powered by Gemini AI</span>
+                  </div>
+                  <h2 className="text-2xl font-black text-gray-900 tracking-tight mt-1">AI Career Coach</h2>
                 </div>
-                <h2 className="text-2xl font-black text-gray-900 tracking-tight mt-1">Analyze Career Alignment</h2>
+                <Button onClick={loadHistory} variant="outline" className="h-9 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 shadow-sm flex items-center gap-1.5 bg-white hover:bg-gray-50 shrink-0">
+                  <History className="w-3.5 h-3.5 text-gray-400" /> View History
+                </Button>
               </div>
 
               {/* Central Glass Card Workspace Structure */}
@@ -316,12 +284,12 @@ const AICoach = () => {
                 <div className="space-y-1 bg-gray-50/60 border border-gray-100 p-3 rounded-2xl focus-within:border-orange-400 focus-within:bg-white focus-within:shadow-sm transition-all duration-200">
                   <div className="flex items-center justify-between mb-1.5">
                     <Label className="text-gray-500 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-gray-400" /> Target Job Parameters Descriptor
+                      <Briefcase className="w-3.5 h-3.5 text-gray-400" /> Job Description
                     </Label>
                     <span className="text-[10px] font-black text-orange-600 uppercase tracking-widest bg-orange-50 border border-orange-100 px-1.5 py-0.5 rounded">Required</span>
                   </div>
                   <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)}
-                    placeholder="Paste corporate job criteria, requirement flags, or stack parameters..."
+                    placeholder="Paste the job description or requirements here..."
                     className="w-full bg-transparent h-20 text-xs font-semibold text-gray-900 placeholder-gray-400 border-0 outline-none resize-none focus:ring-0" />
                 </div>
 
@@ -332,14 +300,14 @@ const AICoach = () => {
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0"><Upload className="w-4 h-4 text-orange-600" /></div>
                       <div>
-                        <h4 className="text-gray-800 font-black text-xs">Resume PDF Upload Asset</h4>
-                        <p className="text-gray-400 text-[10px]">Supported formatting bounds: Vector PDF Max 5MB</p>
+                        <h4 className="text-gray-800 font-black text-xs">Upload Resume (PDF)</h4>
+                        <p className="text-gray-400 text-[10px]">Only PDF files, maximum size 5MB</p>
                       </div>
                     </div>
                     {!resumeFile ? (
                       <div onClick={() => fileInputRef.current?.click()} className="flex-1 bg-white border border-gray-100 rounded-xl py-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50/50 transition-colors shadow-sm group">
                         <Upload className="w-4 h-4 text-gray-400 mb-1 group-hover:text-orange-500" />
-                        <span className="text-[11px] font-bold text-gray-600">Select File Stream</span>
+                        <span className="text-[11px] font-bold text-gray-600">Choose File</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 p-2 bg-orange-50 border border-orange-100 rounded-xl shadow-sm">
@@ -354,10 +322,10 @@ const AICoach = () => {
                   {/* Personal Bio/Self Description block */}
                   <div className="space-y-1 bg-gray-50/60 border border-gray-100 p-3 rounded-2xl focus-within:border-orange-400 focus-within:bg-white focus-within:shadow-sm transition-all duration-200">
                     <Label className="text-gray-500 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                      <FileText className="w-3.5 h-3.5 text-gray-400" /> Auxiliary Self Description Overview
+                      <FileText className="w-3.5 h-3.5 text-gray-400" /> About Yourself (Optional)
                     </Label>
                     <textarea value={selfDescription} onChange={(e) => setSelfDescription(e.target.value)}
-                      placeholder="Outline target background stacks, specializations, core project capabilities..."
+                      placeholder="Briefly write about your experience, skills, and projects..."
                       className="w-full bg-transparent h-20 text-xs font-semibold text-gray-900 placeholder-gray-400 border-0 outline-none resize-none focus:ring-0" />
                   </div>
                 </div>
@@ -368,7 +336,7 @@ const AICoach = () => {
                     className="w-full max-w-sm h-11 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 disabled:opacity-50 text-white font-black text-xs rounded-xl shadow-md shadow-pink-500/10 transition-all flex items-center justify-center gap-1.5 active:scale-95"
                   >
                     <Sparkles className="w-4 h-4" />
-                    {loading ? "Parsing Parameters..." : "Execute Alignment Analysis"}
+                    {loading ? "Analyzing..." : "Compare Resume with Job"}
                   </Button>
 
                   {/* Operational loader tickers container line */}
@@ -391,6 +359,21 @@ const AICoach = () => {
           {/* ════════ REPORT VIEW PANEL ════════ */}
           {view === VIEW_REPORT && report && (
             <motion.div key="report" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="flex-1 flex flex-col overflow-hidden space-y-4">
+              {/* Report Actions / Navigation Row */}
+              <div className="flex items-center justify-between shrink-0 mb-1">
+                <Button onClick={() => setView(VIEW_FORM)} variant="outline" className="h-9 border border-gray-200 px-3 rounded-xl text-gray-600 font-bold text-xs shadow-sm group bg-white hover:bg-gray-50">
+                  <ArrowLeft className="w-3.5 h-3.5 mr-1 transition-transform group-hover:-translate-x-0.5" /> Back to Coach
+                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={resetToForm} className="h-9 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500 shadow-sm flex items-center gap-1">
+                    <Plus className="w-3.5 h-3.5" /> New Analysis
+                  </Button>
+                  <Button onClick={loadHistory} variant="outline" className="h-9 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 shadow-sm flex items-center gap-1.5 bg-white hover:bg-gray-50">
+                    <History className="w-3.5 h-3.5 text-gray-400" /> View History
+                  </Button>
+                </div>
+              </div>
+
               <div className="flex-1 bg-white border border-gray-100 rounded-[28px] shadow-2xl p-5 overflow-y-auto space-y-6">
                 
                 {/* Match Overview Header Row Cluster */}
@@ -398,9 +381,9 @@ const AICoach = () => {
                   <div className="flex flex-col sm:flex-row items-center gap-5">
                     <ScoreCircle score={report.matchScore} />
                     <div className="text-center sm:text-left">
-                      <h3 className="text-lg font-black text-gray-900 tracking-tight">Diagnostics Dossier Complete</h3>
+                      <h3 className="text-lg font-black text-gray-900 tracking-tight">Analysis Complete</h3>
                       <p className="text-gray-400 text-xs font-medium max-w-md line-clamp-2 mt-1 leading-normal">
-                        <b>Target Criteria String Trace: </b>{report.jobDescription}
+                        <b>Job Description: </b>{report.jobDescription}
                       </p>
                     </div>
                   </div>
@@ -408,11 +391,11 @@ const AICoach = () => {
                   {/* Quantitative Metric badging panels */}
                   <div className="flex gap-2 text-center shrink-0">
                     <div className="bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm min-w-20">
-                      <p className="text-[10px] font-black text-gray-400 uppercase">Skill Gaps</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Missing Skills</p>
                       <p className="text-sm font-black text-red-500 mt-0.5">{report.missingSkills?.length ?? 0}</p>
                     </div>
                     <div className="bg-white border border-gray-100 p-2.5 rounded-xl shadow-sm min-w-20">
-                      <p className="text-[10px] font-black text-gray-400 uppercase">Queries</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase">Questions</p>
                       <p className="text-sm font-black text-purple-600 mt-0.5">{(report.technicalQuestions?.length ?? 0) + (report.behavioralQuestions?.length ?? 0)}</p>
                     </div>
                   </div>
@@ -424,7 +407,7 @@ const AICoach = () => {
                   <div className="border border-gray-100 p-4 rounded-2xl bg-white shadow-sm space-y-3">
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-red-500" />
-                      <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider">Identified Skill Deficiencies</h4>
+                      <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider">Missing Skills</h4>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {report.missingSkills?.length > 0 ? (
@@ -432,7 +415,7 @@ const AICoach = () => {
                           <span key={i} className="px-2.5 py-1 rounded-lg text-[11px] font-bold text-red-700 bg-red-50 border border-red-100">{skill}</span>
                         ))
                       ) : (
-                        <p className="text-gray-400 text-xs font-medium">No system deficiencies indexed. Alignment matrix matching is absolute.</p>
+                        <p className="text-gray-400 text-xs font-medium">No missing skills identified. Perfect match!</p>
                       )}
                     </div>
                   </div>
@@ -441,7 +424,7 @@ const AICoach = () => {
                   <div className="border border-gray-100 p-4 rounded-2xl bg-white shadow-sm space-y-3">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-blue-500" />
-                      <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider">Optimization Directives</h4>
+                      <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider">Resume Suggestions</h4>
                     </div>
                     <ul className="space-y-1.5">
                       {report.resumeSuggestions?.map((s, i) => (
@@ -457,7 +440,7 @@ const AICoach = () => {
                 {/* Technical interview catalog accordion mapping panels */}
                 {report.technicalQuestions?.length > 0 && (
                   <div className="space-y-2.5">
-                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Technical Core Interview Telemetry</h4>
+                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Technical Interview Questions</h4>
                     <div className="space-y-2">
                       {report.technicalQuestions.map((item, i) => (
                         <AccordionItem key={i} idx={i} accentClass="bg-purple-50 border-purple-100 text-purple-600" question={item.question} intention={item.intention} answer={item.answer} />
@@ -469,7 +452,7 @@ const AICoach = () => {
                 {/* Behavioral interview catalog panels */}
                 {report.behavioralQuestions?.length > 0 && (
                   <div className="space-y-2.5">
-                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Behavioral Scenario Questions (STAR Architecture)</h4>
+                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Behavioral Interview Questions (STAR)</h4>
                     <div className="space-y-2">
                       {report.behavioralQuestions.map((item, i) => (
                         <AccordionItem key={i} idx={i} accentClass="bg-cyan-50 border-cyan-100 text-cyan-600" question={item.question} intention={item.intention} answer={item.answer} />
@@ -481,7 +464,7 @@ const AICoach = () => {
                 {/* 7-Day Curriculum Study Roadmap display cards */}
                 {report.studyPlan?.length > 0 && (
                   <div className="space-y-3">
-                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">Iterative 7-Day Learning Roadmap Plan</h4>
+                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-wider px-1">7-Day Study Plan</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
                       {report.studyPlan.map((day, i) => {
                         const dc = DAY_COLORS[i % DAY_COLORS.length]
@@ -510,19 +493,29 @@ const AICoach = () => {
 
           {/* ════════ HISTORY LEDGER VIEW PANEL ════════ */}
           {view === VIEW_HISTORY && (
-            <motion.div key="history" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="flex-1 flex flex-col overflow-hidden">
+            <motion.div key="history" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="flex-1 flex flex-col overflow-hidden space-y-4">
+              {/* History Navigation Row */}
+              <div className="flex items-center justify-between shrink-0 mb-1">
+                <Button onClick={() => setView(VIEW_FORM)} variant="outline" className="h-9 border border-gray-200 px-3 rounded-xl text-gray-600 font-bold text-xs shadow-sm group bg-white hover:bg-gray-50">
+                  <ArrowLeft className="w-3.5 h-3.5 mr-1 transition-transform group-hover:-translate-x-0.5" /> Back to Coach
+                </Button>
+                <Button onClick={resetToForm} className="h-9 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500 shadow-sm flex items-center gap-1">
+                  <Plus className="w-3.5 h-3.5" /> New Analysis
+                </Button>
+              </div>
+
               <div className="flex-1 bg-white border border-gray-100 rounded-[28px] shadow-2xl p-5 overflow-y-auto space-y-3">
                 
                 {loading && (
                   <div className="h-full flex flex-col items-center justify-center gap-2 py-20">
                     <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
-                    <p className="text-gray-400 text-xs font-bold">Synchronizing history telemetry tracks...</p>
+                    <p className="text-gray-400 text-xs font-bold">Loading history...</p>
                   </div>
                 )}
 
                 {error && !loading && (
                   <div className="text-center py-20">
-                    <p className="text-red-500 font-bold text-sm">Ledger Synchronization Failed</p>
+                    <p className="text-red-500 font-bold text-sm">Failed to load history</p>
                     <p className="text-gray-400 text-xs mt-0.5">{error}</p>
                   </div>
                 )}
@@ -533,8 +526,8 @@ const AICoach = () => {
                       <FileX className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-black text-gray-800">Telemetry Log is Empty</h3>
-                      <p className="text-gray-400 text-xs mt-0.5">Initialize your first AI profile audit sequence to unfurl analytics here.</p>
+                      <h3 className="text-sm font-black text-gray-800">No History Found</h3>
+                      <p className="text-gray-400 text-xs mt-0.5">Run your first matching analysis to see your history here.</p>
                     </div>
                     <Button onClick={resetToForm} className="h-9 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-pink-500">Run First Analysis</Button>
                   </div>
@@ -542,7 +535,7 @@ const AICoach = () => {
 
                 {!loading && !error && reports.length > 0 && (
                   <div className="space-y-2.5 max-w-3xl w-full mx-auto">
-                    <p className="text-gray-400 text-xs font-bold px-1 uppercase tracking-wider">{reports.length} Archived Telemetry Traces Listed</p>
+                    <p className="text-gray-400 text-xs font-bold px-1 uppercase tracking-wider">{reports.length} Saved Reports</p>
                     
                     {reports.map((r, idx) => {
                       const meta = getScoreMeta(r.matchScore)

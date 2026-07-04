@@ -172,7 +172,7 @@ const ApplicantsTable = ({ jobId, job }) => {
                 </TableHeader>
                 <TableBody>
                   {applicants?.applications?.map((item) => {
-                    const isSelected = item?.status === "Selected"
+                    const isSelected = item?.status?.toLowerCase() === "selected" || item?.status?.toLowerCase() === "accepted"
                     return (
                       <TableRow
                         key={item._id}
@@ -220,13 +220,11 @@ const ApplicantsTable = ({ jobId, job }) => {
                         <TableCell className="py-6">
                           <span
                             className={`px-3 py-2 rounded-full text-xs font-bold shadow-lg ${
-                              item.status === "Accepted"
+                              item.status?.toLowerCase() === "accepted" || item.status?.toLowerCase() === "selected"
                                 ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
-                                : item.status === "Rejected"
+                                : item.status?.toLowerCase() === "rejected"
                                   ? "bg-gradient-to-r from-red-400 to-pink-500 text-white"
-                                  : item.status === "Selected"
-                                    ? "bg-gradient-to-r from-blue-400 to-purple-500 text-white"
-                                    : "bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
+                                  : "bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
                             }`}
                           >
                             {item.status || "Applied"}

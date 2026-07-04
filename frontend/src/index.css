@@ -1,1 +1,118 @@
 @import "tailwindcss";
+
+/* 🌓 Premium Dark Mode Overrides */
+.dark {
+  /* Main background gradients */
+  .bg-gradient-to-br.from-orange-50.via-pink-50.to-purple-50 {
+    --tw-gradient-from: #090d16 !important; /* deep slate dark */
+    --tw-gradient-via: #121020 !important;  /* deep purple/indigo dark */
+    --tw-gradient-to: #030408 !important;   /* deep rich black */
+  }
+
+  /* Ambience background decorative circles */
+  .bg-orange-200, .bg-pink-200, .bg-purple-200 {
+    opacity: 0.08 !important;
+    filter: blur(80px);
+  }
+
+  /* Frosted Glass & Card Panels */
+  .bg-white, .bg-white\/95, .bg-white\/90 {
+    background-color: #0f172aef !important; /* slate-900 with opacity */
+    border-color: #1e293b !important;        /* slate-800 */
+    color: #f8fafc !important;                /* slate-50 */
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Internal grey containers & tags */
+  .bg-gray-50, .bg-gray-50\/60, .bg-slate-50, .bg-gray-50\/50, .bg-gray-50\/20, .bg-gray-50\/50 {
+    background-color: #030712 !important; /* slate-950 */
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+  }
+
+  /* Text color overrides */
+  .text-gray-900, .text-slate-900, .text-gray-800, .text-slate-800, h1, h2, h3, h4, h5, h6 {
+    color: #f8fafc !important;
+  }
+  .text-gray-500, .text-slate-600, .text-gray-600, .text-gray-400, .text-slate-500, .text-gray-400 {
+    color: #94a3b8 !important; /* slate-400 */
+  }
+
+  /* Border styles */
+  .border-gray-100, .border-gray-200, .border-slate-200, .border-gray-200\/50, .border-gray-100\/60, .border-gray-200\/60 {
+    border-color: #1e293b !important;
+  }
+
+  /* Input fields, textareas, searchbars */
+  input[type="text"], input[type="email"], input[type="password"], textarea, select {
+    background-color: #03071280 !important;
+    border-color: #1e293b !important;
+    color: #f8fafc !important;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #ec4899 !important; /* pink-500 */
+    --tw-ring-color: rgba(236, 72, 153, 0.2) !important;
+  }
+
+  /* Navigation Bar overrides */
+  nav {
+    background-color: #030712e0 !important; /* slate-950 with glassmorphism */
+    border-color: #1e293b !important;
+
+    .text-gray-700 {
+      color: #e2e8f0 !important; /* slate-200 */
+    }
+    
+    /* Hover state for nav items */
+    .hover\:bg-gradient-to-r:hover {
+      background-image: linear-gradient(to right, rgba(249, 115, 22, 0.05), rgba(236, 72, 153, 0.05)) !important;
+      color: #f97316 !important;
+    }
+  }
+
+  /* Popover modals */
+  .bg-white\/95.backdrop-blur-lg, div[role="dialog"] {
+    background-color: #0f172ad0 !important;
+    border-color: #1e293b !important;
+  }
+
+  /* Badges & tags overrides */
+  .bg-gray-50.text-gray-600 {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+  }
+
+  /* Table styles */
+  th {
+    background-color: #030712 !important;
+    color: #94a3b8 !important;
+    border-color: #1e293b !important;
+  }
+  td {
+    border-color: #1e293b !important;
+    color: #e2e8f0 !important;
+  }
+
+  /* Back buttons, menu buttons */
+  .bg-gray-100 {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+  }
+  .text-gray-700 {
+    color: #f8fafc !important;
+  }
+  
+  /* Lucide icon overrides */
+  .text-gray-600, .text-gray-500, .text-gray-400, .text-gray-300 {
+    color: #94a3b8 !important;
+  }
+}
+
+/* 🌀 Smooth theme switcher animations */
+body, div, nav, button, h1, h2, h3, h4, p, span, a, input, textarea, svg {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}

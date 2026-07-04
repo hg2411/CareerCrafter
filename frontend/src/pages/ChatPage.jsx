@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import io from "socket.io-client"
 import axios from "axios"
-import { Send, ArrowLeft } from 'lucide-react'
+import { Send, ArrowLeft, Loader2, Sparkles, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import Navbar from "../components/shared/Navbar"
 
-const SOCKET_SERVER_URL = "http://localhost:8000"
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 const ChatPage = () => {
   const { receiverId } = useParams()
@@ -17,7 +17,8 @@ const ChatPage = () => {
   const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [text, setText] = useState("")
-  const [receiver, setReceiver] = useState(null);
+  const [receiver, setReceiver] = useState(null)
+  const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef(null)
   const socketRef = useRef(null)
   const roomId = [user._id, receiverId].sort().join("_")
@@ -25,7 +26,7 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchOldMessages = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/v1/chat/${receiverId}`, {
+        const res = await axios.get(`${SOCKET_SERVER_URL}/api/v1/chat/${receiverId}`, {
           withCredentials: true,
         })
         if (res.data.success) {
@@ -33,6 +34,8 @@ const ChatPage = () => {
         }
       } catch (error) {
         console.error("Failed to load old messages:", error)
+      } finally {
+        setLoading(false)
       }
     }
     if (user?._id) fetchOldMessages()
@@ -55,8 +58,10 @@ const ChatPage = () => {
     })
 
     return () => {
-      socketRef.current.disconnect()
-      socketRef.current = null
+      if (socketRef.current) {
+        socketRef.current.disconnect()
+        socketRef.current = null
+      }
     }
   }, [receiverId, user._id, roomId])
 
@@ -67,18 +72,14 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchReceiver = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8000/api/v1/user/${receiverId}`
-        );
-
-        setReceiver(res.data.user);
+        const res = await axios.get(`${SOCKET_SERVER_URL}/api/v1/user/${receiverId}`)
+        setReceiver(res.data.user)
       } catch (error) {
-        console.log(error);
+        console.error("Failed to fetch receiver profile:", error)
       }
-    };
-
-    fetchReceiver();
-  }, [receiverId]);
+    }
+    if (receiverId) fetchReceiver()
+  }, [receiverId])
 
   const handleSend = async () => {
     if (!text.trim()) return
@@ -88,16 +89,8 @@ const ChatPage = () => {
       receiverId,
       text,
       createdAt: new Date().toISOString(),
-
-      recruiter:
-        user.role === "Recruiter"
-          ? user._id
-          : receiverId,
-
-      student:
-        user.role === "Student"
-          ? user._id
-          : receiverId,
+      recruiter: receiverId,
+      student: user._id,
     }
 
     socketRef.current.emit("sendMessage", {
@@ -109,7 +102,7 @@ const ChatPage = () => {
     setText("")
 
     try {
-      await axios.post("http://localhost:8000/api/v1/chat/message", newMessage, {
+      await axios.post(`${SOCKET_SERVER_URL}/api/v1/chat/message`, newMessage, {
         withCredentials: true,
       })
     } catch (err) {
@@ -121,116 +114,150 @@ const ChatPage = () => {
     return name?.charAt(0).toUpperCase()
   }
 
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-3 justify-center items-center h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+        <Loader2 className="w-10 h-10 text-orange-500 animate-spin" />
+        <p className="text-gray-500 font-bold tracking-wide text-xs">
+          Opening secure chat tunnel...
+        </p>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-6xl mx-auto h-screen flex flex-col">
-        {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+    <div className="min-h-screen max-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 text-gray-900 relative overflow-hidden antialiased font-sans flex flex-col">
+      {/* Decorative Brand Ambience Circles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-pink-200 rounded-full opacity-30 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-20 w-40 h-40 bg-purple-200 rounded-full opacity-25 animate-pulse delay-500"></div>
+      </div>
+
+      <Navbar />
+
+      <div className="relative z-10 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col overflow-hidden">
+        {/* Main Glass Chat Card */}
+        <div className="flex-1 bg-white/95 rounded-[24px] shadow-2xl border border-gray-100 flex flex-col overflow-hidden backdrop-blur-md">
+          {/* Header */}
+          <div className="bg-white/90 border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10 shrink-0 shadow-sm">
+            <div className="flex items-center gap-3.5">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 hover:bg-orange-500/5 text-gray-500 hover:text-orange-600 rounded-xl transition-all border border-gray-100 shadow-sm bg-white"
               >
-                <ArrowLeft className="w-5 h-5 text-slate-600" />
+                <ArrowLeft className="w-4 h-4" />
               </button>
 
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg shadow-md">
+              <div className="relative flex-shrink-0">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 flex items-center justify-center text-white font-black text-base shadow-md">
                   {getInitials(receiver?.fullname)}
                 </div>
-                <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold text-slate-800">{receiver?.fullname}</h2>
-                <p className="text-sm text-slate-500">Active now</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-slate-50">
-          {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center mb-4">
-                <Send className="w-10 h-10 text-slate-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-700 mb-2">No messages yet</h3>
-              <p className="text-slate-500">Start the conversation by sending a message!</p>
-            </div>
-          )}
-
-          {messages.map((msg, idx) => {
-            const isUser = msg.senderId === user._id || msg.senderId?._id === user._id
-            const showAvatar = idx === 0 || messages[idx - 1]?.senderId !== msg.senderId
-
-            return (
-              <div key={idx} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-                <div className={`flex gap-2 items-end max-w-[70%] ${isUser ? "flex-row-reverse" : ""}`}>
-                  {!isUser && (
-                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm flex items-center justify-center font-semibold shadow-sm ${showAvatar ? "visible" : "invisible"}`}>
-                      {getInitials(receiver?.fullname)}
-                    </div>
-                  )}
-
-                  <div className="flex flex-col gap-1">
-                    <div
-                      className={`
-                        px-4 py-2.5 rounded-2xl shadow-sm
-                        ${isUser
-                          ? "bg-blue-600 text-white rounded-br-md"
-                          : "bg-white text-slate-800 border border-slate-200 rounded-bl-md"
-                        }
-                      `}
-                    >
-                      <p className="text-[15px] leading-relaxed">{msg.text}</p>
-                    </div>
-                    <span className={`text-xs text-slate-500 px-1 ${isUser ? "text-right" : ""}`}>
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
+                <h2 className="text-sm font-black text-gray-900 leading-tight">
+                  {receiver?.fullname}
+                </h2>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Active now</p>
                 </div>
               </div>
-            )
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Area */}
-        <div className="bg-white border-t border-slate-200 px-6 py-4">
-          <div className="flex items-end gap-3">
-            <div className="flex-1 relative">
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSend()
-                  }
-                }}
-                placeholder="Type a message..."
-                rows={1}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none resize-none transition-all bg-slate-50"
-                style={{
-                  minHeight: "44px",
-                  maxHeight: "120px",
-                }}
-              />
             </div>
 
-            <Button
-              onClick={handleSend}
-              disabled={!text.trim()}
-              className="rounded-full p-3 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg mb-1"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-gradient-to-r from-orange-500/10 to-pink-500/10 text-orange-700 rounded-full border border-orange-200/30 text-[9px] font-black uppercase tracking-wider">
+              <Sparkles className="w-3 h-3 text-orange-500" /> Secure Chat
+            </div>
+          </div>
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-gray-50/20">
+            {messages.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-full text-center max-w-xs mx-auto space-y-3">
+                <div className="w-16 h-16 bg-gradient-to-br from-orange-500/10 to-pink-500/10 rounded-full flex items-center justify-center border border-orange-200/20 shadow-inner">
+                  <MessageSquare className="w-6 h-6 text-orange-500 animate-bounce" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-gray-900">No messages yet</h3>
+                  <p className="text-gray-400 text-xs font-semibold mt-0.5">
+                    Start your secure conversation below by sending a greeting.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {messages.map((msg, idx) => {
+              const isUser = msg.senderId === user._id || msg.senderId?._id === user._id
+              const showAvatar = idx === 0 || messages[idx - 1]?.senderId !== msg.senderId
+
+              return (
+                <div key={idx} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+                  <div className={`flex gap-3.5 items-end max-w-[75%] ${isUser ? "flex-row-reverse" : ""}`}>
+                    {!isUser && (
+                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 text-white text-xs flex items-center justify-center font-black shadow-md shrink-0 ${showAvatar ? "visible" : "invisible"}`}>
+                        {getInitials(receiver?.fullname)}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-1">
+                      <div
+                        className={`
+                          px-4 py-2.5 rounded-2xl shadow-sm text-xs font-semibold leading-relaxed
+                          ${isUser
+                            ? "bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white rounded-br-none border border-pink-500/10"
+                            : "bg-white text-gray-800 border border-gray-100 rounded-bl-none"
+                          }
+                        `}
+                      >
+                        <p>{msg.text}</p>
+                      </div>
+                      <span className={`text-[9px] text-gray-400 font-bold px-1 ${isUser ? "text-right" : ""}`}>
+                        {new Date(msg.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div className="bg-white border-t border-gray-100 px-6 py-4 shrink-0">
+            <div className="flex items-end gap-3.5">
+              <div className="flex-1 relative">
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSend()
+                    }
+                  }}
+                  placeholder="Type your message here..."
+                  rows={1}
+                  className="w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none resize-none transition-all bg-gray-50/50 text-xs font-semibold text-gray-900 placeholder-gray-400"
+                  style={{
+                    minHeight: "44px",
+                    maxHeight: "120px",
+                  }}
+                />
+              </div>
+
+              <Button
+                onClick={handleSend}
+                disabled={!text.trim()}
+                className="rounded-full w-10 h-10 p-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-pink-500/10 flex items-center justify-center active:scale-95 shrink-0 mb-0.5"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
