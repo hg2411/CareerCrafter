@@ -32,12 +32,14 @@ const allowedOrigins = [
   "http://localhost:5173", // your Vite frontend
   "http://localhost:5174",
   "http://localhost:5175",
-];
+  process.env.FRONTEND_URL,
+].filter(Boolean).map(origin => origin.replace(/\/$/, ""));
 
 const corsOptions = {
   origin(origin, callback) {
     if (!origin) return callback(null, true); // allow requests like Postman
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    const cleanOrigin = origin.replace(/\/$/, "");
+    if (allowedOrigins.includes(cleanOrigin)) return callback(null, true);
     callback(new Error(`CORS Error: Not allowed by CORS for ${origin}`));
   },
   credentials: true,
