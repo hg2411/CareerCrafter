@@ -25,6 +25,7 @@ import { cleanupExpiredJobs } from "./controllers/job.controller.js";
 // ✅ Config
 dotenv.config();
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 8000;
 
 // ✅ 1. CORS Configuration
@@ -58,9 +59,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // set to true in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // set to true in production with HTTPS
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   })
