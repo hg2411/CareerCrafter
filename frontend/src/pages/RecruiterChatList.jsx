@@ -9,8 +9,9 @@ import { io } from "socket.io-client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import Navbar from "../components/shared/Navbar"
+import { BASE_URL } from "@/utils/constant"
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+const SOCKET_SERVER_URL = BASE_URL
 const socket = io(SOCKET_SERVER_URL, { withCredentials: true })
 
 const RecruiterChatList = () => {

@@ -81,7 +81,7 @@ const Login = () => {
   }, [])
 
   const googleLoginHandler = () => {
-    window.location.href = "http://localhost:8000/api/v1/user/auth/google"
+    window.location.href = `${USER_API_END_POINT}/auth/google`
   }
 
   const roles = ["student", "recruiter"]

@@ -6,6 +6,7 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { io } from "socket.io-client"
 import Navbar from "../components/shared/Navbar"
+import { BASE_URL } from "@/utils/constant"
 import {
   MessageSquare,
   Mail,
@@ -15,7 +16,7 @@ import {
   Loader2,
 } from "lucide-react"
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+const SOCKET_SERVER_URL = BASE_URL
 const socket = io(SOCKET_SERVER_URL, { withCredentials: true })
 
 const StudentChatsPage = () => {

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
+import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 import { Loader2 } from "lucide-react";
 
@@ -21,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
       }
 
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/user/auth/me", {
+        const res = await axios.get(`${USER_API_END_POINT}/auth/me`, {
           withCredentials: true,
         });
         if (res.data.success) {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { USER_API_END_POINT } from "../utils/constant";
 
 const useAuthUser = () => {
   const [user, setUser] = useState(null);
@@ -8,7 +9,7 @@ const useAuthUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/auth/me", {
+        const res = await axios.get(`${USER_API_END_POINT}/auth/me`, {
           withCredentials: true,
         });
         if (res.data.success) {

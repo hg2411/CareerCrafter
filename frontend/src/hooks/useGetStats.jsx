@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { STATS_API_END_POINT } from "../utils/constant";
 
 const useGetStats = () => {
   const [stats, setStats] = useState({ activeUsers: 0, recruiters: 0 });
@@ -10,7 +11,7 @@ const useGetStats = () => {
 
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get("http://localhost:8000/api/v1/stats");
+        const { data } = await axios.get(STATS_API_END_POINT);
         console.log("Fetched stats:", data); // debug
         setStats(data);
       } catch (error) {

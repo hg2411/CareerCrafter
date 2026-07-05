@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { USER_API_END_POINT } from "../utils/constant"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/authSlice"
 import {
@@ -32,7 +33,7 @@ const SelectRole = () => {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/user/auth/me", { withCredentials: true })
+        const res = await axios.get(`${USER_API_END_POINT}/auth/me`, { withCredentials: true })
         const user = res.data?.user
         dispatch(setUser(user))
         if (user?.role && user?.hasPassword) {
@@ -62,7 +63,7 @@ const SelectRole = () => {
     setLoading(true)
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/v1/user/auth/set-role-and-password",
+        `${USER_API_END_POINT}/auth/set-role-and-password`,
         { role: selectedRole, password },
         { withCredentials: true },
       )

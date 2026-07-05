@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { USER_API_END_POINT } from "@/utils/constant";
 
 const ResumeUpload = () => {
   const [file, setFile] = useState(null);
@@ -23,7 +24,7 @@ const ResumeUpload = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        "http://localhost:8000/api/v1/user/profile/update",
+        `${USER_API_END_POINT}/profile/update`,
         formData,
         {
           headers: {

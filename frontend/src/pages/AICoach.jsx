@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
+import { API_BASE_URL } from "@/utils/constant"
 import { motion, AnimatePresence } from "framer-motion"
 import Navbar from "../components/shared/Navbar.jsx"
 import { Button } from "../components/ui/button.jsx"
@@ -18,7 +19,7 @@ import {
   setReport, setReports, clearAIState
 } from "../redux/aiSlice.js"
 
-const AI_API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/v1/ai`
+const AI_API_BASE = `${API_BASE_URL}/ai`
 
 const LOADING_MESSAGES = [
   "Reading Resume...",

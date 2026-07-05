@@ -8,8 +8,9 @@ import io from "socket.io-client"
 import { Send, ArrowLeft, Loader2, Sparkles, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Navbar from "../components/shared/Navbar"
+import { BASE_URL } from "@/utils/constant"
 
-const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+const SOCKET_SERVER_URL = BASE_URL
 
 const RecruiterChatPage = () => {
   const { receiverId } = useParams()
