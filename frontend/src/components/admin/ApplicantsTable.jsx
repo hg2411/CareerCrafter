@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover
 import { MoreHorizontal, CheckCircle2, XCircle, TrendingUp, Users } from "lucide-react"
 import { useSelector } from "react-redux"
 import axios from "axios"
-import { APPLICATION_API_END_POINT } from "@/utils/constant"
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant"
 import { toast } from "sonner"
 
 const shortlistingStatus = [
@@ -44,7 +44,7 @@ const ApplicantsTable = ({ jobId, job }) => {
     try {
       setSelectingId(studentId)
       const res = await axios.post(
-        "http://localhost:8000/api/v1/job/select-student",
+        `${JOB_API_END_POINT}/select-student`,
         { studentId, jobId },
         { withCredentials: true },
       )

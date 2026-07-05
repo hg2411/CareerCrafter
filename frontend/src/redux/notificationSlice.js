@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+import { NOTIFICATION_API_END_POINT } from "../utils/constant";
+
 // ✅ Correct base URL
-const NOTIFICATION_API = "http://localhost:8000/api/v1/notifications";
+const NOTIFICATION_API = NOTIFICATION_API_END_POINT;
 
 // ✅ Fetch all notifications
 export const getAllNotifications = createAsyncThunk(
@@ -24,7 +26,7 @@ export const markAllNotificationsAsRead = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await axios.put(
-        "http://localhost:8000/api/v1/notifications/mark-all-as-read",
+        `${NOTIFICATION_API}/mark-all-as-read`,
         {},
         { withCredentials: true }
       );

@@ -25,18 +25,20 @@ router.get(
 );
 
 // 2️⃣ Google callback → find/create user & issue JWT
+const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+  passport.authenticate("google", { failureRedirect: `${frontendUrl}/login` }),
   async (req, res) => {
     try {
       if (!req.user) {
-        return res.redirect("http://localhost:5173/login");
+        return res.redirect(`${frontendUrl}/login`);
       }
 
       // If user has no role → redirect to frontend role selection
       if (!req.user.role) {
-        return res.redirect("http://localhost:5173/select-role");
+        return res.redirect(`${frontendUrl}/select-role`);
       }
 
       // ✅ Generate JWT
@@ -56,16 +58,16 @@ router.get(
 
       // Redirect based on role
       if (req.user.role === "student") {
-        return res.redirect("http://localhost:5173/");
+        return res.redirect(`${frontendUrl}/`);
       } else if (req.user.role === "recruiter") {
-        return res.redirect("http://localhost:5173/admin/companies");
+        return res.redirect(`${frontendUrl}/admin/companies`);
       } else {
-        return res.redirect("http://localhost:5173/");
+        return res.redirect(`${frontendUrl}/`);
       }
 
     } catch (err) {
       console.error("Google callback error:", err);
-      return res.redirect("http://localhost:5173/login");
+      return res.redirect(`${frontendUrl}/login`);
     }
   }
 );

@@ -3,9 +3,10 @@ import { Server } from "socket.io";
 import { Chat } from "./models/chat.model.js";
 
 export const setupSocket = (server) => {
+  const originUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173", // frontend URL
+      origin: originUrl, // frontend URL
       credentials: true,
     },
   });
