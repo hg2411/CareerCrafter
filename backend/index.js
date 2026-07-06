@@ -45,6 +45,7 @@ const corsOptions = {
   },
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 
 // ✅ 2. Middleware
